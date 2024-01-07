@@ -4,15 +4,15 @@ import { EventEmitter } from './utilities/EventEmitter'
 
 export type Resource =
   | {
-      name: string
-      type: Exclude<AssetType, 'cubeTexture'>
-      path: string
-    }
+    name: string
+    type: Exclude<AssetType, 'cubeTexture'>
+    path: string
+  }
   | {
-      name: string
-      type: 'cubeTexture'
-      path: string[]
-    }
+    name: string
+    type: 'cubeTexture'
+    path: string[]
+  }
 
 type AssetType = 'gltf' | 'texture' | 'cubeTexture'
 
@@ -27,7 +27,6 @@ export class Resources extends EventEmitter {
     () => {
       this.emit('loaded')
     },
-    // @ts-ignore
     (url: string, item: number, total: number) => {
       this.emit('progress', item / total)
     },
@@ -36,6 +35,7 @@ export class Resources extends EventEmitter {
     }
   )
   private loaders!: Loaders
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public items: Record<string, any> = {}
 
   constructor(private readonly resources: Resource[]) {
@@ -53,7 +53,7 @@ export class Resources extends EventEmitter {
   }
 
   getItem(name: string) {
-    let item = this.items[name]
+    const item = this.items[name]
     if (!item) {
       throw new Error(`Resource ${name} not found`)
     }

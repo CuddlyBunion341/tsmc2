@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 export class EventEmitter {
   private listeners: { [key: string]: Function[] } = {}
 
@@ -29,7 +30,7 @@ export class EventEmitter {
     this.listeners[event].splice(index, 1)
   }
 
-  public emit(event: string, ...args: any[]) {
+  public emit(event: string, ...args: unknown[]) {
     if (!this.listeners[event]) {
       return
     }
