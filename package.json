@@ -12,7 +12,8 @@
     "preview": "vite preview",
     "cleanup": "node ./scripts/cleanup.js",
     "prepare": "husky install",
-    "preinstall": "git submodule update --init --recursive"
+    "preinstall": "git submodule update --init --recursive",
+    "lint": "eslint ."
   },
   "type": "module",
   "dependencies": {
