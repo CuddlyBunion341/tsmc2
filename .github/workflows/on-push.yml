@@ -15,8 +15,8 @@ jobs:
 
       - name: Node setup
         uses: actions/setup-node@v3
-          with:
-            node-version: latest
+        with:
+          node-version: latest
 
       - name: Install dependencies
         run: yarn install
