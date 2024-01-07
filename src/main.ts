@@ -1,13 +1,8 @@
 import './style.scss'
 import { Engine } from './engine/Engine'
-import { Experience } from './engine/Experience'
+import Game from './game/main'
 
 new Engine({
   canvas: document.querySelector('#canvas') as HTMLCanvasElement,
-  experience: class implements Experience {
-    resources = []
-    init() {}
-    update() {}
-    resize() {}
-  }
+  experience: Game
 })
