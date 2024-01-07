@@ -13,6 +13,7 @@
     "cleanup": "node ./scripts/cleanup.js",
     "prepare": "husky install",
     "preinstall": "git submodule update --init --recursive",
+    "test": "vitest --run",
     "lint": "eslint ."
   },
   "type": "module",
@@ -32,7 +33,8 @@
     "sass": "^1.69.0",
     "typescript": "^5.2.2",
     "vite": "^4.4.11",
-    "vite-plugin-glsl": "^1.1.2"
+    "vite-plugin-glsl": "^1.1.2",
+    "vitest": "^1.1.3"
   },
   "packageManager": "yarn@3.2.1",
   "lint-staged": {
