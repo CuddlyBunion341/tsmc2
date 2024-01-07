@@ -1,16 +1,24 @@
-export class Block {
-  private static count = 0
-
-  public readonly id: number
-
-  constructor(public readonly name: string) {
-    this.id = Block.count++
-  }
+export type Block = {
+  id: number
+  name: string
+  transparent: boolean
 }
 
-export const blocks = {
-  air: new Block('air'),
-  stone: new Block('stone'),
-  dirt: new Block('dirt'),
-  grass: new Block('grass')
-} as const
+const paritalBlocks = [
+  { name: 'air', transparent: true },
+  { name: 'stone' },
+  { name: 'dirt' },
+  { name: 'grass' }
+] as const
+
+type BlockIdRecord = Record<(typeof paritalBlocks)[number]['name'], number>
+
+export const blocks: Block[] = []
+export const blockIds: Record<(typeof paritalBlocks)[number]['name'], number> =
+  {} as BlockIdRecord
+
+paritalBlocks.forEach((blockData, id) => {
+  const block = { id, ...blockData }
+  blocks.push(block as Block)
+  blockIds[blockData.name] = block.id
+})
