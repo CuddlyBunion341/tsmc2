@@ -1,4 +1,3 @@
-import * as THREE from 'three'
 import { Engine } from '../engine/Engine'
 import { Experience } from '../engine/Experience'
 import { Resource } from '../engine/Resources'

@@ -9,7 +9,6 @@ export type Vertex = {
 
 const FACE_COUNT = 6
 const FACE_VERTEX_COUNT = 4
-const FACE_VERTEX_INDEX_COUNT = 6
 
 export class ChunkMesher {
   static vertexData: Vertex[] = [
