@@ -1,6 +1,7 @@
 import { ChunkData } from './ChunkData'
 import { ChunkMesher } from './ChunkMesher'
 import * as THREE from 'three'
+import { blockIds } from './blocks'
 
 export class Chunk {
   public readonly chunkData: ChunkData
@@ -17,7 +18,7 @@ export class Chunk {
       this.chunkData.width,
       this.chunkData.height,
       this.chunkData.depth,
-      this.chunkData.get
+      (x: number, y: number, z: number) => this.chunkData.get(x, y, z)
     )
     this.mesh = new THREE.Mesh()
     this.mesh.position.set(
@@ -25,10 +26,24 @@ export class Chunk {
       this.y * this.chunkData.height,
       this.z * this.chunkData.depth
     )
+    this.mesh.material = new THREE.MeshNormalMaterial()
+  }
+
+  generateData() {
+    for (let x = -1; x <= this.chunkData.width; x++) {
+      for (let y = -1; y <= this.chunkData.height; y++) {
+        for (let z = -1; z <= this.chunkData.depth; z++) {
+          const block = Math.random() < 0.1 ? blockIds.stone : blockIds.air
+          this.chunkData.set(x, y, z, block)
+        }
+      }
+    }
   }
 
   updateMeshGeometry() {
-    const geometry = this.chunkMesher.generateGeometry()
-    this.mesh.geometry = geometry
+    // const geometry = this.chunkMesher.generateGeometry()
+    // this.mesh.geometry = geometry
+
+    this.mesh.geometry = this.chunkMesher.exampleCube().geometry
   }
 }

@@ -65,6 +65,8 @@ export class ChunkMesher {
   generateGeometry() {
     const { positions, normals, uvs, indices } = this.generateVertexData()
 
+    // TODO: pack the data into a single Uint32 buffer
+
     const geometry = new THREE.BufferGeometry()
     geometry.setAttribute(
       'position',
@@ -118,16 +120,25 @@ export class ChunkMesher {
             // check if the current face is visible
             if ((faceMask & (1 << i)) === 0) continue
             indices.push(...ChunkMesher.vertexIndices.map((v) => lastIndex + v))
-            const firstFaceVertexIndex = lastIndex + i * FACE_VERTEX_COUNT
-            vertices.push(
-              ...ChunkMesher.vertexData.slice(
+            const firstFaceVertexIndex = i * FACE_VERTEX_COUNT
+
+            const faceVertices = ChunkMesher.vertexData
+              .slice(
                 firstFaceVertexIndex,
                 firstFaceVertexIndex + FACE_VERTEX_COUNT
               )
-            )
-            // TODO: calculate light level
-            // TODO: calculate AO
-            // TODO: calculate UVs
+              .map((vertex) => {
+                const pos: [number, number, number] = [
+                  vertex.pos[0] + x,
+                  vertex.pos[1] + y,
+                  vertex.pos[2] + z
+                ]
+                // TODO: calculate light level
+                // TODO: calculate AO
+                // TODO: calculate UVs
+                return { ...vertex, pos }
+              })
+            vertices.push(...faceVertices)
             lastIndex += FACE_VERTEX_INDEX_COUNT
           }
         }
@@ -139,5 +150,55 @@ export class ChunkMesher {
     const uvs = vertices.map((v) => v.uv).flat()
 
     return { positions, normals, uvs, indices }
+  }
+
+  public exampleCube() {
+    const attributes: {
+      vertexKey: keyof Vertex
+      name: string
+      size: number
+    }[] = [
+      {
+        name: 'position',
+        size: 3,
+        vertexKey: 'pos'
+      },
+      {
+        name: 'normal',
+        size: 3,
+        vertexKey: 'norm'
+      },
+      {
+        name: 'uv',
+        size: 2,
+        vertexKey: 'uv'
+      }
+    ]
+
+    const geometry = new THREE.BufferGeometry()
+
+    attributes.forEach((attribute) => {
+      const attributeData = ChunkMesher.vertexData
+        .map((vertex) => vertex[attribute.vertexKey])
+        .flat()
+      const array = new Float32Array(attributeData)
+      geometry.setAttribute(
+        attribute.name,
+        new THREE.BufferAttribute(array, attribute.size)
+      )
+    })
+
+    const indices = Array(6)
+      .fill(0)
+      .map((_, i) => ChunkMesher.vertexIndices.map((v) => v + i * 4))
+      .flat()
+
+    console.log(indices)
+
+    geometry.setIndex(indices)
+
+    const material = new THREE.MeshNormalMaterial()
+    const mesh = new THREE.Mesh(geometry, material)
+    return mesh
   }
 }
