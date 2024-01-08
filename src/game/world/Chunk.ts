@@ -26,14 +26,15 @@ export class Chunk {
       this.y * this.chunkData.height,
       this.z * this.chunkData.depth
     )
-    this.mesh.material = new THREE.MeshNormalMaterial()
+    this.mesh.material = new THREE.MeshBasicMaterial({ wireframe: true })
   }
 
   generateData() {
-    for (let x = -1; x <= this.chunkData.width; x++) {
-      for (let y = -1; y <= this.chunkData.height; y++) {
-        for (let z = -1; z <= this.chunkData.depth; z++) {
-          const block = Math.random() < 0.1 ? blockIds.stone : blockIds.air
+    // The border was initialized to 0, so we only need to set the interior blocks
+    for (let x = 0; x < this.chunkData.width; x++) {
+      for (let y = 0; y < this.chunkData.height; y++) {
+        for (let z = 0; z < this.chunkData.depth; z++) {
+          const block = blockIds.stone
           this.chunkData.set(x, y, z, block)
         }
       }
@@ -43,7 +44,5 @@ export class Chunk {
   updateMeshGeometry() {
     const geometry = this.chunkMesher.generateGeometry()
     this.mesh.geometry = geometry
-
-    // this.mesh.geometry = this.chunkMesher.exampleCube().geometry
   }
 }

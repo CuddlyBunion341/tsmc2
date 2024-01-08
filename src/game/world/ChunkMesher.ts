@@ -23,16 +23,6 @@ export class ChunkMesher {
     { pos: [1, -1, -1], norm: [1, 0, 0], uv: [1, 0] },
     { pos: [1, 1, 1], norm: [1, 0, 0], uv: [0, 1] },
     { pos: [1, 1, -1], norm: [1, 0, 0], uv: [1, 1] },
-    // back
-    { pos: [1, -1, -1], norm: [0, 0, -1], uv: [0, 0] },
-    { pos: [-1, -1, -1], norm: [0, 0, -1], uv: [1, 0] },
-    { pos: [1, 1, -1], norm: [0, 0, -1], uv: [0, 1] },
-    { pos: [-1, 1, -1], norm: [0, 0, -1], uv: [1, 1] },
-    // front
-    { pos: [-1, -1, 1], norm: [0, 0, 1], uv: [0, 0] },
-    { pos: [1, -1, 1], norm: [0, 0, 1], uv: [1, 0] },
-    { pos: [-1, 1, 1], norm: [0, 0, 1], uv: [0, 1] },
-    { pos: [1, 1, 1], norm: [0, 0, 1], uv: [1, 1] },
     // bottom
     { pos: [1, -1, 1], norm: [0, -1, 0], uv: [0, 0] },
     { pos: [-1, -1, 1], norm: [0, -1, 0], uv: [1, 0] },
@@ -42,7 +32,17 @@ export class ChunkMesher {
     { pos: [1, 1, -1], norm: [0, 1, 0], uv: [0, 0] },
     { pos: [-1, 1, -1], norm: [0, 1, 0], uv: [1, 0] },
     { pos: [1, 1, 1], norm: [0, 1, 0], uv: [0, 1] },
-    { pos: [-1, 1, 1], norm: [0, 1, 0], uv: [1, 1] }
+    { pos: [-1, 1, 1], norm: [0, 1, 0], uv: [1, 1] },
+    // back
+    { pos: [1, -1, -1], norm: [0, 0, -1], uv: [0, 0] },
+    { pos: [-1, -1, -1], norm: [0, 0, -1], uv: [1, 0] },
+    { pos: [1, 1, -1], norm: [0, 0, -1], uv: [0, 1] },
+    { pos: [-1, 1, -1], norm: [0, 0, -1], uv: [1, 1] },
+    // front
+    { pos: [-1, -1, 1], norm: [0, 0, 1], uv: [0, 0] },
+    { pos: [1, -1, 1], norm: [0, 0, 1], uv: [1, 0] },
+    { pos: [-1, 1, 1], norm: [0, 0, 1], uv: [0, 1] },
+    { pos: [1, 1, 1], norm: [0, 0, 1], uv: [1, 1] }
   ] as const
 
   static vertexIndices = [0, 1, 2, 2, 1, 3] as const
@@ -129,9 +129,9 @@ export class ChunkMesher {
               )
               .map((vertex) => {
                 const pos: [number, number, number] = [
-                  vertex.pos[0] + x,
-                  vertex.pos[1] + y,
-                  vertex.pos[2] + z
+                  vertex.pos[0] / 2 + x,
+                  vertex.pos[1] / 2 + y,
+                  vertex.pos[2] / 2 + z
                 ]
                 // TODO: calculate light level
                 // TODO: calculate AO
@@ -150,53 +150,5 @@ export class ChunkMesher {
     const uvs = vertices.map((v) => v.uv).flat()
 
     return { positions, normals, uvs, indices }
-  }
-
-  public exampleCube() {
-    const attributes: {
-      vertexKey: keyof Vertex
-      name: string
-      size: number
-    }[] = [
-      {
-        name: 'position',
-        size: 3,
-        vertexKey: 'pos'
-      },
-      {
-        name: 'normal',
-        size: 3,
-        vertexKey: 'norm'
-      },
-      {
-        name: 'uv',
-        size: 2,
-        vertexKey: 'uv'
-      }
-    ]
-
-    const geometry = new THREE.BufferGeometry()
-
-    attributes.forEach((attribute) => {
-      const attributeData = ChunkMesher.vertexData
-        .map((vertex) => vertex[attribute.vertexKey])
-        .flat()
-      const array = new Float32Array(attributeData)
-      geometry.setAttribute(
-        attribute.name,
-        new THREE.BufferAttribute(array, attribute.size)
-      )
-    })
-
-    const indices = Array(6)
-      .fill(0)
-      .map((_, i) => ChunkMesher.vertexIndices.map((v) => v + i * 4))
-      .flat()
-
-    geometry.setIndex(indices)
-
-    const material = new THREE.MeshNormalMaterial()
-    const mesh = new THREE.Mesh(geometry, material)
-    return mesh
   }
 }
