@@ -15,3 +15,12 @@ describe('#getIndex()', () => {
     expect(chunkData.getIndex(-1, -1, 0)).toBe(34 * 34)
   })
 })
+
+describe('#get(), #set()', () => {
+  const chunkData = new ChunkData(32, 32, 32)
+  it('should return the correct value', () => {
+    expect(chunkData.get(0, 0, 0)).toBe(0)
+    chunkData.set(0, 0, 0, 1)
+    expect(chunkData.get(0, 0, 0)).toBe(1)
+  })
+})
