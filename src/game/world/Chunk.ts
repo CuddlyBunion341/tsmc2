@@ -20,5 +20,15 @@ export class Chunk {
       this.chunkData.get
     )
     this.mesh = new THREE.Mesh()
+    this.mesh.position.set(
+      this.x * this.chunkData.width,
+      this.y * this.chunkData.height,
+      this.z * this.chunkData.depth
+    )
+  }
+
+  updateMeshGeometry() {
+    const geometry = this.chunkMesher.generateGeometry()
+    this.mesh.geometry = geometry
   }
 }

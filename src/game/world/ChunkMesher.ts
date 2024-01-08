@@ -62,6 +62,27 @@ export class ChunkMesher {
     return mesh
   }
 
+  generateGeometry() {
+    const { positions, normals, uvs, indices } = this.generateVertexData()
+
+    const geometry = new THREE.BufferGeometry()
+    geometry.setAttribute(
+      'position',
+      new THREE.BufferAttribute(new Float32Array(positions), 3)
+    )
+    geometry.setAttribute(
+      'normal',
+      new THREE.BufferAttribute(new Float32Array(normals), 3)
+    )
+    geometry.setAttribute(
+      'uv',
+      new THREE.BufferAttribute(new Float32Array(uvs), 2)
+    )
+    geometry.setIndex(indices)
+
+    return geometry
+  }
+
   private static isSolid(block: number) {
     if (block === 0) return false
     return !blocks[block].transparent
@@ -118,26 +139,5 @@ export class ChunkMesher {
     const uvs = vertices.map((v) => v.uv).flat()
 
     return { positions, normals, uvs, indices }
-  }
-
-  private generateGeometry() {
-    const { positions, normals, uvs, indices } = this.generateVertexData()
-
-    const geometry = new THREE.BufferGeometry()
-    geometry.setAttribute(
-      'position',
-      new THREE.BufferAttribute(new Float32Array(positions), 3)
-    )
-    geometry.setAttribute(
-      'normal',
-      new THREE.BufferAttribute(new Float32Array(normals), 3)
-    )
-    geometry.setAttribute(
-      'uv',
-      new THREE.BufferAttribute(new Float32Array(uvs), 2)
-    )
-    geometry.setIndex(indices)
-
-    return geometry
   }
 }
