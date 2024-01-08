@@ -41,9 +41,9 @@ export class Chunk {
   }
 
   updateMeshGeometry() {
-    // const geometry = this.chunkMesher.generateGeometry()
-    // this.mesh.geometry = geometry
+    const geometry = this.chunkMesher.generateGeometry()
+    this.mesh.geometry = geometry
 
-    this.mesh.geometry = this.chunkMesher.exampleCube().geometry
+    // this.mesh.geometry = this.chunkMesher.exampleCube().geometry
   }
 }

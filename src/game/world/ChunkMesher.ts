@@ -139,7 +139,7 @@ export class ChunkMesher {
                 return { ...vertex, pos }
               })
             vertices.push(...faceVertices)
-            lastIndex += FACE_VERTEX_INDEX_COUNT
+            lastIndex += FACE_VERTEX_COUNT
           }
         }
       }
@@ -192,8 +192,6 @@ export class ChunkMesher {
       .fill(0)
       .map((_, i) => ChunkMesher.vertexIndices.map((v) => v + i * 4))
       .flat()
-
-    console.log(indices)
 
     geometry.setIndex(indices)
 
