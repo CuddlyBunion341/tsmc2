@@ -21,6 +21,4 @@ export class Chunk {
     )
     this.mesh = new THREE.Mesh()
   }
-
-  generateMesh() {}
 }

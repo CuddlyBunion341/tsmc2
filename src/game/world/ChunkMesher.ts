@@ -7,6 +7,10 @@ export type Vertex = {
   uv: [number, number]
 }
 
+const FACE_COUNT = 6
+const FACE_VERTEX_COUNT = 4
+const FACE_VERTEX_INDEX_COUNT = 6
+
 export class ChunkMesher {
   static vertexData: Vertex[] = [
     // left
@@ -50,16 +54,24 @@ export class ChunkMesher {
     public readonly blockGetter: (x: number, y: number, z: number) => number
   ) {}
 
-  static isSolid(block: number) {
+  generateMesh() {
+    const geometry = this.generateGeometry()
+    const material = new THREE.MeshNormalMaterial()
+    const mesh = new THREE.Mesh(geometry, material)
+
+    return mesh
+  }
+
+  private static isSolid(block: number) {
     if (block === 0) return false
     return !blocks[block].transparent
   }
 
-  isSolid(x: number, y: number, z: number) {
+  private isSolid(x: number, y: number, z: number) {
     return ChunkMesher.isSolid(this.blockGetter(x, y, z))
   }
 
-  generateVertexData() {
+  private generateVertexData() {
     const vertices: Vertex[] = []
     const indices: number[] = []
 
@@ -71,6 +83,7 @@ export class ChunkMesher {
           const block = this.blockGetter(x, y, z)
           if (!ChunkMesher.isSolid(block)) continue
 
+          // use a face mask to determine which faces to render
           let faceMask = 0b000000
           if (!this.isSolid(x - 1, y, z)) faceMask |= 0b000001 // 1
           if (!this.isSolid(x + 1, y, z)) faceMask |= 0b000010 // 2
@@ -80,14 +93,21 @@ export class ChunkMesher {
           if (!this.isSolid(x, y, z + 1)) faceMask |= 0b100000 // 32
           if (faceMask === 0b000000) continue
 
-          for (let i = 0; i < 6; i++) {
+          for (let i = 0; i < FACE_COUNT; i++) {
+            // check if the current face is visible
             if ((faceMask & (1 << i)) === 0) continue
             indices.push(...ChunkMesher.vertexIndices.map((v) => lastIndex + v))
-            const vertexIndex = lastIndex + i * 4
+            const firstFaceVertexIndex = lastIndex + i * FACE_VERTEX_COUNT
             vertices.push(
-              ...ChunkMesher.vertexData.slice(vertexIndex, vertexIndex + 4)
+              ...ChunkMesher.vertexData.slice(
+                firstFaceVertexIndex,
+                firstFaceVertexIndex + FACE_VERTEX_COUNT
+              )
             )
-            lastIndex += 6
+            // TODO: calculate light level
+            // TODO: calculate AO
+            // TODO: calculate UVs
+            lastIndex += FACE_VERTEX_INDEX_COUNT
           }
         }
       }
@@ -98,14 +118,6 @@ export class ChunkMesher {
     const uvs = vertices.map((v) => v.uv).flat()
 
     return { positions, normals, uvs, indices }
-  }
-
-  generateMesh() {
-    const geometry = this.generateGeometry()
-    const material = new THREE.MeshNormalMaterial()
-    const mesh = new THREE.Mesh(geometry, material)
-
-    return mesh
   }
 
   private generateGeometry() {
