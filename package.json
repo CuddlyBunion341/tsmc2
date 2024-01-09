@@ -13,7 +13,7 @@
     "cleanup": "node ./scripts/cleanup.js",
     "prepare": "husky install",
     "preinstall": "git submodule update --init --recursive",
-    "test": "vitest --run",
+    "test": "vitest",
     "lint": "eslint ."
   },
   "type": "module",

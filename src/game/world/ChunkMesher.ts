@@ -62,7 +62,11 @@ export class ChunkMesher {
   }
 
   generateGeometry() {
-    const { positions, normals, uvs, indices } = this.generateVertexData()
+    const { vertices, indices } = this.generateChunkVertices()
+
+    const positions = vertices.map((v) => v.pos).flat()
+    const normals = vertices.map((v) => v.norm).flat()
+    const uvs = vertices.map((v) => v.uv).flat()
 
     // TODO: pack the data into a single Uint32 buffer
 
@@ -93,7 +97,7 @@ export class ChunkMesher {
     return ChunkMesher.isSolid(this.blockGetter(x, y, z))
   }
 
-  private generateVertexData() {
+  generateChunkVertices() {
     const vertices: Vertex[] = []
     const indices: number[] = []
 
@@ -118,7 +122,7 @@ export class ChunkMesher {
           for (let i = 0; i < FACE_COUNT; i++) {
             // check if the current face is visible
             if ((faceMask & (1 << i)) === 0) continue
-            const faceVertices = this.generateFaceGeometry(i, x, y, z)
+            const faceVertices = this.generateFaceVertices(i, x, y, z)
             vertices.push(...faceVertices)
 
             indices.push(...ChunkMesher.vertexIndices.map((v) => lastIndex + v))
@@ -128,14 +132,10 @@ export class ChunkMesher {
       }
     }
 
-    const positions = vertices.map((v) => v.pos).flat()
-    const normals = vertices.map((v) => v.norm).flat()
-    const uvs = vertices.map((v) => v.uv).flat()
-
-    return { positions, normals, uvs, indices }
+    return { vertices, indices }
   }
 
-  generateFaceGeometry(faceIndex: number, x: number, y: number, z: number) {
+  generateFaceVertices(faceIndex: number, x: number, y: number, z: number) {
     const firstFaceVertexIndex = faceIndex * FACE_VERTEX_COUNT
 
     const faceVertices = ChunkMesher.vertexData
