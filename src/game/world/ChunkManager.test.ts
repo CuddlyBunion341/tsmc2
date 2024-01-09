@@ -1,5 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
-import { ChunkMesher, Vertex } from './ChunkMesher'
+import { describe, it, expect } from 'vitest'
 import { ChunkManager } from './ChunkManager'
 
 describe('#createChunksAroundOrigin()', () => {
