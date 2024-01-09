@@ -118,26 +118,10 @@ export class ChunkMesher {
           for (let i = 0; i < FACE_COUNT; i++) {
             // check if the current face is visible
             if ((faceMask & (1 << i)) === 0) continue
-            indices.push(...ChunkMesher.vertexIndices.map((v) => lastIndex + v))
-            const firstFaceVertexIndex = i * FACE_VERTEX_COUNT
-
-            const faceVertices = ChunkMesher.vertexData
-              .slice(
-                firstFaceVertexIndex,
-                firstFaceVertexIndex + FACE_VERTEX_COUNT
-              )
-              .map((vertex) => {
-                const pos: [number, number, number] = [
-                  vertex.pos[0] / 2 + x,
-                  vertex.pos[1] / 2 + y,
-                  vertex.pos[2] / 2 + z
-                ]
-                // TODO: calculate light level
-                // TODO: calculate AO
-                // TODO: calculate UVs
-                return { ...vertex, pos }
-              })
+            const faceVertices = this.generateFaceGeometry(i, x, y, z)
             vertices.push(...faceVertices)
+
+            indices.push(...ChunkMesher.vertexIndices.map((v) => lastIndex + v))
             lastIndex += FACE_VERTEX_COUNT
           }
         }
@@ -149,5 +133,25 @@ export class ChunkMesher {
     const uvs = vertices.map((v) => v.uv).flat()
 
     return { positions, normals, uvs, indices }
+  }
+
+  generateFaceGeometry(faceIndex: number, x: number, y: number, z: number) {
+    const firstFaceVertexIndex = faceIndex * FACE_VERTEX_COUNT
+
+    const faceVertices = ChunkMesher.vertexData
+      .slice(firstFaceVertexIndex, firstFaceVertexIndex + FACE_VERTEX_COUNT)
+      .map((vertex) => {
+        const pos: [number, number, number] = [
+          vertex.pos[0] / 2 + x,
+          vertex.pos[1] / 2 + y,
+          vertex.pos[2] / 2 + z
+        ]
+        // TODO: calculate light level
+        // TODO: calculate AO
+        // TODO: calculate UVs
+        return { ...vertex, pos }
+      })
+
+    return faceVertices
   }
 }
