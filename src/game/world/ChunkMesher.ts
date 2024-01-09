@@ -2,8 +2,8 @@ import * as THREE from 'three'
 import { blocks } from './blocks'
 
 export type Vertex = {
-  pos: [number, number, number]
-  norm: [number, number, number]
+  position: [number, number, number]
+  normal: [number, number, number]
   uv: [number, number]
 }
 
@@ -11,37 +11,43 @@ const FACE_COUNT = 6
 const FACE_VERTEX_COUNT = 4
 
 export class ChunkMesher {
+  static geometryAttributes = [
+    { name: 'position', size: 3 },
+    { name: 'normal', size: 3 },
+    { name: 'uv', size: 2 }
+  ] as const
+
   static vertexData: Vertex[] = [
     // left
-    { pos: [-1, -1, -1], norm: [-1, 0, 0], uv: [0, 0] },
-    { pos: [-1, -1, 1], norm: [-1, 0, 0], uv: [1, 0] },
-    { pos: [-1, 1, -1], norm: [-1, 0, 0], uv: [0, 1] },
-    { pos: [-1, 1, 1], norm: [-1, 0, 0], uv: [1, 1] },
+    { position: [-1, -1, -1], normal: [-1, 0, 0], uv: [0, 0] },
+    { position: [-1, -1, 1], normal: [-1, 0, 0], uv: [1, 0] },
+    { position: [-1, 1, -1], normal: [-1, 0, 0], uv: [0, 1] },
+    { position: [-1, 1, 1], normal: [-1, 0, 0], uv: [1, 1] },
     // right
-    { pos: [1, -1, 1], norm: [1, 0, 0], uv: [0, 0] },
-    { pos: [1, -1, -1], norm: [1, 0, 0], uv: [1, 0] },
-    { pos: [1, 1, 1], norm: [1, 0, 0], uv: [0, 1] },
-    { pos: [1, 1, -1], norm: [1, 0, 0], uv: [1, 1] },
+    { position: [1, -1, 1], normal: [1, 0, 0], uv: [0, 0] },
+    { position: [1, -1, -1], normal: [1, 0, 0], uv: [1, 0] },
+    { position: [1, 1, 1], normal: [1, 0, 0], uv: [0, 1] },
+    { position: [1, 1, -1], normal: [1, 0, 0], uv: [1, 1] },
     // bottom
-    { pos: [1, -1, 1], norm: [0, -1, 0], uv: [0, 0] },
-    { pos: [-1, -1, 1], norm: [0, -1, 0], uv: [1, 0] },
-    { pos: [1, -1, -1], norm: [0, -1, 0], uv: [0, 1] },
-    { pos: [-1, -1, -1], norm: [0, -1, 0], uv: [1, 1] },
+    { position: [1, -1, 1], normal: [0, -1, 0], uv: [0, 0] },
+    { position: [-1, -1, 1], normal: [0, -1, 0], uv: [1, 0] },
+    { position: [1, -1, -1], normal: [0, -1, 0], uv: [0, 1] },
+    { position: [-1, -1, -1], normal: [0, -1, 0], uv: [1, 1] },
     // top
-    { pos: [1, 1, -1], norm: [0, 1, 0], uv: [0, 0] },
-    { pos: [-1, 1, -1], norm: [0, 1, 0], uv: [1, 0] },
-    { pos: [1, 1, 1], norm: [0, 1, 0], uv: [0, 1] },
-    { pos: [-1, 1, 1], norm: [0, 1, 0], uv: [1, 1] },
+    { position: [1, 1, -1], normal: [0, 1, 0], uv: [0, 0] },
+    { position: [-1, 1, -1], normal: [0, 1, 0], uv: [1, 0] },
+    { position: [1, 1, 1], normal: [0, 1, 0], uv: [0, 1] },
+    { position: [-1, 1, 1], normal: [0, 1, 0], uv: [1, 1] },
     // back
-    { pos: [1, -1, -1], norm: [0, 0, -1], uv: [0, 0] },
-    { pos: [-1, -1, -1], norm: [0, 0, -1], uv: [1, 0] },
-    { pos: [1, 1, -1], norm: [0, 0, -1], uv: [0, 1] },
-    { pos: [-1, 1, -1], norm: [0, 0, -1], uv: [1, 1] },
+    { position: [1, -1, -1], normal: [0, 0, -1], uv: [0, 0] },
+    { position: [-1, -1, -1], normal: [0, 0, -1], uv: [1, 0] },
+    { position: [1, 1, -1], normal: [0, 0, -1], uv: [0, 1] },
+    { position: [-1, 1, -1], normal: [0, 0, -1], uv: [1, 1] },
     // front
-    { pos: [-1, -1, 1], norm: [0, 0, 1], uv: [0, 0] },
-    { pos: [1, -1, 1], norm: [0, 0, 1], uv: [1, 0] },
-    { pos: [-1, 1, 1], norm: [0, 0, 1], uv: [0, 1] },
-    { pos: [1, 1, 1], norm: [0, 0, 1], uv: [1, 1] }
+    { position: [-1, -1, 1], normal: [0, 0, 1], uv: [0, 0] },
+    { position: [1, -1, 1], normal: [0, 0, 1], uv: [1, 0] },
+    { position: [-1, 1, 1], normal: [0, 0, 1], uv: [0, 1] },
+    { position: [1, 1, 1], normal: [0, 0, 1], uv: [1, 1] }
   ] as const
 
   static vertexIndices = [0, 1, 2, 2, 1, 3] as const
@@ -64,25 +70,17 @@ export class ChunkMesher {
   generateGeometry() {
     const { vertices, indices } = this.generateChunkVertices()
 
-    const positions = vertices.map((v) => v.pos).flat()
-    const normals = vertices.map((v) => v.norm).flat()
-    const uvs = vertices.map((v) => v.uv).flat()
-
-    // TODO: pack the data into a single Uint32 buffer
-
     const geometry = new THREE.BufferGeometry()
-    geometry.setAttribute(
-      'position',
-      new THREE.BufferAttribute(new Float32Array(positions), 3)
-    )
-    geometry.setAttribute(
-      'normal',
-      new THREE.BufferAttribute(new Float32Array(normals), 3)
-    )
-    geometry.setAttribute(
-      'uv',
-      new THREE.BufferAttribute(new Float32Array(uvs), 2)
-    )
+
+    ChunkMesher.geometryAttributes.forEach(({ name, size }) => {
+      const attributeData = vertices.map((v) => v[name]).flat()
+      const attribute = new THREE.BufferAttribute(
+        new Float32Array(attributeData),
+        size
+      )
+      geometry.setAttribute(name, attribute)
+    })
+
     geometry.setIndex(indices)
 
     return geometry
@@ -141,15 +139,15 @@ export class ChunkMesher {
     const faceVertices = ChunkMesher.vertexData
       .slice(firstFaceVertexIndex, firstFaceVertexIndex + FACE_VERTEX_COUNT)
       .map((vertex) => {
-        const pos: [number, number, number] = [
-          vertex.pos[0] / 2 + x,
-          vertex.pos[1] / 2 + y,
-          vertex.pos[2] / 2 + z
+        const position: [number, number, number] = [
+          vertex.position[0] / 2 + x,
+          vertex.position[1] / 2 + y,
+          vertex.position[2] / 2 + z
         ]
         // TODO: calculate light level
         // TODO: calculate AO
         // TODO: calculate UVs
-        return { ...vertex, pos }
+        return { ...vertex, position }
       })
 
     return faceVertices

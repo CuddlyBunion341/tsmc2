@@ -11,8 +11,8 @@ const assertGeometryArray = (array: number[], length: number) => {
 }
 
 const assertVertexData = (vertex: Vertex) => {
-  assertGeometryArray(vertex.pos, 3)
-  assertGeometryArray(vertex.norm, 3)
+  assertGeometryArray(vertex.position, 3)
+  assertGeometryArray(vertex.normal, 3)
   assertGeometryArray(vertex.uv, 2)
 }
 
