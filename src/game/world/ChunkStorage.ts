@@ -25,8 +25,8 @@ export class ChunkStorage {
     return this.chunks.get(this.getChunkKey(x, y, z))
   }
 
-  setChunk(x: number, y: number, z: number, chunk: Chunk) {
-    this.chunks.set(this.getChunkKey(x, y, z), chunk)
+  addChunk(chunk: Chunk) {
+    this.chunks.set(this.getChunkKey(chunk.x, chunk.y, chunk.z), chunk)
   }
 
   getChunkKey(x: number, y: number, z: number) {
