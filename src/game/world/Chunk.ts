@@ -4,6 +4,7 @@ import * as THREE from 'three'
 import { blockIds } from './blocks'
 
 export class Chunk {
+  public static readonly SIZE = 32
   public readonly chunkData: ChunkData
   public readonly chunkMesher: ChunkMesher
   public readonly mesh: THREE.Mesh
@@ -13,7 +14,7 @@ export class Chunk {
     public readonly y: number,
     public readonly z: number
   ) {
-    this.chunkData = new ChunkData()
+    this.chunkData = new ChunkData(Chunk.SIZE, Chunk.SIZE, Chunk.SIZE)
     this.chunkMesher = new ChunkMesher(
       this.chunkData.width,
       this.chunkData.height,
