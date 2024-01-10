@@ -14,8 +14,7 @@ const paritalBlocks = [
 type BlockIdRecord = Record<(typeof paritalBlocks)[number]['name'], number>
 
 export const blocks: Block[] = []
-export const blockIds: Record<(typeof paritalBlocks)[number]['name'], number> =
-  {} as BlockIdRecord
+export const blockIds: Record<(typeof paritalBlocks)[number]['name'], number> = {} as BlockIdRecord
 
 paritalBlocks.forEach((blockData, id) => {
   const block = { id, ...blockData }
