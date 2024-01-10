@@ -18,9 +18,10 @@ export class GreedyMesher2D<T> {
   constructor(
     private readonly width: number,
     private readonly height: number,
-    private readonly dataGetter: (x: number, y: number, z: number) => T
+    private readonly dataGetter: (x: number, y: number) => T
   ) {
     this.areas = []
+    this.currentArea = this.newArea(0, 0)
     this.processedList = new Matrix2d(width, height)
   }
 
@@ -30,6 +31,18 @@ export class GreedyMesher2D<T> {
 
   step() {
     // TODO: implement
+  }
+
+  private newArea(x: number, y: number) {
+    return {
+      value: this.dataGetter(x, y),
+      x,
+      y,
+      w: 0,
+      h: 0,
+      canGrowX: true,
+      canGrowY: true
+    }
   }
 
   private growX() {
