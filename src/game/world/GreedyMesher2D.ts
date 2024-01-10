@@ -113,15 +113,17 @@ export class GreedyMesher2d<T> {
   private growX() {
     const { x, y, w } = this.currentArea
 
-    if (this.canGrowInto(x + w, y)) {
-      this.currentArea.w++
-    } else {
+    if (!this.canGrowInto(x + w, y)) {
       this.currentArea.state = 'growingY'
+      return
     }
+    
+    this.currentArea.w++
   }
 
   private growY() {
     const { x, y, w, h } = this.currentArea
+
     for (let xi = x; xi < x + w; xi++) {
       if (!this.canGrowInto(xi, y + h)) {
         this.currentArea.state = 'done'
