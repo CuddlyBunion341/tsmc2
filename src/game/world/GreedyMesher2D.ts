@@ -6,14 +6,14 @@ export interface Area<T> {
   y: number
   w: number
   h: number
-  canGrowX: boolean
-  canGrowY: boolean
+  state: 'growingX' | 'growingY' | 'done'
 }
 
-export class GreedyMesher2D<T> {
+export class GreedyMesher2d<T> {
   private areas: Area<T>[]
   private currentArea: Area<T>
-  private processedList: Matrix2d<boolean>
+  private processed: Matrix2d<boolean>
+  private isDone: boolean
 
   constructor(
     private readonly width: number,
@@ -22,38 +22,120 @@ export class GreedyMesher2D<T> {
   ) {
     this.areas = []
     this.currentArea = this.newArea(0, 0)
-    this.processedList = new Matrix2d(width, height)
+    this.processed = new Matrix2d(width, height)
+    this.isDone = false
   }
 
-  call() {
-    // TODO: implement
+  public call() {
+    while (!this.step());
+
+    return this.areas
   }
 
-  step() {
-    // TODO: implement
+  public step() {
+    if (this.isDone) return false
+
+    switch (this.currentArea.state) {
+      case 'growingX':
+        this.growX()
+        break
+      case 'growingY':
+        this.growY()
+        break
+      case 'done':
+        this.updateProcessed()
+        this.areas.push(this.currentArea)
+        if (!this.setNextArea()) {
+          this.isDone = true
+          return false
+        }
+    }
+
+    return true
   }
 
-  private newArea(x: number, y: number) {
+  setNextArea() {
+    const area = this.getNextArea()
+    if (!area) return null
+    return (this.currentArea = area)
+  }
+
+  private newArea(x: number, y: number): Area<T> {
     return {
       value: this.dataGetter(x, y),
       x,
       y,
-      w: 0,
-      h: 0,
-      canGrowX: true,
-      canGrowY: true
+      w: 1,
+      h: 1,
+      state: 'growingX'
     }
   }
 
+  private updateProcessed() {
+    for (
+      let x = this.currentArea.x;
+      x < this.currentArea.x + this.currentArea.w;
+      x++
+    ) {
+      for (
+        let y = this.currentArea.y;
+        y < this.currentArea.y + this.currentArea.h;
+        y++
+      ) {
+        this.processed.set(x, y, true)
+      }
+    }
+  }
+
+  private getNextArea() {
+    const lastArea = this.currentArea
+
+    let x = 0
+    let y = 0
+
+    if (lastArea) y = lastArea.y
+
+    // TODO: optimize
+    while (!this.dataGetter(x, y) || this.processed.get(x, y)) {
+      if (x >= this.width && y >= this.height) return null
+
+      if (x >= this.width) {
+        x = 0
+        y++
+      } else {
+        x++
+      }
+    }
+
+    return this.newArea(x, y)
+  }
+
   private growX() {
-    // TODO: implement
+    const { x, y, w } = this.currentArea
+
+    if (this.canGrowInto(x + w, y)) {
+      this.currentArea.w++
+    } else {
+      this.currentArea.state = 'growingY'
+    }
   }
 
   private growY() {
-    // TODO: implement
+    const { x, y, w, h } = this.currentArea
+    for (let xi = x; xi < x + w; xi++) {
+      if (!this.canGrowInto(xi, y + h)) {
+        this.currentArea.state = 'done'
+        return
+      }
+    }
+
+    this.currentArea.h++
   }
 
-  private setNewArea() {
-    // TODO: implement
+  private canGrowInto(x: number, y: number) {
+    return (
+      this.dataGetter(x, y) === this.currentArea.value &&
+      !this.processed.get(x, y)
+    )
   }
 }
