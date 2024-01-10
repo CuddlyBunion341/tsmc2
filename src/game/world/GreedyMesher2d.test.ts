@@ -1,7 +1,8 @@
 import { describe, test, expect } from 'vitest'
 import { GreedyMesher2d } from './GreedyMesher2d'
 
-const dataGetterFn = (data: number[][]) => (x: number, y: number) => data[data.length - y - 1][x]
+const dataGetterFn = (data: number[][]) => (x: number, y: number) =>
+  data[data.length - y - 1][x]
 
 const greedyMesherFactory = (data: number[][]) =>
   new GreedyMesher2d(data[0].length, data.length, dataGetterFn(data), (v) => v === 0)

@@ -1,7 +1,11 @@
 export class Matrix2d<T> {
   public readonly data: T[]
 
-  constructor(public readonly width: number, public readonly height: number, defaultValue?: T) {
+  constructor(
+    public readonly width: number,
+    public readonly height: number,
+    defaultValue?: T
+  ) {
     this.data = Array(width * height).fill(defaultValue)
   }
 

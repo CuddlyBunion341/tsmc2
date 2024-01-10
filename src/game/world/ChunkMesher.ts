@@ -74,10 +74,7 @@ export class ChunkMesher {
 
     ChunkMesher.geometryAttributes.forEach(({ name, size }) => {
       const attributeData = vertices.map((v) => v[name]).flat()
-      const attribute = new THREE.BufferAttribute(
-        new Float32Array(attributeData),
-        size
-      )
+      const attribute = new THREE.BufferAttribute(new Float32Array(attributeData), size)
       geometry.setAttribute(name, attribute)
     })
 
