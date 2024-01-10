@@ -1,26 +1,30 @@
 import { describe, it, expect } from 'vitest'
 import { ChunkData } from './ChunkData'
 
-describe('#getIndex()', () => {
-  const chunkData = new ChunkData(32, 32, 32)
-  it('should return the correct index for the x axis', () => {
-    expect(chunkData.getIndex(-1, -1, -1)).toBe(0)
-    expect(chunkData.getIndex(0, -1, -1)).toBe(1)
-    expect(chunkData.getIndex(1, -1, -1)).toBe(2)
-  })
-  it('should return the correct index for the y axis', () => {
-    expect(chunkData.getIndex(-1, 0, -1)).toBe(34)
-  })
-  it('should return the correct index for the z axis', () => {
-    expect(chunkData.getIndex(-1, -1, 0)).toBe(34 * 34)
+describe('#constructor()', () => {
+  const chunkData = new ChunkData(1, 2, 3)
+
+  it('should create a matrix with the correct dimensions', () => {
+    expect(chunkData.data.width).toEqual(3)
+    expect(chunkData.data.height).toEqual(4)
+    expect(chunkData.data.depth).toEqual(5)
   })
 })
 
-describe('#get(), #set()', () => {
+describe('#get()', () => {
   const chunkData = new ChunkData(32, 32, 32)
-  it('should return the correct value', () => {
-    expect(chunkData.get(0, 0, 0)).toBe(0)
-    chunkData.set(0, 0, 0, 1)
-    expect(chunkData.get(0, 0, 0)).toBe(1)
+
+  it('calls the Matrix3d method with correct params', () => {
+    chunkData.data.set(1, 2, 3, 4)
+    expect(chunkData.get(0, 1, 2)).toEqual(4)
+  })
+})
+
+describe('#set()', () => {
+  const chunkData = new ChunkData(32, 32, 32)
+
+  it('calls the Matrix3d method with correct params', () => {
+    chunkData.set(0, 1, 2, 5)
+    expect(chunkData.data.get(1, 2, 3)).toEqual(5)
   })
 })
