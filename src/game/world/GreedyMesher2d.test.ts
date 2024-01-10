@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest'
-import { GreedyMesher2d } from './GreedyMesher2d'
+import { GreedyMesher2d } from './GreedyMesher2d_'
 
 const dataGetterFn = (data: number[][]) => (x: number, y: number) => data[data.length - y - 1][x]
 
