@@ -10,77 +10,57 @@ export interface Area<T> {
 }
 
 export class GreedyMesher2d<T> {
-  private areas: Area<T>[]
-  private currentArea: Area<T>
-  private processed: Matrix2d<boolean>
-  private isDone: boolean
+  public areas: Area<T>[]
+  public currentArea: Area<T>
+  public processed: Matrix2d<boolean>
+  public isDone: boolean
 
   constructor(
     private readonly width: number,
     private readonly height: number,
-    private readonly dataGetter: (x: number, y: number) => T
+    private readonly dataGetter: (x: number, y: number) => T,
+    private readonly skip: (value: T) => boolean = (value) => !!value,
+    private readonly isSameValue: (a: T, b: T) => boolean = (a, b) => a === b
   ) {
     this.areas = []
     this.currentArea = this.newArea(0, 0)
-    this.processed = new Matrix2d(width, height)
+    this.processed = new Matrix2d(width, height, false)
     this.isDone = false
   }
 
   public call() {
-    while (!this.step());
+    while (this.step());
 
     return this.areas
   }
 
   public step() {
-    if (this.isDone) return false
+    if (this.currentArea.state === 'growingX') {
+      this.growX()
+    }
+    if (this.currentArea.state === 'growingY') {
+      this.growY()
+    }
+    if (this.currentArea.state === 'done') {
+      this.areas.push(this.currentArea)
+      this.updateProcessed()
 
-    switch (this.currentArea.state) {
-      case 'growingX':
-        this.growX()
-      /* falls through */
-      case 'growingY':
-        this.growY()
-      /* falls through */
-      case 'done':
-        this.updateProcessed()
-        this.areas.push(this.currentArea)
-        if (!this.setNextArea()) {
-          this.isDone = true
-        }
+      const next = this.getNextArea()
+      if (next) this.currentArea = next
+
+      this.isDone = next === null
     }
 
-    return this.isDone
-  }
-
-  setNextArea() {
-    const area = this.getNextArea()
-    if (!area) return null
-    return (this.currentArea = area)
+    return !this.isDone
   }
 
   private newArea(x: number, y: number): Area<T> {
-    return {
-      value: this.dataGetter(x, y),
-      x,
-      y,
-      w: 1,
-      h: 1,
-      state: 'growingX'
-    }
+    return { value: this.dataGetter(x, y), x, y, w: 1, h: 1, state: 'growingX' }
   }
 
   private updateProcessed() {
-    for (
-      let x = this.currentArea.x;
-      x < this.currentArea.x + this.currentArea.w;
-      x++
-    ) {
-      for (
-        let y = this.currentArea.y;
-        y < this.currentArea.y + this.currentArea.h;
-        y++
-      ) {
+    for (let x = this.currentArea.x; x < this.currentArea.x + this.currentArea.w; x++) {
+      for (let y = this.currentArea.y; y < this.currentArea.y + this.currentArea.h; y++) {
         this.processed.set(x, y, true)
       }
     }
@@ -89,9 +69,17 @@ export class GreedyMesher2d<T> {
   private getNextArea() {
     const lastArea = this.currentArea
 
-    for (let y = lastArea.y; y < this.height; y++) {
-      for (let x = lastArea.x + lastArea.w; x < this.width; x++) {
-        if (!this.processed.get(x, lastArea.y)) {
+    let initialY = lastArea.y
+    let initialX = lastArea.x + lastArea.w
+
+    if (initialX >= this.width) {
+      initialX = 0
+      initialY++
+    }
+
+    for (let y = initialY; y < this.height; y++) {
+      for (let x = initialX; x < this.width; x++) {
+        if (!this.processed.get(x, y) && !this.skip(this.dataGetter(x, y))) {
           return this.newArea(x, y)
         }
       }
@@ -126,8 +114,10 @@ export class GreedyMesher2d<T> {
 
   private canGrowInto(x: number, y: number) {
     return (
-      this.dataGetter(x, y) === this.currentArea.value &&
-      !this.processed.get(x, y)
+      x < this.width &&
+      y < this.height &&
+      this.isSameValue(this.dataGetter(x, y), this.currentArea.value) &&
+      !this.skip(this.dataGetter(x, y))
     )
   }
 }
