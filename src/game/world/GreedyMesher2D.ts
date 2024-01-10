@@ -38,20 +38,19 @@ export class GreedyMesher2d<T> {
     switch (this.currentArea.state) {
       case 'growingX':
         this.growX()
-        break
+      /* falls through */
       case 'growingY':
         this.growY()
-        break
+      /* falls through */
       case 'done':
         this.updateProcessed()
         this.areas.push(this.currentArea)
         if (!this.setNextArea()) {
           this.isDone = true
-          return false
         }
     }
 
-    return true
+    return this.isDone
   }
 
   setNextArea() {
@@ -90,24 +89,15 @@ export class GreedyMesher2d<T> {
   private getNextArea() {
     const lastArea = this.currentArea
 
-    let x = 0
-    let y = 0
-
-    if (lastArea) y = lastArea.y
-
-    // TODO: optimize
-    while (!this.dataGetter(x, y) || this.processed.get(x, y)) {
-      if (x >= this.width && y >= this.height) return null
-
-      if (x >= this.width) {
-        x = 0
-        y++
-      } else {
-        x++
+    for (let y = lastArea.y; y < this.height; y++) {
+      for (let x = lastArea.x + lastArea.w; x < this.width; x++) {
+        if (!this.processed.get(x, lastArea.y)) {
+          return this.newArea(x, y)
+        }
       }
     }
 
-    return this.newArea(x, y)
+    return null
   }
 
   private growX() {
@@ -117,7 +107,7 @@ export class GreedyMesher2d<T> {
       this.currentArea.state = 'growingY'
       return
     }
-    
+
     this.currentArea.w++
   }
 
