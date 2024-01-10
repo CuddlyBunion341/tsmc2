@@ -1,5 +1,7 @@
+import { Matrix3d } from '../util/Matrix3d'
+
 export class ChunkData {
-  public readonly data: number[]
+  public readonly data: Matrix3d<number>
 
   constructor(
     public readonly width: number = 32,
@@ -8,20 +10,14 @@ export class ChunkData {
   ) {
     // use a 1 block border around the chunk to avoid using neighbor references
     // this results in 2 extra blocks in each dimension
-    this.data = new Array((width + 2) * (height + 2) * (depth + 2)).fill(0)
+    this.data = new Matrix3d(width + 2, height + 2, depth + 2, 0)
   }
 
   get(x: number, y: number, z: number): number {
-    return this.data[this.getIndex(x, y, z)]
+    return this.data.get(x + 1, y + 1, z + 1)
   }
 
   set(x: number, y: number, z: number, value: number): void {
-    this.data[this.getIndex(x, y, z)] = value
-  }
-
-  getIndex(x: number, y: number, z: number): number {
-    // add 1 to each coordinate to account for the border
-    // add 2 to the width and height to account for the border
-    return x + 1 + (this.width + 2) * (y + 1 + (this.height + 2) * (z + 1))
+    this.data.set(x + 1, y + 1, z + 1, value)
   }
 }

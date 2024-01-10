@@ -1,5 +1,7 @@
-export type Area = {
-  value: number
+import { Matrix2d } from '../util/Matrix2d'
+
+export interface Area<T> {
+  value: T
   x: number
   y: number
   w: number
@@ -8,16 +10,22 @@ export type Area = {
   canGrowY: boolean
 }
 
-export class GreedyMesher2D {
-  private areas: Area[]
-  private currentArea: Area
+export class GreedyMesher2D<T> {
+  private areas: Area<T>[]
+  private currentArea: Area<T>
+  private processedList: Matrix2d<boolean>
 
   constructor(
     private readonly width: number,
     private readonly height: number,
-    private readonly dataGetter: (x: number, y: number, z: number) => number
+    private readonly dataGetter: (x: number, y: number, z: number) => T
   ) {
     this.areas = []
+    this.processedList = new Matrix2d(width, height)
+  }
+
+  call() {
+    // TODO: implement
   }
 
   step() {
