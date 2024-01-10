@@ -42,50 +42,10 @@ export class GreedyMesher2d<T> {
       this.growY()
     }
     if (this.currentArea.state === 'done') {
-      this.areas.push(this.currentArea)
-      this.updateProcessed()
-
-      const next = this.getNextArea()
-      if (next) this.currentArea = next
-
-      this.isDone = next === null
+      this.prepareNextArea()
     }
 
     return !this.isDone
-  }
-
-  private newArea(x: number, y: number): Area<T> {
-    return { value: this.dataGetter(x, y), x, y, w: 1, h: 1, state: 'growingX' }
-  }
-
-  private updateProcessed() {
-    for (let x = this.currentArea.x; x < this.currentArea.x + this.currentArea.w; x++) {
-      for (let y = this.currentArea.y; y < this.currentArea.y + this.currentArea.h; y++) {
-        this.processed.set(x, y, true)
-      }
-    }
-  }
-
-  private getNextArea() {
-    const lastArea = this.currentArea
-
-    let initialY = lastArea.y
-    let initialX = lastArea.x + lastArea.w
-
-    if (initialX >= this.width) {
-      initialX = 0
-      initialY++
-    }
-
-    for (let y = initialY; y < this.height; y++) {
-      for (let x = initialX; x < this.width; x++) {
-        if (!this.processed.get(x, y) && !this.skip(this.dataGetter(x, y))) {
-          return this.newArea(x, y)
-        }
-      }
-    }
-
-    return null
   }
 
   private growX() {
@@ -119,5 +79,49 @@ export class GreedyMesher2d<T> {
       this.isSameValue(this.dataGetter(x, y), this.currentArea.value) &&
       !this.skip(this.dataGetter(x, y))
     )
+  }
+
+  private prepareNextArea() {
+    this.areas.push(this.currentArea)
+    this.updateProcessed()
+
+    const next = this.getNextArea()
+    if (next) this.currentArea = next
+    else this.isDone = true
+  }
+
+  private updateProcessed() {
+    for (let x = this.currentArea.x; x < this.currentArea.x + this.currentArea.w; x++) {
+      for (let y = this.currentArea.y; y < this.currentArea.y + this.currentArea.h; y++) {
+        this.processed.set(x, y, true)
+      }
+    }
+  }
+
+  private getNextArea() {
+    const lastArea = this.currentArea
+
+    let initialX = lastArea.x + lastArea.w
+    let initialY = lastArea.y
+
+    if (initialX >= this.width) {
+      initialX = 0
+      initialY++
+    }
+
+    for (let y = initialY; y < this.height; y++) {
+      for (let x = initialX; x < this.width; x++) {
+        if (this.processed.get(x, y)) continue
+        if (this.skip(this.dataGetter(x, y))) continue
+
+        return this.newArea(x, y)
+      }
+    }
+
+    return null
+  }
+
+  private newArea(x: number, y: number): Area<T> {
+    return { value: this.dataGetter(x, y), x, y, w: 1, h: 1, state: 'growingX' }
   }
 }
