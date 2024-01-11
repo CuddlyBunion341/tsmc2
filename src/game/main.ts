@@ -2,6 +2,9 @@ import { Engine } from '../engine/Engine'
 import { Experience } from '../engine/Experience'
 import { Resource } from '../engine/Resources'
 import { ChunkManager } from './world/ChunkManager'
+import { Chunk } from './world/Chunk'
+import { FractalNoise2d } from './utilities/Noise'
+import { InteractiveNoise } from './InteractiveNoise'
 
 export default class Game implements Experience {
   resources: Resource[] = []
