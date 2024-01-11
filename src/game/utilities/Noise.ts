@@ -12,6 +12,12 @@ interface FractalNoise {
   persistence: number
 }
 
+export function seededRandomizer(seed: number) {
+  const engine = MersenneTwister19937.seed(seed)
+  const random = new Random(engine)
+  return () => random.realZeroToOneExclusive()
+}
+
 export class FractalNoise2d implements FractalNoise {
   public amplitude = 1
   public frequency = 30
@@ -20,17 +26,7 @@ export class FractalNoise2d implements FractalNoise {
   public noiseFunction: NoiseFunction2D
 
   constructor(public readonly seed: number, public readonly octaves: number) {
-    // const engine = MersenneTwister19937.seed(seed)
-    const engine = MersenneTwister19937.autoSeed()
-    const randomFn = new Random(engine)
-    const random = () => randomFn.realZeroToOneExclusive()
-
-    // const noiseFn = createNoise2D(random)
-    const noiseFn = createNoise2D(Math.random)
-
-    // this.noiseFunction = (x: number, y: number) => (noiseFn(x, y) + 1) / 2
-
-    this.noiseFunction = createNoise2D(Math.random)
+    this.noiseFunction = createNoise2D(seededRandomizer(seed))
   }
 
   public getOctave(x: number, y: number, octave: number): number {
@@ -47,35 +43,20 @@ export class FractalNoise2d implements FractalNoise {
   public get(x: number, y: number): number {
     let noise = 0
 
-    // for (let o = 0; o < this.octaves; o++) {
-    //   noise += this.getOctave(x, y, o) * (1 - this.persistence)
-    // }
-
-    // noise += this.getOctave(x, y, this.octaves) * (1 - this.persistence)
-
-    // noise += this.noiseFunction(x, y) * this.amplitude
-
-    let amplitudes = 0
+    let amplitudeSum = 0
 
     for (let o = 0; o < this.octaves; o++) {
       const l = Math.pow(this.lacunarity, o)
       const p = Math.pow(this.persistence, o)
 
-      amplitudes += 1 / p
+      amplitudeSum += 1 / p
 
       noise +=
         (1 / p) *
         this.noiseFunction(x / (this.frequency / l), y / (this.frequency / l))
     }
 
-    // noise = noise / (1 - 1 / Math.pow(this.lacunarity, this.octaves))
-
-    noise = noise / amplitudes
-
-    // noise += this.getOctave(x, y, 1)
-    // noise +=
-    //   this.noiseFunction(x * this.frequency, y * this.frequency) *
-    //   this.amplitude
+    noise = noise / amplitudeSum
 
     return noise
   }
