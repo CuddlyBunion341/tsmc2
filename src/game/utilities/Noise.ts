@@ -5,12 +5,12 @@
 import { NoiseFunction2D, createNoise2D } from 'simplex-noise'
 import { MersenneTwister19937, Random } from 'random-js'
 
-interface FractalNoise {
-  amplitude: number
-  frequency: number
-  lacunarity: number
-  persistence: number
-}
+// interface FractalNoise {
+//   amplitude: number
+//   frequency: number
+//   lacunarity: number
+//   persistence: number
+// }
 
 export function seededRandomizer(seed: number) {
   const engine = MersenneTwister19937.seed(seed)
@@ -18,9 +18,10 @@ export function seededRandomizer(seed: number) {
   return () => random.realZeroToOneExclusive()
 }
 
-export class FractalNoise2d implements FractalNoise {
+export class FractalNoise2d {
   public amplitude = 1
-  public frequency = 30
+  public frequencyX = 30
+  public frequencyY = 30
   public lacunarity = 2
   public persistence = 2
   public noiseFunction: NoiseFunction2D
@@ -32,8 +33,8 @@ export class FractalNoise2d implements FractalNoise {
   public getOctave(x: number, y: number, octave: number): number {
     return (
       this.noiseFunction(
-        (x * this.frequency * this.lacunarity) / octave,
-        ((y / (this.frequency * octave)) * this.lacunarity) / octave
+        (x * this.frequencyX * this.lacunarity) / octave,
+        ((y / (this.frequencyY * octave)) * this.lacunarity) / octave
       ) *
       this.amplitude *
       this.lacunarity
@@ -53,7 +54,7 @@ export class FractalNoise2d implements FractalNoise {
 
       noise +=
         (1 / p) *
-        this.noiseFunction(x / (this.frequency / l), y / (this.frequency / l))
+        this.noiseFunction(x / (this.frequencyX / l), y / (this.frequencyY / l))
     }
 
     noise = noise / amplitudeSum
