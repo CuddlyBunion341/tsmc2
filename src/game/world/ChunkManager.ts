@@ -1,10 +1,12 @@
 import { Chunk } from './Chunk'
 import { ChunkStorage } from './ChunkStorage'
+import { TerrainGenerator } from './TerrainGenerator'
 
 export class ChunkManager {
   public readonly chunks: ChunkStorage
 
   constructor(
+    public terrainGenerator: TerrainGenerator,
     public renderDistanceX = 8,
     public renderDistanceY = 2,
     public renderDistanceZ = 8
@@ -15,24 +17,12 @@ export class ChunkManager {
   public createChunksAroundOrigin(x: number, y: number, z: number) {
     const newChunks = []
 
-    for (
-      let cx = x - this.renderDistanceX;
-      cx <= x + this.renderDistanceX;
-      cx++
-    ) {
-      for (
-        let cy = y - this.renderDistanceY;
-        cy <= y + this.renderDistanceY;
-        cy++
-      ) {
-        for (
-          let cz = z - this.renderDistanceZ;
-          cz <= z + this.renderDistanceZ;
-          cz++
-        ) {
+    for (let cx = x - this.renderDistanceX; cx <= x + this.renderDistanceX; cx++) {
+      for (let cy = y - this.renderDistanceY; cy <= y + this.renderDistanceY; cy++) {
+        for (let cz = z - this.renderDistanceZ; cz <= z + this.renderDistanceZ; cz++) {
           const chunk = this.chunks.getChunk(cx, cy, cz)
           if (chunk) continue
-          const newChunk = new Chunk(cx, cy, cz)
+          const newChunk = new Chunk(this.terrainGenerator, cx, cy, cz)
           this.chunks.addChunk(newChunk)
           newChunks.push(newChunk)
         }

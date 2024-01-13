@@ -2,9 +2,7 @@ import { Engine } from '../engine/Engine'
 import { Experience } from '../engine/Experience'
 import { Resource } from '../engine/Resources'
 import { ChunkManager } from './world/ChunkManager'
-import { Chunk } from './world/Chunk'
-import { FractalNoise2d } from './utilities/Noise'
-import { InteractiveNoise } from './InteractiveNoise'
+import { TerrainGenerator } from './world/TerrainGenerator'
 
 export default class Game implements Experience {
   resources: Resource[] = []
@@ -12,7 +10,9 @@ export default class Game implements Experience {
   constructor(private engine: Engine) {}
 
   init(): void {
-    const chunkManager = new ChunkManager()
+    const terrainGenerator = new TerrainGenerator(69420)
+    const chunkManager = new ChunkManager(terrainGenerator)
+
     const chunks = chunkManager.createChunksAroundOrigin(0, 0, 0)
 
     chunks.forEach((chunk) => {
