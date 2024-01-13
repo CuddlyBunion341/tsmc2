@@ -6,8 +6,8 @@ export class TerrainGenerator {
 
   constructor(public readonly seed: number) {
     this.noise2d = new FractalNoise2d(this.seed, 4)
-    this.noise2d.frequencyX = 50
-    this.noise2d.frequencyY = 50
+    this.noise2d.frequencyX = 100
+    this.noise2d.frequencyY = 100
   }
 
   public getBlock(x: number, y: number, z: number) {
