@@ -35,15 +35,10 @@ export class GreedyMesher2d<T> {
   }
 
   public step() {
-    if (this.currentArea.state === 'growingX') {
-      this.growX()
-    }
-    if (this.currentArea.state === 'growingY') {
-      this.growY()
-    }
-    if (this.currentArea.state === 'done') {
-      this.prepareNextArea()
-    }
+    if (this.currentArea.state === 'growingX') this.growX()
+    else if (this.currentArea.state === 'growingY') this.growY()
+    else if (this.currentArea.state === 'done') this.prepareNextArea()
+    else throw new Error(`Invalid state: ${this.currentArea.state}`)
 
     return !this.isDone
   }

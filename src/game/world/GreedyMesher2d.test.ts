@@ -19,6 +19,7 @@ describe('#step()', () => {
       { value: 1, x: 0, y: 0, w: 1, h: 1, state: 'growingX' },
       { value: 1, x: 0, y: 0, w: 2, h: 1, state: 'growingX' },
       { value: 1, x: 0, y: 0, w: 3, h: 1, state: 'growingX' },
+      { value: 1, x: 0, y: 0, w: 3, h: 1, state: 'growingY' },
       { value: 1, x: 0, y: 0, w: 3, h: 2, state: 'growingY' },
       { value: 1, x: 0, y: 0, w: 3, h: 3, state: 'growingY' },
       { value: 1, x: 0, y: 0, w: 3, h: 3, state: 'done' }
@@ -40,7 +41,7 @@ describe('#step()', () => {
     const steps = [
       { value: 1, x: 0, y: 0, w: 1, h: 1, state: 'growingX' },
       { value: 1, x: 0, y: 0, w: 2, h: 1, state: 'growingX' },
-      { value: 1, x: 0, y: 0, w: 2, h: 2, state: 'growingY' }
+      { value: 1, x: 0, y: 0, w: 2, h: 1, state: 'growingY' }
     ]
 
     steps.forEach((step) => {
@@ -59,8 +60,9 @@ describe('#step()', () => {
     const steps = [
       { value: 1, x: 0, y: 0, w: 1, h: 1, state: 'growingX' },
       { value: 1, x: 0, y: 0, w: 2, h: 1, state: 'growingX' },
+      { value: 1, x: 0, y: 0, w: 2, h: 1, state: 'growingY' },
       { value: 1, x: 0, y: 0, w: 2, h: 2, state: 'growingY' },
-      { value: 2, x: 2, y: 1, w: 1, h: 1, state: 'growingX' }
+      { value: 1, x: 0, y: 0, w: 2, h: 2, state: 'done' }
     ]
 
     steps.forEach((step) => {
