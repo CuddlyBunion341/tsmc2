@@ -2,6 +2,7 @@ import { ChunkData } from './ChunkData'
 import { ChunkMesher } from './ChunkMesher'
 import * as THREE from 'three'
 import { blockIds } from './blocks'
+import { shaderMaterial } from './VoxelShaderMaterial'
 
 export class Chunk {
   public static readonly SIZE = 32
@@ -28,6 +29,7 @@ export class Chunk {
       this.z * this.chunkData.depth
     )
     this.mesh.material = new THREE.MeshBasicMaterial({ wireframe: true })
+    this.mesh.material = shaderMaterial
   }
 
   generateData() {
