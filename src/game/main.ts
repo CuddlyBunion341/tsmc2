@@ -11,7 +11,7 @@ export default class Game implements Experience {
 
   init(): void {
     const terrainGenerator = new TerrainGenerator(69420)
-    const chunkManager = new ChunkManager(terrainGenerator)
+    const chunkManager = new ChunkManager(terrainGenerator, 4, 2, 4)
 
     const chunks = chunkManager.createChunksAroundOrigin(0, 0, 0)
 
