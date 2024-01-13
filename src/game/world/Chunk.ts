@@ -4,6 +4,7 @@ import * as THREE from 'three'
 import { blockIds } from './blocks'
 
 export class Chunk {
+  public static readonly SIZE = 32
   public readonly chunkData: ChunkData
   public readonly chunkMesher: ChunkMesher
   public readonly mesh: THREE.Mesh
@@ -13,7 +14,7 @@ export class Chunk {
     public readonly y: number,
     public readonly z: number
   ) {
-    this.chunkData = new ChunkData()
+    this.chunkData = new ChunkData(Chunk.SIZE, Chunk.SIZE, Chunk.SIZE)
     this.chunkMesher = new ChunkMesher(
       this.chunkData.width,
       this.chunkData.height,
@@ -30,15 +31,7 @@ export class Chunk {
   }
 
   generateData() {
-    // The border was initialized to 0, so we only need to set the interior blocks
-    for (let x = 0; x < this.chunkData.width; x++) {
-      for (let y = 0; y < this.chunkData.height; y++) {
-        for (let z = 0; z < this.chunkData.depth; z++) {
-          const block = blockIds.stone
-          this.chunkData.set(x, y, z, block)
-        }
-      }
-    }
+    this.chunkData.set(0, 0, 0, blockIds.stone)
   }
 
   updateMeshGeometry() {
