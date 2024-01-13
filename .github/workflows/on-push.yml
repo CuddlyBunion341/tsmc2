@@ -11,7 +11,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: node_modules
-          key: npm-${{ hashFiles('bun.lockb') }}
+          key: npm-${{ hashFiles('yarn.lock') }}
 
       - name: Node setup
         uses: actions/setup-node@v3
