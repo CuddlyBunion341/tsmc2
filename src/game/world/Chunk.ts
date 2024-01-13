@@ -2,7 +2,6 @@ import { ChunkData } from './ChunkData'
 import { ChunkMesher } from './ChunkMesher'
 import * as THREE from 'three'
 import { TerrainGenerator } from './TerrainGenerator'
-import { Benchmark } from '../utilities/Benchmark'
 
 export class Chunk {
   public static readonly SIZE = 32
