@@ -1,4 +1,3 @@
-import { ChunkMesher, FACE_COUNT, Vertex } from './ChunkMesher'
 import { Area, GreedyMesher2d } from './GreedyMesher2d'
 
 type BlockFace = {
@@ -6,99 +5,77 @@ type BlockFace = {
   // TODO: store ao values for each vertex
 }
 
-const FACE_DIRECTIONS = ['+x', '-x', '+y', '-y', '+z', '-z'] as const
-type FACE_DIRECTION = (typeof FACE_DIRECTIONS)[number]
-
-type GreedyMesherParam = {
-  width: 'width' | 'height' | 'width'
-  height: 'height' | 'depth' | 'height'
-  x: 'x' | 'y' | 'z'
-  y: 'y' | 'z' | 'x'
-}
-
-const GREEDY_MESHER_PARAMS: Record<FACE_DIRECTION, GreedyMesherParam> = {
-  '+x': {
-    width: 'height',
-    height: 'depth',
-    x: 'y',
-    y: 'z'
-  },
-  '-x': {
-    width: 'height',
-    height: 'depth',
-    x: 'y',
-    y: 'z'
-  },
-  '+y': {
-    width: 'width',
-    height: 'depth',
-    x: 'x',
-    y: 'z'
-  },
-  '-y': {
-    width: 'width',
-    height: 'depth',
-    x: 'x',
-    y: 'z'
-  },
-  '+z': {
-    width: 'width',
-    height: 'height',
-    x: 'x',
-    y: 'y'
-  },
-  '-z': {
-    width: 'width',
-    height: 'height',
-    x: 'x',
-    y: 'y'
-  }
-} as const
+const axes = ['x', 'y', 'z'] as const
+type Axis = (typeof axes)[number]
 
 export class GreedyChunkMesher {
   constructor(
     public readonly width: number,
     public readonly height: number,
     public readonly depth: number,
-    public readonly blockGetter: (x: number, y: number, z: number) => number
+    public readonly voxelGetter: (x: number, y: number, z: number) => number
   ) {}
 
   public generateChunkAreas() {
     const areas: Area<BlockFace>[] = []
 
-    for (let n = 0; n < FACE_DIRECTIONS.length; n++) {
-      const params = GREEDY_MESHER_PARAMS[FACE_DIRECTIONS[n]]
+    const dimensions = { x: this.width, y: this.height, z: this.depth }
 
-      const mesher = new GreedyMesher2d<BlockFace>(
-        this[params.width],
-        this[params.height],
-        (x: number, y: number) => {
-          const blockId = this.blockGetter(
-            params.x === 'x' ? x : params.y === 'x' ? y : 0,
-            params.x === 'y' ? x : params.y === 'y' ? y : 0,
-            params.x === 'z' ? x : params.y === 'z' ? y : 0
-          )
+    const mesherConfiguration = this.getMesherConfiguration()
+    axes.forEach((axis) => {
+      const { planeWidth, planeHeight, mapper } = mesherConfiguration[axis]
+      for (let layer = 0; layer < dimensions[axis]; layer++) {
+        const greedyMesher = new GreedyMesher2d<BlockFace>(
+          planeWidth,
+          planeHeight,
+          (planeX: number, planeY: number) => {
+            const cords = mapper(layer, planeX, planeY)
+            return this.faceGetter(cords.x, cords.y, cords.z)
+          }
+        )
 
-          // TODO: implement ao, light
-
-          return { blockId }
-        },
-        (value) => value.blockId === 0,
-        (a, b) => {
-          return a.blockId === b.blockId
-          // TODO: implement && a.ao === b.ao
-          // TODO: implement && a.light === b.light
-        }
-      )
-
-      const faceAreas = mesher.call()
-
-      faceAreas.forEach((area) => {
-        const { x, y, w, h } = area
+        const ares = greedyMesher.call()
         // TODO: implement
-      })
+      }
+    })
+  }
+
+  public faceGetter(x: number, y: number, z: number) {
+    const blockId = this.voxelGetter(x, y, z) || 0
+
+    return { blockId }
+  }
+
+  public getMesherConfiguration() {
+    const createCordMapper = (order: Axis[]) => {
+      const [a, b, c] = order
+
+      return (layer: number, planeX: number, planeY: number) => {
+        const cords = { x: 0, y: 0, z: 0 }
+        cords[a] = layer
+        cords[b] = planeX
+        cords[c] = planeY
+
+        return cords
+      }
     }
 
-    return areas
+    return {
+      x: {
+        planeWidth: this.depth,
+        planeHeight: this.height,
+        mapper: createCordMapper(['x', 'z', 'y'])
+      },
+      y: {
+        planeWidth: this.width,
+        planeHeight: this.depth,
+        mapper: createCordMapper(['y', 'x', 'z'])
+      },
+      z: {
+        planeWidth: this.width,
+        planeHeight: this.height,
+        mapper: createCordMapper(['z', 'x', 'y'])
+      }
+    }
   }
 }
