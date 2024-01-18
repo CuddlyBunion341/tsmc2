@@ -19,8 +19,7 @@ export class Camera implements GameEntity {
       0.1,
       1000
     )
-    this.instance.position.z = 5
-    this.instance.position.y = 2
+    this.instance.position.set(64, 64, 64)
     this.engine.scene.add(this.instance)
   }
 

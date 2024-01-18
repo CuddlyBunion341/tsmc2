@@ -22,7 +22,7 @@ export class Chunk {
       this.chunkData.width,
       this.chunkData.height,
       this.chunkData.depth,
-      this.chunkData.data.data
+      this.chunkData.data.list
     )
 
     this.mesh = new THREE.Mesh()
@@ -56,7 +56,8 @@ export class Chunk {
 
   // @Benchmark
   updateMeshGeometry() {
-    const geometry = this.chunkMesher.generateGeometry()
-    this.mesh.geometry = geometry
+    const mesh = this.chunkMesher.generateMesh()
+    this.mesh.geometry = mesh.geometry
+    this.mesh.material = mesh.material
   }
 }

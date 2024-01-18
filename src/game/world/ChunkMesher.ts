@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { voxelMaterial } from './raytracer/voxelMaterial'
 
 export type Vertex = {
   position: [number, number, number]
@@ -14,14 +15,29 @@ export class ChunkMesher {
     public readonly arrayBuffer: ArrayBuffer
   ) {}
 
-  generateGeometry() {
-    const geometry = new THREE.BufferGeometry()
+  generateMesh() {
+    const textureSize = Math.sqrt(this.width * this.height * this.depth)
+    const texture = new THREE.DataTexture(
+      this.arrayBuffer,
+      textureSize,
+      textureSize,
+      THREE.RedFormat,
+      THREE.UnsignedByteType
+    )
+    texture.needsUpdate = true
 
-    geometry.setAttribute(
-      'voxel',
-      new THREE.BufferAttribute(new Float32Array(this.arrayBuffer), 1)
+    // const material = voxelMaterial.clone()
+    // material.uniforms = {
+    //   uData: { value: texture }
+    // }
+
+    const material = new THREE.MeshNormalMaterial()
+
+    const mesh = new THREE.Mesh(
+      new THREE.BoxGeometry(this.width, this.height, this.depth),
+      material
     )
 
-    return geometry
+    return mesh
   }
 }
