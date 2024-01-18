@@ -16,13 +16,11 @@ export class ChunkMesher {
   ) {}
 
   generateMesh() {
-    const textureSize = Math.sqrt(this.width * this.height * this.depth)
-    const texture = new THREE.DataTexture(
+    const texture = new THREE.Data3DTexture(
       this.arrayBuffer,
-      textureSize,
-      textureSize,
-      THREE.RedFormat,
-      THREE.UnsignedByteType
+      this.width,
+      this.height,
+      this.depth
     )
     texture.needsUpdate = true
 
@@ -34,9 +32,7 @@ export class ChunkMesher {
       chunkWidth: { value: this.width },
       chunkHeight: { value: this.height },
       chunkDepth: { value: this.depth },
-      maxStepSize: { value: 32 },
-      THRESHOLD: { value: 0.0 },
-      MAX_STEPS: { value: 10 },
+      MAX_STEPS: { value: 64 },
       STEP_SIZE: { value: 0.5 }
     }
 
