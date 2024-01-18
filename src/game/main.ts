@@ -1,3 +1,4 @@
+import * as THREE from 'three'
 import { Engine } from '../engine/Engine'
 import { Experience } from '../engine/Experience'
 import { Resource } from '../engine/Resources'
@@ -19,7 +20,10 @@ export default class Game implements Experience {
 
     chunks.forEach((chunk) => {
       chunk.generateData()
+      chunk.updateMeshGeometry()
+      const helper = new THREE.BoxHelper(chunk.mesh)
       this.engine.scene.add(chunk.mesh)
+      this.engine.scene.add(helper)
     })
 
     chunks.forEach((chunk) => {

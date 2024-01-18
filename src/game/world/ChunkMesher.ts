@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { voxelMaterial } from './raytracer/voxelMaterial'
+import { voxelMaterial } from './raymarcher/voxelMaterial'
 
 export type Vertex = {
   position: [number, number, number]
@@ -26,12 +26,19 @@ export class ChunkMesher {
     )
     texture.needsUpdate = true
 
-    // const material = voxelMaterial.clone()
-    // material.uniforms = {
-    //   uData: { value: texture }
-    // }
+    // const material = new THREE.MeshBasicMaterial()
 
-    const material = new THREE.MeshNormalMaterial()
+    const material = voxelMaterial.clone()
+    material.uniforms = {
+      uData: { value: texture },
+      chunkWidth: { value: this.width },
+      chunkHeight: { value: this.height },
+      chunkDepth: { value: this.depth },
+      maxStepSize: { value: 32 },
+      THRESHOLD: { value: 0.0 },
+      MAX_STEPS: { value: 10 },
+      STEP_SIZE: { value: 0.5 }
+    }
 
     const mesh = new THREE.Mesh(
       new THREE.BoxGeometry(this.width, this.height, this.depth),

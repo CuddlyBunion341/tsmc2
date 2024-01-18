@@ -26,7 +26,6 @@ export class Chunk {
     )
 
     this.mesh = new THREE.Mesh()
-    this.mesh.material = voxelMaterial
     this.mesh.position.set(
       this.x * this.chunkData.width,
       this.y * this.chunkData.height,
