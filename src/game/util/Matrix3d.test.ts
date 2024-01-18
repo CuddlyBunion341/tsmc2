@@ -24,7 +24,7 @@ describe('#getIndex()', () => {
 })
 
 describe('#get(), #set()', () => {
-  const chunkData = new Matrix3d(32, 32, 32, 5)
+  const chunkData = new Matrix3d(32, 32, 32)
   it('should fill the matrix with the default value', () => {
     expect(chunkData.get(0, 0, 0)).toBe(5)
   })

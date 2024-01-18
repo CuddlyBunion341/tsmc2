@@ -2,6 +2,8 @@ import { ChunkData } from './ChunkData'
 import { ChunkMesher } from './ChunkMesher'
 import * as THREE from 'three'
 import { TerrainGenerator } from './TerrainGenerator'
+import { blockIds } from './blocks'
+import { voxelMaterial } from './raytracer/voxelMaterial'
 
 export class Chunk {
   public static readonly SIZE = 32
@@ -20,9 +22,11 @@ export class Chunk {
       this.chunkData.width,
       this.chunkData.height,
       this.chunkData.depth,
-      (x: number, y: number, z: number) => this.chunkData.get(x, y, z)
+      this.chunkData.data.data
     )
+
     this.mesh = new THREE.Mesh()
+    this.mesh.material = voxelMaterial
     this.mesh.position.set(
       this.x * this.chunkData.width,
       this.y * this.chunkData.height,
