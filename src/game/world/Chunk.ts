@@ -22,7 +22,7 @@ export class Chunk {
       this.chunkData.width,
       this.chunkData.height,
       this.chunkData.depth,
-      this.chunkData.data.dataView
+      this.chunkData.data.list
     )
 
     this.mesh = new THREE.Mesh()

@@ -12,28 +12,38 @@ export class ChunkMesher {
     public readonly width: number,
     public readonly height: number,
     public readonly depth: number,
-    public readonly bufferView: DataView
+    public readonly voxelData: Uint8Array
   ) {}
 
   generateMesh() {
     const texture = new THREE.Data3DTexture(
-      this.bufferView,
+      this.voxelData,
       this.width,
       this.height,
       this.depth
     )
+    texture.format = THREE.RedFormat
+    texture.unpackAlignment = 1
+    texture.minFilter = THREE.NearestFilter
+    texture.magFilter = THREE.NearestFilter
+    console.log(this.voxelData)
     texture.needsUpdate = true
 
     const size = 16
     // const buffer = new Float32Array(size * size)
     // const view = new DataView(buffer)
 
-    const array = new Array(size * size)
+    const array = new Array(size * size * size)
 
     {
-      for (let x = 0; x < size; x++) {
-        for (let y = 0; y < size; y++) {
-          array[x * size + y] = Math.random() * 120
+      let i = 0
+
+      for (let x = 0; x < 32; x++) {
+        for (let y = 0; y < 32; y++) {
+          for (let z = 0; z < 32; z++) {
+            i++
+            array[i] = Math.random() * 255
+          }
         }
       }
     }
@@ -52,13 +62,14 @@ export class ChunkMesher {
 
     const material = voxelMaterial.clone()
     material.uniforms = {
-      uData: { value: texture },
-      vData: { value: texture2d },
+      uData: { value: texture2d },
+      vData: { value: texture },
       chunkWidth: { value: this.width },
       chunkHeight: { value: this.height },
       chunkDepth: { value: this.depth },
       MAX_STEPS: { value: 64 },
-      STEP_SIZE: { value: 0.5 }
+      STEP_SIZE: { value: 0.5 },
+      time: { value: 0 }
     }
 
     const mesh = new THREE.Mesh(

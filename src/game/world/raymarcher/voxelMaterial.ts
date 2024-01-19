@@ -4,5 +4,6 @@ import fragmentShader from './shader.frag'
 
 export const voxelMaterial = new THREE.ShaderMaterial({
   vertexShader,
-  fragmentShader
+  fragmentShader,
+  side: THREE.DoubleSide,
 })
