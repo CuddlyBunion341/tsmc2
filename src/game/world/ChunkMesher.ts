@@ -30,16 +30,12 @@ export class ChunkMesher {
 
     const material = voxelMaterial.clone()
     material.uniforms = {
-      vData: { value: texture },
-      chunkWidth: { value: this.width },
-      chunkHeight: { value: this.height },
-      chunkDepth: { value: this.depth },
-      MAX_STEPS: { value: 64 },
-      STEP_SIZE: { value: 0.5 },
-      time: { value: 0 }
+      map: { value: texture },
+      threshold: { value: 0.7 },
+      steps: { value: 32 * 32 }
     }
 
-    const geometry = new THREE.BoxGeometry(this.width, this.height, this.depth)
+    const geometry = new THREE.BoxGeometry(1, 1, 1)
     const mesh = new THREE.Mesh(geometry, material)
 
     return mesh

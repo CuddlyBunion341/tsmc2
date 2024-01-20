@@ -26,12 +26,7 @@ export class Chunk {
     )
 
     this.mesh = new THREE.Mesh()
-    this.mesh.position.set(
-      this.x * this.chunkData.width,
-      this.y * this.chunkData.height,
-      this.z * this.chunkData.depth
-    )
-    this.mesh.material = new THREE.MeshMatcapMaterial()
+    this.mesh.position.set(this.x, this.y, this.z)
   }
 
   // @Benchmark
