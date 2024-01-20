@@ -1,7 +1,7 @@
 import { ChunkData } from './ChunkData'
 import { ChunkMesher } from './ChunkMesher'
 import * as THREE from 'three'
-import { blockIds } from './blocks'
+import { TerrainGenerator } from './TerrainGenerator'
 
 export class Chunk {
   public static readonly SIZE = 32
@@ -10,6 +10,7 @@ export class Chunk {
   public readonly mesh: THREE.Mesh
 
   constructor(
+    public readonly terrainGenerator: TerrainGenerator,
     public readonly x: number,
     public readonly y: number,
     public readonly z: number
@@ -27,13 +28,29 @@ export class Chunk {
       this.y * this.chunkData.height,
       this.z * this.chunkData.depth
     )
-    this.mesh.material = new THREE.MeshBasicMaterial({ wireframe: true })
+    this.mesh.material = new THREE.MeshMatcapMaterial()
   }
 
+  // @Benchmark
   generateData() {
-    this.chunkData.set(0, 0, 0, blockIds.stone)
+    // TODO: extract into web worker
+
+    for (let x = -1; x < this.chunkData.width + 1; x++) {
+      for (let y = -1; y < this.chunkData.height + 1; y++) {
+        for (let z = -1; z < this.chunkData.depth + 1; z++) {
+          const block = this.terrainGenerator.getBlock(
+            x + this.x * this.chunkData.width,
+            y + this.y * this.chunkData.height,
+            z + this.z * this.chunkData.depth
+          )
+
+          this.chunkData.set(x, y, z, block)
+        }
+      }
+    }
   }
 
+  // @Benchmark
   updateMeshGeometry() {
     const geometry = this.chunkMesher.generateGeometry()
     this.mesh.geometry = geometry

@@ -1,6 +1,7 @@
 import { Chunk } from './Chunk'
 import { ChunkStorage } from './ChunkStorage'
 import { describe, expect, test } from 'vitest'
+import { TerrainGenerator } from './TerrainGenerator'
 
 describe('#getChunkKey()', () => {
   test('should generate the correct key', () => {
@@ -12,7 +13,8 @@ describe('#getChunkKey()', () => {
 describe('#getBlockChunk(), #addChunk()', () => {
   test('should return the correct chunk', () => {
     const chunkStorage = new ChunkStorage()
-    const chunk = new Chunk(0, 0, 0)
+    const terrainGenerator = new TerrainGenerator(0)
+    const chunk = new Chunk(terrainGenerator, 0, 0, 0)
     chunkStorage.addChunk(chunk)
 
     expect(chunkStorage.getBlockChunk(0, 0, 0)).toBe(chunk)

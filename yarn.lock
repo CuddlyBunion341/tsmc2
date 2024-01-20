@@ -2908,6 +2908,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"random-js@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "random-js@npm:2.1.0"
+  checksum: cdee38c303aafe441bd7809810b9dff9f6fdd9f356775bbd7e138943c0bc782a5f0ab473d3fac9d58da759d3976c1eef421d8a3f76f56301c805cc11bc496a11
+  languageName: node
+  linkType: hard
+
 "react-is@npm:^18.0.0":
   version: 18.2.0
   resolution: "react-is@npm:18.2.0"
@@ -3154,6 +3161,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"simplex-noise@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "simplex-noise@npm:4.0.1"
+  checksum: b5458713337129016ae71182e20d2e2e0d01bb62c78cf180276dafe8a59bf1814a66aedd0dfc9bbb70cc549a9bc02f1c9773e4f222a2cff4692cd48e7a2b348b
+  languageName: node
+  linkType: hard
+
 "slash@npm:^3.0.0":
   version: 3.0.0
   resolution: "slash@npm:3.0.0"
@@ -3397,7 +3411,9 @@ __metadata:
     lil-gui: ^0.18.2
     lint-staged: ^13.3.0
     prettier: 2.8.8
+    random-js: ^2.1.0
     sass: ^1.69.0
+    simplex-noise: ^4.0.1
     three: ^0.157.0
     typescript: ^5.2.2
     vite: ^4.4.11
