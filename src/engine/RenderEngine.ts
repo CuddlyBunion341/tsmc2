@@ -12,7 +12,7 @@ export class RenderEngine implements GameEntity {
   constructor(private engine: Engine) {
     this.renderer = new WebGLRenderer({
       canvas: this.engine.canvas,
-      antialias: true,
+      antialias: true
     })
 
     this.renderer.outputEncoding = THREE.sRGBEncoding
@@ -26,10 +26,7 @@ export class RenderEngine implements GameEntity {
 
     this.composer = new EffectComposer(this.renderer)
 
-    const renderPass = new RenderPass(
-      this.engine.scene,
-      this.engine.camera.instance
-    )
+    const renderPass = new RenderPass(this.engine.scene, this.engine.camera.instance)
     this.composer.addPass(renderPass)
   }
 
