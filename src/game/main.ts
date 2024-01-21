@@ -21,8 +21,8 @@ export default class Game implements Experience {
     chunks.forEach((chunk) => {
       chunk.generateData()
       chunk.updateMeshGeometry()
-      const helper = new THREE.BoxHelper(chunk.mesh)
       this.engine.scene.add(chunk.mesh)
+      // const helper = new THREE.BoxHelper(chunk.mesh)
       // this.engine.scene.add(helper)
     })
   }

@@ -17,17 +17,8 @@ export class ChunkMesher {
   ) {}
 
   generateMesh() {
-    const voxelTexture = this.generateDataTexture(this.voxelData)
-    const jumpMapTexture = this.generateDataTexture(
-      new JumpMap(this.width, this.height, this.depth, this.voxelData).generate()
-    )
     const material = voxelMaterial.clone()
-    material.uniforms = {
-      map: { value: voxelTexture },
-      jumpMap: { value: jumpMapTexture },
-      threshold: { value: 0 },
-      steps: { value: 32 * 16 }
-    }
+    material.uniforms = this.generateUniforms()
 
     const geometry = new THREE.BoxGeometry(1, 1, 1)
     const mesh = new THREE.Mesh(geometry, material)
@@ -37,6 +28,7 @@ export class ChunkMesher {
 
   generateUniforms() {
     const voxelTexture = this.generateDataTexture(this.voxelData)
+    console.time('jump map')
     const jumpMap = new JumpMap(
       this.width,
       this.height,
@@ -48,9 +40,23 @@ export class ChunkMesher {
     return {
       map: { value: voxelTexture },
       jumpMap: { value: jumpMapTexture },
+      brick: { value: this.generateBrickTexture() },
       threshold: { value: 0 },
       steps: { value: 32 * 16 }
     }
+  }
+
+  generateBrickTexture() {
+    const loader = new THREE.TextureLoader()
+    const texture = loader.load('/assets/textures/brick.png')
+
+    texture.minFilter = THREE.NearestFilter
+    texture.magFilter = THREE.NearestFilter
+
+    texture.wrapS = THREE.RepeatWrapping
+    texture.wrapT = THREE.RepeatWrapping
+
+    return texture
   }
 
   generateDataTexture(data: Uint8Array) {
@@ -58,8 +64,8 @@ export class ChunkMesher {
 
     texture.format = THREE.RedFormat
     texture.unpackAlignment = 1
-    texture.minFilter = THREE.LinearFilter
-    texture.magFilter = THREE.LinearFilter
+    texture.minFilter = THREE.NearestFilter
+    texture.magFilter = THREE.NearestFilter
     texture.needsUpdate = true
 
     return texture

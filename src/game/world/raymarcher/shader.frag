@@ -8,6 +8,7 @@ varying vec3 vDirection;
 
 uniform sampler3D map;
 uniform sampler3D jumpMap;
+uniform sampler2D brick;
 
 uniform float threshold;
 uniform float steps;
@@ -56,6 +57,30 @@ vec3 normal(vec3 coord) {
   return vec3(x, y, z);
 }
 
+vec2 calculateUv(vec3 pos) {
+
+    vec3 n = normal(pos);
+  
+    vec2 uv = vec2(0.0);
+  
+    if(n.x > 0.0) {
+      uv = vec2(pos.z, pos.y);
+    } else if(n.x < 0.0) {
+      uv = vec2(pos.z, pos.y);
+    } else if(n.y > 0.0) {
+      uv = vec2(pos.x, pos.z);
+    } else if(n.y < 0.0) {
+      uv = vec2(pos.x, pos.z);
+    } else if(n.z > 0.0) {
+      uv = vec2(pos.x, pos.y);
+    } else if(n.z < 0.0) {
+      uv = vec2(pos.x, pos.y);
+    }
+ 
+    return uv * 32.0;
+}
+
+
 void main() {
 
   vec3 rayDir = normalize(vDirection);
@@ -79,9 +104,12 @@ void main() {
 
     if(blockId > 0.0) {
 
-      // gl_FragColor.rgb = normal(p + 0.5) * 0.1 + (p * 1.5 + 0.25);
-      gl_FragColor.rgb = normal(p + 0.5);
-      // gl_FragColor.rgb = normal(p) * 0.5 + (p * 1.5 + 0.25);
+      // calculate uv from position
+      vec2 uv = calculateUv(p + 0.5);
+
+      gl_FragColor.rgb = normalize(texture2D(brick, vec2(uv)).rgb);
+
+      // gl_FragColor.rgb = normal(p + 0.5);
       gl_FragColor.a = 1.;
 
       break;
