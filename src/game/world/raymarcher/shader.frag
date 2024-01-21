@@ -32,6 +32,9 @@ float sample1(vec3 p) {
 #define epsilon .0001
 
 vec3 normal(vec3 coord) {
+
+  coord = fract(coord);
+
   if(coord.x < epsilon)
     return vec3(1.0, 0.0, 0.0);
   if(coord.y < epsilon)
@@ -45,12 +48,12 @@ vec3 normal(vec3 coord) {
   if(coord.z > 1.0 - epsilon)
     return vec3(0.0, 0.0, -1.0);
 
-  float step = 0.01;
+  float step = 0.002;
   float x = sample1(coord + vec3(-step, 0.0, 0.0)) - sample1(coord + vec3(step, 0.0, 0.0));
   float y = sample1(coord + vec3(0.0, -step, 0.0)) - sample1(coord + vec3(0.0, step, 0.0));
   float z = sample1(coord + vec3(0.0, 0.0, -step)) - sample1(coord + vec3(0.0, 0.0, step));
 
-  return normalize(vec3(x, y, z));
+  return vec3(x, y, z);
 }
 
 void main() {
@@ -70,25 +73,21 @@ void main() {
 
   gl_FragColor = vec4(0.0);
 
-  float stepsTaken = 0.0;
-
   for(float t = bounds.x; t < bounds.y; t += delta) {
 
-    float d = sample1(p + 0.5);
+    float blockId = sample1(p + 0.5);
 
-    if(d > threshold) {
+    if(blockId > 0.0) {
 
+      // gl_FragColor.rgb = normal(p + 0.5) * 0.1 + (p * 1.5 + 0.25);
+      gl_FragColor.rgb = normal(p + 0.5);
+      // gl_FragColor.rgb = normal(p) * 0.5 + (p * 1.5 + 0.25);
       gl_FragColor.a = 1.;
 
-      float color = 10.0 /  stepsTaken;
-
-      gl_FragColor.rgb = vec3(color);
       break;
-
     }
 
     p += rayDir * delta;
-    stepsTaken++;
   }
 
   if(gl_FragColor.a == 0.0)
