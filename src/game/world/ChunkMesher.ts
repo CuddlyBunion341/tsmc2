@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { voxelMaterial } from './raymarcher/voxelMaterial'
-import { GenerateJumpMap } from './raymarcher/JumpMap'
+import { JumpMap } from './raymarcher/JumpMap'
 
 export type Vertex = {
   position: [number, number, number]
@@ -18,9 +18,13 @@ export class ChunkMesher {
 
   generateMesh() {
     const voxelTexture = this.generateDataTexture(this.voxelData)
+    const jumpMapTexture = this.generateDataTexture(
+      new JumpMap(this.width, this.height, this.depth, this.voxelData).generate()
+    )
     const material = voxelMaterial.clone()
     material.uniforms = {
       map: { value: voxelTexture },
+      jumpMap: { value: jumpMapTexture },
       threshold: { value: 0 },
       steps: { value: 32 * 16 }
     }
@@ -29,6 +33,24 @@ export class ChunkMesher {
     const mesh = new THREE.Mesh(geometry, material)
 
     return mesh
+  }
+
+  generateUniforms() {
+    const voxelTexture = this.generateDataTexture(this.voxelData)
+    const jumpMap = new JumpMap(
+      this.width,
+      this.height,
+      this.depth,
+      this.voxelData
+    ).generate()
+    const jumpMapTexture = this.generateDataTexture(jumpMap)
+
+    return {
+      map: { value: voxelTexture },
+      jumpMap: { value: jumpMapTexture },
+      threshold: { value: 0 },
+      steps: { value: 32 * 16 }
+    }
   }
 
   generateDataTexture(data: Uint8Array) {

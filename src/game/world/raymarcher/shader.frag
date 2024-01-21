@@ -7,6 +7,7 @@ varying vec3 vOrigin;
 varying vec3 vDirection;
 
 uniform sampler3D map;
+uniform sampler3D jumpMap;
 
 uniform float threshold;
 uniform float steps;
@@ -69,20 +70,25 @@ void main() {
 
   gl_FragColor = vec4(0.0);
 
+  float stepsTaken = 0.0;
+
   for(float t = bounds.x; t < bounds.y; t += delta) {
 
     float d = sample1(p + 0.5);
 
     if(d > threshold) {
 
-      gl_FragColor.rgb = normal(p + 0.5) * 0.5 + (p * 1.5 + 0.25);
       gl_FragColor.a = 1.;
+
+      float color = 10.0 /  stepsTaken;
+
+      gl_FragColor.rgb = vec3(color);
       break;
 
     }
 
     p += rayDir * delta;
-
+    stepsTaken++;
   }
 
   if(gl_FragColor.a == 0.0)
