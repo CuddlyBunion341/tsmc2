@@ -31,8 +31,8 @@ export class ChunkMesher {
     const material = voxelMaterial.clone()
     material.uniforms = {
       map: { value: texture },
-      threshold: { value: 0.7 },
-      steps: { value: 32 * 32 }
+      threshold: { value: 0 },
+      steps: { value: 32 * 16 }
     }
 
     const geometry = new THREE.BoxGeometry(1, 1, 1)

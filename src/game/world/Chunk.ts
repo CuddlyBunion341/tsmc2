@@ -2,12 +2,11 @@ import { ChunkData } from './ChunkData'
 import { ChunkMesher } from './ChunkMesher'
 import * as THREE from 'three'
 import { TerrainGenerator } from './TerrainGenerator'
-import { blockIds } from './blocks'
-import { voxelMaterial } from './raytracer/voxelMaterial'
+import { Matrix3d } from '../util/Matrix3d'
 
 export class Chunk {
   public static readonly SIZE = 32
-  public readonly chunkData: ChunkData
+  public readonly chunkData: Matrix3d
   public readonly chunkMesher: ChunkMesher
   public readonly mesh: THREE.Mesh
 
@@ -17,12 +16,12 @@ export class Chunk {
     public readonly y: number,
     public readonly z: number
   ) {
-    this.chunkData = new ChunkData(Chunk.SIZE, Chunk.SIZE, Chunk.SIZE)
+    this.chunkData = new Matrix3d(Chunk.SIZE, Chunk.SIZE, Chunk.SIZE)
     this.chunkMesher = new ChunkMesher(
       this.chunkData.width,
       this.chunkData.height,
       this.chunkData.depth,
-      this.chunkData.data.list
+      this.chunkData.list
     )
 
     this.mesh = new THREE.Mesh()
@@ -33,16 +32,16 @@ export class Chunk {
   generateData() {
     // TODO: extract into web worker
 
-    for (let x = -1; x < this.chunkData.width + 1; x++) {
-      for (let y = -1; y < this.chunkData.height + 1; y++) {
-        for (let z = -1; z < this.chunkData.depth + 1; z++) {
+    for (let x = 0; x < this.chunkData.width; x++) {
+      for (let y = 0; y < this.chunkData.height; y++) {
+        for (let z = 0; z < this.chunkData.depth; z++) {
           const block = this.terrainGenerator.getBlock(
             x + this.x * this.chunkData.width,
             y + this.y * this.chunkData.height,
             z + this.z * this.chunkData.depth
           )
 
-          this.chunkData.set(x, y, z, block)
+          this.chunkData.set(x, y, z, block * 255)
         }
       }
     }

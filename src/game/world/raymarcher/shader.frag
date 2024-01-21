@@ -25,7 +25,7 @@ vec2 hitBox(vec3 orig, vec3 dir) {
 }
 
 float sample1(vec3 p) {
-  return texture(map, p).r;
+  return texture(map, vec3(p.x,p.y,p.z)).r;
 }
 
 #define epsilon .0001
