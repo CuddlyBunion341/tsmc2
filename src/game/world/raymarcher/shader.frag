@@ -104,12 +104,12 @@ void main() {
 
     if(blockId > 0.0) {
 
-      // calculate uv from position
       vec2 uv = calculateUv(p + 0.5);
+      vec3 textureColor = texture2D(brick, vec2(uv)).rgb;
+      vec3 normalColor = normal(p + 0.5) * 0.5 + 0.5;
 
-      gl_FragColor.rgb = normalize(texture2D(brick, vec2(uv)).rgb);
+      gl_FragColor.rgb = mix(textureColor, normalColor, 0.5);
 
-      // gl_FragColor.rgb = normal(p + 0.5);
       gl_FragColor.a = 1.;
 
       break;
