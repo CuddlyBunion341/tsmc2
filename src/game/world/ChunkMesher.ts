@@ -27,20 +27,15 @@ export class ChunkMesher {
   }
 
   generateUniforms() {
-    const voxelTexture = this.generateDataTexture(this.voxelData)
-    const jumpMap = new JumpMap(
-      this.width,
-      this.height,
-      this.depth,
-      this.voxelData
-    ).generate()
-    const jumpMapTexture = this.generateDataTexture(jumpMap)
+    const jumpMap = new JumpMap(this.width, this.height, this.depth, this.voxelData)
+    const jumpBuffer = jumpMap.generate()
 
     return {
-      map: { value: voxelTexture },
-      jumpMap: { value: jumpMapTexture },
+      map: { value: this.generateDataTexture(this.voxelData) },
+      jumpMap: { value: this.generateDataTexture(jumpBuffer) },
       brick: { value: this.generateBrickTexture() },
-      steps: { value: 32 * 16 }
+      chunkSize: { value: 32 },
+      voxelStepCount: { value: 16 }
     }
   }
 

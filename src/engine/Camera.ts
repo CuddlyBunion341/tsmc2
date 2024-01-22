@@ -2,7 +2,6 @@ import { Engine } from './Engine'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GameEntity } from './GameEntity'
-import { W } from 'vitest/dist/reporters-qc5Smpt5'
 
 export class Camera implements GameEntity {
   public instance!: THREE.PerspectiveCamera
@@ -17,7 +16,7 @@ export class Camera implements GameEntity {
     this.instance = new THREE.PerspectiveCamera(
       75,
       window.innerWidth / window.innerHeight,
-      0.1,
+      0.001,
       1000
     )
     this.instance.position.set(0.5, 0.5, 0.5)

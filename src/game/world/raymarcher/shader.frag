@@ -11,7 +11,8 @@ uniform sampler3D jumpMap;
 uniform sampler2D brick;
 
 uniform float threshold;
-uniform float steps;
+uniform float chunkSize;
+uniform float voxelStepCount;
 
 vec2 hitBox(vec3 orig, vec3 dir) {
   const vec3 box_min = vec3(-0.5);
@@ -26,13 +27,12 @@ vec2 hitBox(vec3 orig, vec3 dir) {
   return vec2(t0, t1);
 }
 
-float sample1(vec3 position) {
-  return texture(map, vec3(position.x,position.y,position.z)).r;
+float sampleBlock(vec3 position) {
+  return texture(map, vec3(position.x, position.y, position.z)).r;
 }
 
 float sampleJumpMap(vec3 position) {
-  return texture(jumpMap, vec3(position.x,position.y,position.z)).r;
-
+  return texture(jumpMap, vec3(position.x, position.y, position.z)).r;
 }
 
 #define epsilon .0001
@@ -55,36 +55,35 @@ vec3 normal(vec3 coord) {
     return vec3(0.0, 0.0, -1.0);
 
   float step = 0.002;
-  float x = sample1(coord + vec3(-step, 0.0, 0.0)) - sample1(coord + vec3(step, 0.0, 0.0));
-  float y = sample1(coord + vec3(0.0, -step, 0.0)) - sample1(coord + vec3(0.0, step, 0.0));
-  float z = sample1(coord + vec3(0.0, 0.0, -step)) - sample1(coord + vec3(0.0, 0.0, step));
+  float x = sampleBlock(coord + vec3(-step, 0.0, 0.0)) - sampleBlock(coord + vec3(step, 0.0, 0.0));
+  float y = sampleBlock(coord + vec3(0.0, -step, 0.0)) - sampleBlock(coord + vec3(0.0, step, 0.0));
+  float z = sampleBlock(coord + vec3(0.0, 0.0, -step)) - sampleBlock(coord + vec3(0.0, 0.0, step));
 
   return vec3(x, y, z);
 }
 
 vec2 calculateUv(vec3 pos) {
 
-    vec3 n = normal(pos);
-  
-    vec2 uv = vec2(0.0);
-  
-    if(n.x > 0.0) {
-      uv = vec2(pos.z, pos.y);
-    } else if(n.x < 0.0) {
-      uv = vec2(pos.z, pos.y);
-    } else if(n.y > 0.0) {
-      uv = vec2(pos.x, pos.z);
-    } else if(n.y < 0.0) {
-      uv = vec2(pos.x, pos.z);
-    } else if(n.z > 0.0) {
-      uv = vec2(pos.x, pos.y);
-    } else if(n.z < 0.0) {
-      uv = vec2(pos.x, pos.y);
-    }
- 
-    return uv * 32.0;
-}
+  vec3 n = normal(pos);
 
+  vec2 uv = vec2(0.0);
+
+  if(n.x > 0.0) {
+    uv = vec2(pos.z, pos.y);
+  } else if(n.x < 0.0) {
+    uv = vec2(pos.z, pos.y);
+  } else if(n.y > 0.0) {
+    uv = vec2(pos.x, pos.z);
+  } else if(n.y < 0.0) {
+    uv = vec2(pos.x, pos.z);
+  } else if(n.z > 0.0) {
+    uv = vec2(pos.x, pos.y);
+  } else if(n.z < 0.0) {
+    uv = vec2(pos.x, pos.y);
+  }
+
+  return uv * chunkSize;
+}
 
 void main() {
 
@@ -100,40 +99,57 @@ void main() {
   vec3 inc = 1.0 / abs(rayDir);
   float delta = min(inc.x, min(inc.y, inc.z));
 
-  delta /= steps;
+  delta /= chunkSize * voxelStepCount;
 
+  float smallStep = delta;
 
   gl_FragColor = vec4(0.0);
 
+  float t = bounds.x;
 
-  for(float t = bounds.x; t < bounds.y; t += delta) {
-
-    float blockId = sample1(p + 0.5);
+  while(t < bounds.y) {
+    float blockId = sampleBlock(p + 0.5);
 
     if(blockId > 0.0) {
 
       vec2 uv = calculateUv(p + 0.5);
-      vec3 textureColor = texture2D(brick, vec2(uv)).rgb;
+      // vec3 textureColor = texture2D(brick, vec2(uv)).rgb;
       vec3 normalColor = normal(p + 0.5) * 0.5 + 0.5;
 
-      // gl_FragColor.rgb = normal(p + 0.5);
-
-
-      gl_FragColor.rgb = mix(textureColor, normalColor, 0.5);
+      // gl_FragColor.rgb = mix(textureColor, normalColor, 0.1);
+      gl_FragColor.rgb = normalColor;
 
       gl_FragColor.a = 1.;
 
       break;
     }
 
-    // float minSafeDistance = sampleJumpMap(p + 0.5) / 32.0 / 16.0;
+    float minSafeDistance = delta;
 
-    // gl_FragColor = vec4(vec3(minSafeDistance + 0.5), 1.0);
-    // return;
+    if (sampleJumpMap(p + .5) != 0.0) {
+      minSafeDistance += smallStep * voxelStepCount;
+      // gl_FragColor = vec4(1.0);
+      // return;
+    }
+
+    // float maxJump = sampleJumpMap(p + .5) * 1 / voxelStepCount;
+    // if (maxJump > 0.0) {
+    //   minSafeDistance = min(minSafeDistance, maxJump);
+    // }
+
+    // float msd = sampleJumpMap(p + .5);
+    // if (msd > .9 && msd < 1.1) { 
+    //   gl_FragColor = vec4(1.0);
+    //   return;
+    // }
+    
+
 
     // p += rayDir * max(delta, minSafeDistance);
 
-    p += rayDir * delta;
+    p += rayDir * minSafeDistance;
+
+    t += minSafeDistance;
   }
 
   if(gl_FragColor.a == 0.0)

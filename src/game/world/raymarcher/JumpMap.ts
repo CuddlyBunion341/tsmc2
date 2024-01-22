@@ -1,24 +1,24 @@
 import { Matrix3d } from '../../util/Matrix3d'
 
-export class JumpMap extends Matrix3d<Int8Array> {
+export class JumpMap extends Matrix3d<Uint8Array> {
   constructor(
     width: number,
     height: number,
     depth: number,
     public voxelData: Uint8Array
   ) {
-    super(width, height, depth, Int8Array)
+    super(width, height, depth, Uint8Array)
   }
 
   generate() {
-    this.fill(1)
+    this.fill(2)
 
     for (let x = 0; x < this.width; x++) {
       for (let y = 0; y < this.height; y++) {
         for (let z = 0; z < this.depth; z++) {
-          if (this.getBlock(x, y, z) !== 0) continue
+          if (this.getBlock(x, y, z) === 0) continue
 
-          this.set(x, y, z, -1)
+          this.set(x, y, z, 0)
 
           this.updateNeighbors(x, y, z)
         }
@@ -38,7 +38,7 @@ export class JumpMap extends Matrix3d<Int8Array> {
 
           if (dx === 0 && dy === 0 && dz === 0) continue
           if (this.outOfBounds(nx, ny, nz)) continue
-          this.set(nx, ny, nz, 0)
+          this.set(nx, ny, nz, Math.max(this.get(nx, ny, nz) - 1, 0))
         }
       }
     }
