@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { Matrix3d } from './Matrix3d'
 
 describe('#getIndex()', () => {
-  const chunkData = new Matrix3d(32, 32, 32)
+  const chunkData = new Matrix3d<Uint8Array>(32, 32, 32, Uint8Array)
 
   it('should return the correct index for the x axis', () => {
     expect(chunkData.getIndex(0, 0, 0)).toBe(0)
@@ -24,7 +24,7 @@ describe('#getIndex()', () => {
 })
 
 describe('#get(), #set()', () => {
-  const chunkData = new Matrix3d(32, 32, 32)
+  const chunkData = new Matrix3d<Uint8Array>(32, 32, 32, Uint8Array)
   it('should fill the matrix with the default value', () => {
     expect(chunkData.get(0, 0, 0)).toBe(5)
   })

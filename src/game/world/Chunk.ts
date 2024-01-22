@@ -1,4 +1,3 @@
-import { ChunkData } from './ChunkData'
 import { ChunkMesher } from './ChunkMesher'
 import * as THREE from 'three'
 import { TerrainGenerator } from './TerrainGenerator'
@@ -6,7 +5,7 @@ import { Matrix3d } from '../util/Matrix3d'
 
 export class Chunk {
   public static readonly SIZE = 32
-  public readonly chunkData: Matrix3d
+  public readonly chunkData: Matrix3d<Uint8Array>
   public readonly chunkMesher: ChunkMesher
   public readonly mesh: THREE.Mesh
 
@@ -16,7 +15,7 @@ export class Chunk {
     public readonly y: number,
     public readonly z: number
   ) {
-    this.chunkData = new Matrix3d(Chunk.SIZE, Chunk.SIZE, Chunk.SIZE)
+    this.chunkData = new Matrix3d(Chunk.SIZE, Chunk.SIZE, Chunk.SIZE, Uint8Array)
     this.chunkMesher = new ChunkMesher(
       this.chunkData.width,
       this.chunkData.height,

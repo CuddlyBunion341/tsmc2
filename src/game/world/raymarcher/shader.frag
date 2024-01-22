@@ -26,8 +26,13 @@ vec2 hitBox(vec3 orig, vec3 dir) {
   return vec2(t0, t1);
 }
 
-float sample1(vec3 p) {
-  return texture(map, vec3(p.x,p.y,p.z)).r;
+float sample1(vec3 position) {
+  return texture(map, vec3(position.x,position.y,position.z)).r;
+}
+
+float sampleJumpMap(vec3 position) {
+  return texture(jumpMap, vec3(position.x,position.y,position.z)).r;
+
 }
 
 #define epsilon .0001
@@ -94,9 +99,12 @@ void main() {
   vec3 p = vOrigin + bounds.x * rayDir;
   vec3 inc = 1.0 / abs(rayDir);
   float delta = min(inc.x, min(inc.y, inc.z));
+
   delta /= steps;
 
+
   gl_FragColor = vec4(0.0);
+
 
   for(float t = bounds.x; t < bounds.y; t += delta) {
 
@@ -108,12 +116,22 @@ void main() {
       vec3 textureColor = texture2D(brick, vec2(uv)).rgb;
       vec3 normalColor = normal(p + 0.5) * 0.5 + 0.5;
 
+      // gl_FragColor.rgb = normal(p + 0.5);
+
+
       gl_FragColor.rgb = mix(textureColor, normalColor, 0.5);
 
       gl_FragColor.a = 1.;
 
       break;
     }
+
+    // float minSafeDistance = sampleJumpMap(p + 0.5) / 32.0 / 16.0;
+
+    // gl_FragColor = vec4(vec3(minSafeDistance + 0.5), 1.0);
+    // return;
+
+    // p += rayDir * max(delta, minSafeDistance);
 
     p += rayDir * delta;
   }

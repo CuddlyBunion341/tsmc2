@@ -28,7 +28,6 @@ export class ChunkMesher {
 
   generateUniforms() {
     const voxelTexture = this.generateDataTexture(this.voxelData)
-    console.time('jump map')
     const jumpMap = new JumpMap(
       this.width,
       this.height,
@@ -41,7 +40,6 @@ export class ChunkMesher {
       map: { value: voxelTexture },
       jumpMap: { value: jumpMapTexture },
       brick: { value: this.generateBrickTexture() },
-      threshold: { value: 0 },
       steps: { value: 32 * 16 }
     }
   }
@@ -59,7 +57,7 @@ export class ChunkMesher {
     return texture
   }
 
-  generateDataTexture(data: Uint8Array) {
+  generateDataTexture(data: Int8Array | Uint8Array) {
     const texture = new THREE.Data3DTexture(data, this.width, this.height, this.depth)
 
     texture.format = THREE.RedFormat

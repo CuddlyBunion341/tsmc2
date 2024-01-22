@@ -1,12 +1,17 @@
-export class Matrix3d {
-  public readonly list: Uint8Array
+export class Matrix3d<T extends Uint8Array | Int8Array | Float32Array> {
+  public readonly list: T
 
   constructor(
     public readonly width: number,
     public readonly height: number,
-    public readonly depth: number
+    public readonly depth: number,
+    TypedArray: new (length: number) => T
   ) {
-    this.list = new Uint8Array(width * height * depth)
+    this.list = new TypedArray(width * height * depth)
+  }
+
+  fill(value: number) {
+    this.list.fill(value)
   }
 
   get(x: number, y: number, z: number) {
