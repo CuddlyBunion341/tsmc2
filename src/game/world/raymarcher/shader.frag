@@ -1,3 +1,4 @@
+// Inspired by:
 // https://github.com/mrdoob/three.js/blob/master/examples/webgl2_volume_perlin.html
 
 precision highp float;
@@ -6,7 +7,7 @@ precision highp sampler3D;
 varying vec3 vOrigin;
 varying vec3 vDirection;
 
-uniform sampler3D map;
+uniform sampler3D chunkMap;
 uniform sampler3D jumpMap;
 uniform sampler2D brick;
 
@@ -28,7 +29,7 @@ vec2 hitBox(vec3 orig, vec3 dir) {
 }
 
 float sampleBlock(vec3 position) {
-  return texture(map, vec3(position.x, position.y, position.z)).r;
+  return texture(chunkMap, vec3(position.x, position.y, position.z)).r;
 }
 
 float sampleJumpMap(vec3 position) {
@@ -54,7 +55,7 @@ vec3 normal(vec3 coord) {
   if(coord.z > 1.0 - epsilon)
     return vec3(0.0, 0.0, -1.0);
 
-  float step = 0.002;
+  float step = 1.0 / (chunkSize * voxelStepCount);
   float x = sampleBlock(coord + vec3(-step, 0.0, 0.0)) - sampleBlock(coord + vec3(step, 0.0, 0.0));
   float y = sampleBlock(coord + vec3(0.0, -step, 0.0)) - sampleBlock(coord + vec3(0.0, step, 0.0));
   float z = sampleBlock(coord + vec3(0.0, 0.0, -step)) - sampleBlock(coord + vec3(0.0, 0.0, step));
@@ -95,7 +96,7 @@ void main() {
 
   bounds.x = max(bounds.x, 0.0);
 
-  vec3 p = vOrigin + bounds.x * rayDir;
+  vec3 rayPosition = vOrigin + bounds.x * rayDir;
   vec3 inc = 1.0 / abs(rayDir);
   float delta = min(inc.x, min(inc.y, inc.z));
 
@@ -108,16 +109,15 @@ void main() {
   float t = bounds.x;
 
   while(t < bounds.y) {
-    float blockId = sampleBlock(p + 0.5);
+    float blockId = sampleBlock(rayPosition + 0.5);
 
     if(blockId > 0.0) {
 
-      vec2 uv = calculateUv(p + 0.5);
-      // vec3 textureColor = texture2D(brick, vec2(uv)).rgb;
-      vec3 normalColor = normal(p + 0.5) * 0.5 + 0.5;
+      vec2 uv = calculateUv(rayPosition + 0.5);
+      vec3 textureColor = texture2D(brick, uv).rgb;
+      vec3 normalColor = normal(rayPosition + 0.5) * 0.5 + 0.5;
 
-      // gl_FragColor.rgb = mix(textureColor, normalColor, 0.1);
-      gl_FragColor.rgb = normalColor;
+      gl_FragColor.rgb = mix(textureColor, normalColor, 0.5);
 
       gl_FragColor.a = 1.;
 
@@ -126,28 +126,14 @@ void main() {
 
     float minSafeDistance = delta;
 
-    if (sampleJumpMap(p + .5) != 0.0) {
-      minSafeDistance += smallStep * voxelStepCount;
-      // gl_FragColor = vec4(1.0);
-      // return;
-    }
-
-    // float maxJump = sampleJumpMap(p + .5) * 1 / voxelStepCount;
-    // if (maxJump > 0.0) {
-    //   minSafeDistance = min(minSafeDistance, maxJump);
-    // }
-
-    // float msd = sampleJumpMap(p + .5);
-    // if (msd > .9 && msd < 1.1) { 
-    //   gl_FragColor = vec4(1.0);
-    //   return;
-    // }
+    float maxJump = sampleJumpMap(rayPosition + .5) - 1.0 / 255.0;
     
 
+    if (maxJump != 0.0) {
+      minSafeDistance += smallStep * voxelStepCount;
+    }
 
-    // p += rayDir * max(delta, minSafeDistance);
-
-    p += rayDir * minSafeDistance;
+    rayPosition += rayDir * minSafeDistance;
 
     t += minSafeDistance;
   }

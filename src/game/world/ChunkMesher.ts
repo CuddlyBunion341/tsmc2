@@ -31,7 +31,7 @@ export class ChunkMesher {
     const jumpBuffer = jumpMap.generate()
 
     return {
-      map: { value: this.generateDataTexture(this.voxelData) },
+      chunkMap: { value: this.generateDataTexture(this.voxelData) },
       jumpMap: { value: this.generateDataTexture(jumpBuffer) },
       brick: { value: this.generateBrickTexture() },
       chunkSize: { value: 32 },

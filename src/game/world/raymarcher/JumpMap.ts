@@ -38,7 +38,7 @@ export class JumpMap extends Matrix3d<Uint8Array> {
 
           if (dx === 0 && dy === 0 && dz === 0) continue
           if (this.outOfBounds(nx, ny, nz)) continue
-          this.set(nx, ny, nz, Math.max(this.get(nx, ny, nz) - 1, 0))
+          this.set(nx, ny, nz, Math.max(this.get(nx, ny, nz) - 1, 1))
         }
       }
     }
