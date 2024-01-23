@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { voxelMaterial } from './raymarcher/voxelMaterial'
 import { JumpMap } from './raymarcher/JumpMap'
+import { StupidJumpMap } from './raymarcher/StupidJumpMap'
 
 export type Vertex = {
   position: [number, number, number]
@@ -27,7 +28,7 @@ export class ChunkMesher {
   }
 
   generateUniforms() {
-    const jumpMap = new JumpMap(this.width, this.height, this.depth, this.voxelData)
+    const jumpMap = new StupidJumpMap(this.width, this.height, this.depth, this.voxelData)
     const jumpBuffer = jumpMap.generate()
 
     return {

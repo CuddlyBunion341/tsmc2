@@ -87,7 +87,6 @@ vec2 calculateUv(vec3 pos) {
 }
 
 void main() {
-
   vec3 rayDir = normalize(vDirection);
   vec2 bounds = hitBox(vOrigin, rayDir);
 
@@ -126,11 +125,11 @@ void main() {
 
     float minSafeDistance = delta;
 
-    float maxJump = sampleJumpMap(rayPosition + .5) - 1.0 / 255.0;
+    float maxJump = sampleJumpMap(rayPosition + 0.5) * 255.0;
     
 
-    if (maxJump != 0.0) {
-      minSafeDistance += smallStep * voxelStepCount;
+    if (maxJump > 1.0) {
+      minSafeDistance += smallStep * voxelStepCount * (maxJump - 0.75); 
     }
 
     rayPosition += rayDir * minSafeDistance;
