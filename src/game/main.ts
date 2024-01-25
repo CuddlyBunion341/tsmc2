@@ -13,19 +13,16 @@ export default class Game implements Experience {
   @Benchmark
   init(): void {
     const terrainGenerator = new TerrainGenerator(69420)
-    const chunkManager = new ChunkManager(terrainGenerator, 8, 2, 8)
+    const chunkManager = new ChunkManager(terrainGenerator, 0, 1, 0)
 
     const chunks = chunkManager.createChunksAroundOrigin(0, 0, 0)
 
     chunks.forEach((chunk) => {
       chunk.generateData()
+      chunk.updateMeshGeometry()
       this.engine.scene.add(chunk.mesh)
-    })
-
-    chunks.forEach((chunk) => {
-      setTimeout(() => {
-        chunk.updateMeshGeometry()
-      }, Math.random())
+      // const helper = new THREE.BoxHelper(chunk.mesh)
+      // this.engine.scene.add(helper)
     })
   }
 

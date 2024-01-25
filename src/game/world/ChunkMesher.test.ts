@@ -34,7 +34,7 @@ describe('#generateVertexData()', () => {
       chunkData.width,
       chunkData.height,
       chunkData.depth,
-      (x, y, z) => chunkData.get(x, y, z)
+      chunkData.data.list
     )
   })
 

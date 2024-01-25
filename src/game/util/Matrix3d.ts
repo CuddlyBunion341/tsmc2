@@ -1,21 +1,25 @@
-export class Matrix3d<T> {
-  public readonly data: T[]
+export class Matrix3d<T extends Uint8Array | Int8Array | Float32Array> {
+  public readonly list: T
 
   constructor(
     public readonly width: number,
     public readonly height: number,
     public readonly depth: number,
-    defaultValue?: T
+    TypedArray: new (length: number) => T
   ) {
-    this.data = new Array(width * height * depth).fill(defaultValue)
+    this.list = new TypedArray(width * height * depth)
+  }
+
+  fill(value: number) {
+    this.list.fill(value)
   }
 
   get(x: number, y: number, z: number) {
-    return this.data[this.getIndex(x, y, z)]
+    return this.list[this.getIndex(x, y, z)]
   }
 
-  set(x: number, y: number, z: number, value: T) {
-    this.data[this.getIndex(x, y, z)] = value
+  set(x: number, y: number, z: number, value: number) {
+    this.list[this.getIndex(x, y, z)] = value
   }
 
   getIndex(x: number, y: number, z: number): number {

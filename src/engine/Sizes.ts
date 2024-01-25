@@ -8,6 +8,7 @@ export class Sizes extends EventEmitter {
   public height!: number
   public pixelRatio: number = Math.min(window.devicePixelRatio, 2)
   public aspectRatio!: number
+  public renderScale: number = 2
 
   public sizing: Sizing = 'contain'
 
@@ -23,15 +24,15 @@ export class Sizes extends EventEmitter {
   }
 
   public setContainsSizing() {
-    this.width = window.innerWidth
-    this.height = window.innerHeight
+    this.width = window.innerWidth * this.renderScale
+    this.height = window.innerHeight * this.renderScale
 
     this.aspectRatio = this.width / this.height
   }
 
   public setCoverSizing() {
-    const maxWidth = window.innerWidth
-    const maxHeight = window.innerHeight
+    const maxWidth = window.innerWidth * this.renderScale
+    const maxHeight = window.innerHeight * this.renderScale
 
     if (maxWidth / maxHeight < this.aspectRatio) {
       this.width = maxWidth

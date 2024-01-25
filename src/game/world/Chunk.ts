@@ -1,11 +1,11 @@
-import { ChunkData } from './ChunkData'
 import { ChunkMesher } from './ChunkMesher'
 import * as THREE from 'three'
 import { TerrainGenerator } from './TerrainGenerator'
+import { Matrix3d } from '../util/Matrix3d'
 
 export class Chunk {
   public static readonly SIZE = 32
-  public readonly chunkData: ChunkData
+  public readonly chunkData: Matrix3d<Uint8Array>
   public readonly chunkMesher: ChunkMesher
   public readonly mesh: THREE.Mesh
 
@@ -15,29 +15,25 @@ export class Chunk {
     public readonly y: number,
     public readonly z: number
   ) {
-    this.chunkData = new ChunkData(Chunk.SIZE, Chunk.SIZE, Chunk.SIZE)
+    this.chunkData = new Matrix3d(Chunk.SIZE, Chunk.SIZE, Chunk.SIZE, Uint8Array)
     this.chunkMesher = new ChunkMesher(
       this.chunkData.width,
       this.chunkData.height,
       this.chunkData.depth,
-      (x: number, y: number, z: number) => this.chunkData.get(x, y, z)
+      this.chunkData.list
     )
+
     this.mesh = new THREE.Mesh()
-    this.mesh.position.set(
-      this.x * this.chunkData.width,
-      this.y * this.chunkData.height,
-      this.z * this.chunkData.depth
-    )
-    this.mesh.material = new THREE.MeshMatcapMaterial()
+    this.mesh.position.set(this.x, this.y, this.z)
   }
 
   // @Benchmark
   generateData() {
     // TODO: extract into web worker
 
-    for (let x = -1; x < this.chunkData.width + 1; x++) {
-      for (let y = -1; y < this.chunkData.height + 1; y++) {
-        for (let z = -1; z < this.chunkData.depth + 1; z++) {
+    for (let x = 0; x < this.chunkData.width; x++) {
+      for (let y = 0; y < this.chunkData.height; y++) {
+        for (let z = 0; z < this.chunkData.depth; z++) {
           const block = this.terrainGenerator.getBlock(
             x + this.x * this.chunkData.width,
             y + this.y * this.chunkData.height,
@@ -52,7 +48,8 @@ export class Chunk {
 
   // @Benchmark
   updateMeshGeometry() {
-    const geometry = this.chunkMesher.generateGeometry()
-    this.mesh.geometry = geometry
+    const mesh = this.chunkMesher.generateMesh()
+    this.mesh.geometry = mesh.geometry
+    this.mesh.material = mesh.material
   }
 }
