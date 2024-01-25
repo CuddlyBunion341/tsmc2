@@ -30,14 +30,20 @@ export class ChunkMesher {
     const jumpMap = new StupidJumpMap(this.width, this.height, this.depth, this.voxelData)
     const jumpBuffer = jumpMap.generate()
 
+    const blockTexturePath = '/assets/textures/brick.png'
+
+    const commonUniforms = {
+      chunkSize: { value: 32 },
+      voxelStepCount: { value: 16 },
+      jumpPrecision: { value: 0.75 }
+    }
+
     return {
+      ...commonUniforms,
       voxelAndJumpMap: {
         value: this.generateInterlaced3dTexture(this.voxelData, jumpBuffer)
       },
-      brick: { value: this.generateBrickTexture() },
-      chunkSize: { value: 32 },
-      voxelStepCount: { value: 16 },
-      lightPosition: { value: new THREE.Vector3(2, 2, 2) }
+      blockTexture: { value: this.generateBlockTexture(blockTexturePath) }
     }
   }
 
@@ -62,7 +68,12 @@ export class ChunkMesher {
 
   generateInterlaced3dTexture(redChannel: Uint8Array, greenChannel: Uint8Array) {
     const interlacedBuffer = this.interlaceBuffer(redChannel, greenChannel)
-    const texture = new THREE.Data3DTexture(interlacedBuffer, this.width, this.height)
+    const texture = new THREE.Data3DTexture(
+      interlacedBuffer,
+      this.width,
+      this.height,
+      this.depth
+    )
 
     texture.format = THREE.RGFormat
     texture.minFilter = THREE.NearestFilter
@@ -72,9 +83,9 @@ export class ChunkMesher {
     return texture
   }
 
-  generateBrickTexture() {
+  generateBlockTexture(texturePath: string) {
     const loader = new THREE.TextureLoader()
-    const texture = loader.load('/assets/textures/brick.png')
+    const texture = loader.load(texturePath)
 
     texture.minFilter = THREE.NearestFilter
     texture.magFilter = THREE.NearestFilter

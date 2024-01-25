@@ -7,13 +7,12 @@ precision highp sampler3D;
 varying vec3 vOrigin;
 varying vec3 vDirection;
 
-uniform sampler2D brick;
-
+uniform sampler2D blockTexture;
 uniform sampler3D voxelAndJumpMap;
 
-uniform float threshold;
 uniform float chunkSize;
 uniform float voxelStepCount;
+uniform float jumpPrecision;
 
 vec2 calculateHitBox(vec3 orig, vec3 dir) {
   const vec3 box_min = vec3(-0.5);
@@ -32,7 +31,7 @@ vec2 calculateHitBox(vec3 orig, vec3 dir) {
 
 float sampleBlock(vec3 coord) {
   // TODO: remove this method as it causes too many texture lookups
-  return texture2D(voxelAndJumpMap, coord).r;
+  return textureCube(voxelAndJumpMap, coord).r;
 }
 
 vec3 calculateNormal(vec3 coord) {
@@ -66,6 +65,8 @@ vec2 calculateUv(vec3 pos) {
 
   vec2 uv = vec2(0.0);
 
+  // TODO: refactor to step functions
+
   if(n.x > 0.0) {
     uv = vec2(pos.z, pos.y);
   } else if(n.x < 0.0) {
@@ -84,18 +85,17 @@ vec2 calculateUv(vec3 pos) {
 }
 
 void main() {
-  vec3 rayDir = normalize(vDirection);
-  vec2 bounds = calculateHitBox(vOrigin, rayDir);
+  vec3 rayDirection = normalize(vDirection);
+  vec2 bounds = calculateHitBox(vOrigin, rayDirection);
 
   bounds.x = max(bounds.x, 0.0);
 
   if(bounds.x > bounds.y)
     discard;
 
-  vec3 rayPosition = vOrigin + bounds.x * rayDir;
-  vec3 inc = 1.0 / abs(rayDir);
+  vec3 rayPosition = vOrigin + bounds.x * rayDirection;
+  vec3 inc = 1.0 / abs(rayDirection);
   float smallStep = min(inc.x, min(inc.y, inc.z));
-
   smallStep /= chunkSize * voxelStepCount;
 
   gl_FragColor = vec4(0.0);
@@ -103,16 +103,17 @@ void main() {
   float t = bounds.x;
 
   float stepsTaken = 0.0;
+  // use float to avoid casting (this approach aids with debugging)
 
   while(t < bounds.y) {
-    vec2 blockAndJump = texture2D(voxelAndJumpMap, rayPosition + 0.5).rg;
+    vec2 blockAndJump = textureCube(voxelAndJumpMap, rayPosition + 0.5).rg;
     float blockId = blockAndJump.r;
     float maxJump = blockAndJump.g * 255.0;
 
     if(blockId > 0.0) {
 
       vec2 uv = calculateUv(rayPosition + 0.5);
-      vec3 textureColor = texture2D(brick, uv).rgb;
+      vec3 textureColor = texture2D(blockTexture, uv).rgb;
       vec3 normalColor = calculateNormal(rayPosition + .5) * .5 + .5;
 
       vec3 stepsColor = vec3(stepsTaken / (chunkSize * voxelStepCount));
@@ -121,21 +122,17 @@ void main() {
 
       gl_FragColor = vec4(mixedColor, 1.0);
       return;
-
-      gl_FragColor.rgb = mix(textureColor, normalColor, 0.1);
-      gl_FragColor.a = 1.0;
-      return;
     }
 
     float minSafeDistance = smallStep;
 
     if (maxJump > 1.0) {
       // TODO: refactor into step function, as branching is expensive
-      minSafeDistance += smallStep * voxelStepCount * (maxJump - 0.75); 
-      float test = smallStep * voxelStepCount * (maxJump - 0.75);
+      minSafeDistance += smallStep * voxelStepCount * (maxJump - jumpPrecision); 
+      float test = smallStep * voxelStepCount * (maxJump - jumpPrecision);
     }
 
-    rayPosition += rayDir * minSafeDistance;
+    rayPosition += rayDirection * minSafeDistance;
 
     stepsTaken++;
 
