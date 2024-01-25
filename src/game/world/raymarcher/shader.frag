@@ -30,7 +30,6 @@ vec2 calculateHitBox(vec3 orig, vec3 dir) {
 #define epsilon .0001
 
 float sampleBlock(vec3 coord) {
-  // TODO: remove this method as it causes too many texture lookups
   return textureCube(voxelAndJumpMap, coord).r;
 }
 
@@ -84,6 +83,15 @@ vec2 calculateUv(vec3 pos) {
   return uv * chunkSize;
 }
 
+void renderBlockFragment(vec3 position) {
+  vec2 uv = calculateUv(position + 0.5);
+  vec3 textureColor = texture2D(blockTexture, uv).rgb;
+  vec3 normalColor = calculateNormal(position + 0.5) * 0.5 + 0.5;
+
+  vec3 mixedColor = mix(textureColor, normalColor, 0.2);
+  gl_FragColor = vec4(mixedColor, 1.0);
+}
+
 void main() {
   vec3 rayDirection = normalize(vDirection);
   vec2 bounds = calculateHitBox(vOrigin, rayDirection);
@@ -111,16 +119,7 @@ void main() {
     float maxJump = blockAndJump.g * 255.0;
 
     if(blockId > 0.0) {
-
-      vec2 uv = calculateUv(rayPosition + 0.5);
-      vec3 textureColor = texture2D(blockTexture, uv).rgb;
-      vec3 normalColor = calculateNormal(rayPosition + .5) * .5 + .5;
-
-      vec3 stepsColor = vec3(stepsTaken / (chunkSize * voxelStepCount));
-      vec3 mixedNormalTextureColor = mix(normalColor, textureColor, 0.5);
-      vec3 mixedColor = mix(stepsColor, mixedNormalTextureColor, 0.1);
-
-      gl_FragColor = vec4(mixedColor, 1.0);
+      renderBlockFragment(rayPosition);
       return;
     }
 
@@ -129,7 +128,6 @@ void main() {
     if (maxJump > 1.0) {
       // TODO: refactor into step function, as branching is expensive
       minSafeDistance += smallStep * voxelStepCount * (maxJump - jumpPrecision); 
-      float test = smallStep * voxelStepCount * (maxJump - jumpPrecision);
     }
 
     rayPosition += rayDirection * minSafeDistance;
