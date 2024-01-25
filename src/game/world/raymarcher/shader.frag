@@ -14,7 +14,7 @@ uniform float chunkSize;
 uniform float voxelStepCount;
 uniform float jumpPrecision;
 
-vec2 calculateHitBox(vec3 orig, vec3 dir) {
+vec2 calculateRayBoxIntersection(vec3 orig, vec3 dir) {
   const vec3 box_min = vec3(-0.5);
   const vec3 box_max = vec3(0.5);
   vec3 inv_dir = 1.0 / dir;
@@ -30,6 +30,7 @@ vec2 calculateHitBox(vec3 orig, vec3 dir) {
 #define epsilon .0001
 
 float sampleBlock(vec3 coord) {
+  // TODO: remove me because it's expensive
   return textureCube(voxelAndJumpMap, coord).r;
 }
 
@@ -94,26 +95,24 @@ void renderBlockFragment(vec3 position) {
 
 void main() {
   vec3 rayDirection = normalize(vDirection);
-  vec2 bounds = calculateHitBox(vOrigin, rayDirection);
+  vec2 intersection = calculateRayBoxIntersection(vOrigin, rayDirection);
 
-  bounds.x = max(bounds.x, 0.0);
+  float near = max(intersection.x, 0.0);
+  float far = intersection.y;
 
-  if(bounds.x > bounds.y)
+  if(near > far)
     discard;
 
-  vec3 rayPosition = vOrigin + bounds.x * rayDirection;
-  vec3 inc = 1.0 / abs(rayDirection);
-  float smallStep = min(inc.x, min(inc.y, inc.z));
+  vec3 rayPosition = vOrigin + near * rayDirection;
+  vec3 increment = 1.0 / abs(rayDirection);
+  float smallStep = min(increment.x, min(increment.y, increment.z));
   smallStep /= chunkSize * voxelStepCount;
 
   gl_FragColor = vec4(0.0);
 
-  float t = bounds.x;
+  float rayProgress = near;
 
-  float stepsTaken = 0.0;
-  // use float to avoid casting (this approach aids with debugging)
-
-  while(t < bounds.y) {
+  while(rayProgress < far) {
     vec2 blockAndJump = textureCube(voxelAndJumpMap, rayPosition + 0.5).rg;
     float blockId = blockAndJump.r;
     float maxJump = blockAndJump.g * 255.0;
@@ -132,9 +131,7 @@ void main() {
 
     rayPosition += rayDirection * minSafeDistance;
 
-    stepsTaken++;
-
-    t += minSafeDistance;
+    rayProgress += minSafeDistance;
   }
 }
 
