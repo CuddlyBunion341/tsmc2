@@ -40,7 +40,7 @@ export class Chunk {
             z + this.z * this.chunkData.depth
           )
 
-          this.chunkData.set(x, y, z, block * 255)
+          this.chunkData.set(x, y, z, block)
         }
       }
     }

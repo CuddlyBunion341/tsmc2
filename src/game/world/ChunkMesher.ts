@@ -1,6 +1,5 @@
 import * as THREE from 'three'
 import { voxelMaterial } from './raymarcher/voxelMaterial'
-import { JumpMap } from './raymarcher/JumpMap'
 import { StupidJumpMap } from './raymarcher/StupidJumpMap'
 
 export type Vertex = {
@@ -32,12 +31,45 @@ export class ChunkMesher {
     const jumpBuffer = jumpMap.generate()
 
     return {
-      chunkMap: { value: this.generateDataTexture(this.voxelData) },
-      jumpMap: { value: this.generateDataTexture(jumpBuffer) },
+      voxelAndJumpMap: {
+        value: this.generateInterlaced3dTexture(this.voxelData, jumpBuffer)
+      },
       brick: { value: this.generateBrickTexture() },
       chunkSize: { value: 32 },
-      voxelStepCount: { value: 16 }
+      voxelStepCount: { value: 16 },
+      lightPosition: { value: new THREE.Vector3(2, 2, 2) }
     }
+  }
+
+  interlaceBuffer(buffer1: Uint8Array, buffer2: Uint8Array) {
+    // Use array over typed array because it is faster to write to
+    const stride = 2
+
+    const newArray = new Array(buffer1.byteLength + buffer2.byteLength)
+
+    for (let i = 0; i < buffer1.byteLength; i++) {
+      newArray[i * stride] = buffer1[i]
+    }
+
+    for (let i = 0; i < buffer2.byteLength; i++) {
+      newArray[i * stride + 1] = buffer2[i]
+    }
+
+    const newTypedArray = new Uint8Array(newArray)
+
+    return newTypedArray
+  }
+
+  generateInterlaced3dTexture(redChannel: Uint8Array, greenChannel: Uint8Array) {
+    const interlacedBuffer = this.interlaceBuffer(redChannel, greenChannel)
+    const texture = new THREE.Data3DTexture(interlacedBuffer, this.width, this.height)
+
+    texture.format = THREE.RGFormat
+    texture.minFilter = THREE.NearestFilter
+    texture.magFilter = THREE.NearestFilter
+    texture.needsUpdate = true
+
+    return texture
   }
 
   generateBrickTexture() {
@@ -49,18 +81,6 @@ export class ChunkMesher {
 
     texture.wrapS = THREE.RepeatWrapping
     texture.wrapT = THREE.RepeatWrapping
-
-    return texture
-  }
-
-  generateDataTexture(data: Int8Array | Uint8Array) {
-    const texture = new THREE.Data3DTexture(data, this.width, this.height, this.depth)
-
-    texture.format = THREE.RedFormat
-    texture.unpackAlignment = 1
-    texture.minFilter = THREE.NearestFilter
-    texture.magFilter = THREE.NearestFilter
-    texture.needsUpdate = true
 
     return texture
   }
