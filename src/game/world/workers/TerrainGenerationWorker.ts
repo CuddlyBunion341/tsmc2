@@ -29,5 +29,7 @@ self.onmessage = (message) => {
     }
   }
 
-  postMessage({ chunkData: chunkData.data.data })
+  const arrayBuffer = chunkData.data.data.buffer
+
+  postMessage(arrayBuffer, [arrayBuffer])
 }

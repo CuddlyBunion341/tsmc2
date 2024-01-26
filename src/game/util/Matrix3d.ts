@@ -1,20 +1,22 @@
-export class Matrix3d<T> {
-  public data: T[]
+import { TypedArray } from "three"
+
+export class Matrix3d {
+  public data: TypedArray
 
   constructor(
     public readonly width: number,
     public readonly height: number,
     public readonly depth: number,
-    defaultValue?: T
+    defaultValue: number = 0
   ) {
-    this.data = new Array(width * height * depth).fill(defaultValue)
+    this.data = new Uint8Array(width * height * depth).fill(defaultValue)
   }
 
   get(x: number, y: number, z: number) {
     return this.data[this.getIndex(x, y, z)]
   }
 
-  set(x: number, y: number, z: number, value: T) {
+  set(x: number, y: number, z: number, value: number) {
     this.data[this.getIndex(x, y, z)] = value
   }
 

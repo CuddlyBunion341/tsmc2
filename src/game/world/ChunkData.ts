@@ -1,7 +1,7 @@
 import { Matrix3d } from '../util/Matrix3d'
 
 export class ChunkData {
-  public readonly data: Matrix3d<number>
+  public readonly data: Matrix3d
 
   constructor(
     public readonly width: number = 32,

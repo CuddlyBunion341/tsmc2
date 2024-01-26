@@ -42,11 +42,13 @@ export class Chunk {
       terrainGeneratorSeed: this.terrainGenerator.seed
     }
 
-    const callback = (payload: { data: { chunkData: number[] } }) => {
-      this.chunkData.data.data = payload.data.chunkData
+    const transferable = [this.chunkData.data.data.buffer]
+
+    const callback = (payload: { data: ArrayBuffer }) => {
+      this.chunkData.data.data = new Uint8Array(payload.data)
     }
 
-    return { payload, callback }
+    return { payload, transferable, callback }
   }
 
   // @Benchmark

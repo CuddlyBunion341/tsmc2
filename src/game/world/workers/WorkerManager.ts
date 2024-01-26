@@ -3,6 +3,7 @@ export type Callback = (args: any) => void
 
 export type WorkerTask = {
   payload: unknown
+  transferable?: Transferable[]
   callback: Callback
 }
 
@@ -24,7 +25,7 @@ export class WorkerManager {
   }
 
   public enqueueTask(task: WorkerTask) {
-    const { payload, callback } = task
+    const { payload, callback, transferable } = task
 
     const idleWorker = this.idleWorkers.pop()
 
@@ -33,9 +34,8 @@ export class WorkerManager {
       return
     }
 
-    idleWorker.postMessage(payload)
+    idleWorker.postMessage(payload, transferable || [])
     idleWorker.onmessage = (message: unknown) => {
-      console.log('message received from worker', message)
       callback(message)
       this.idleWorkers.push(idleWorker)
       this.enqueueTaskFromQueue()
