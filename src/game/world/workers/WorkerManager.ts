@@ -38,7 +38,9 @@ export class WorkerManager {
     idleWorker.onmessage = (message: unknown) => {
       callback(message)
       this.idleWorkers.push(idleWorker)
-      this.enqueueTaskFromQueue()
+      requestAnimationFrame(() => {
+        this.enqueueTaskFromQueue()
+      })
     }
 
     this.activeWorkers.push(idleWorker)

@@ -19,7 +19,7 @@ export default class Game implements Experience {
     const chunks = chunkManager.createChunksAroundOrigin(0, 0, 0)
 
     const workerPath = './src/game/world/workers/TerrainGenerationWorker.ts'
-    const workerCount = 10
+    const workerCount = navigator.hardwareConcurrency
 
     const workerManager = new WorkerManager(workerPath, workerCount)
 
