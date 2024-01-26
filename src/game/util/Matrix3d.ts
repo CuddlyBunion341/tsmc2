@@ -1,5 +1,5 @@
 export class Matrix3d<T> {
-  public readonly data: T[]
+  public data: T[]
 
   constructor(
     public readonly width: number,

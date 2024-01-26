@@ -4,6 +4,7 @@ import { Resource } from '../engine/Resources'
 import { Benchmark } from './utilities/Benchmark'
 import { ChunkManager } from './world/ChunkManager'
 import { TerrainGenerator } from './world/TerrainGenerator'
+import { WorkerManager } from './world/workers/WorkerManager'
 
 export default class Game implements Experience {
   resources: Resource[] = []
@@ -17,9 +18,25 @@ export default class Game implements Experience {
 
     const chunks = chunkManager.createChunksAroundOrigin(0, 0, 0)
 
+    const workerManager = new WorkerManager(
+      './src/game/world/workers/TerrainGenerationWorker.ts',
+      4
+    )
+
     chunks.forEach((chunk) => {
       chunk.generateData()
       this.engine.scene.add(chunk.mesh)
+
+      const task = chunk.prepareGeneratorWorkerData()
+
+      workerManager.enqueueTask({
+        payload: task.payload,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        callback: (args: any) => {
+          task.callback(args)
+          chunk.updateMeshGeometry()
+        }
+      })
     })
 
     chunks.forEach((chunk) => {
