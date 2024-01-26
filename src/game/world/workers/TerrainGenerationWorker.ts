@@ -16,9 +16,9 @@ self.onmessage = (message) => {
   const terrainGenerator = new TerrainGenerator(terrainGeneratorSeed)
   const chunkData = new ChunkData(chunkWidth, chunkHeight, chunkDepth)
 
-  for (let x = 0; x < chunkWidth; x++) {
-    for (let y = 0; y < chunkHeight; y++) {
-      for (let z = 0; z < chunkDepth; z++) {
+  for (let x = -1; x < chunkWidth + 1; x++) {
+    for (let y = -1; y < chunkHeight + 1; y++) {
+      for (let z = -1; z < chunkDepth + 1; z++) {
         const block = terrainGenerator.getBlock(
           x + chunkX * chunkWidth,
           y + chunkY * chunkHeight,
