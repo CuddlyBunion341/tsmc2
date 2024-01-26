@@ -9,7 +9,7 @@ import { WorkerManager } from './world/workers/WorkerManager'
 export default class Game implements Experience {
   resources: Resource[] = []
 
-  constructor(private engine: Engine) {}
+  constructor(private engine: Engine) { }
 
   @Benchmark
   init(): void {
@@ -18,10 +18,10 @@ export default class Game implements Experience {
 
     const chunks = chunkManager.createChunksAroundOrigin(0, 0, 0)
 
-    const workerManager = new WorkerManager(
-      './src/game/world/workers/TerrainGenerationWorker.ts',
-      4
-    )
+    const workerPath = './src/game/world/workers/TerrainGenerationWorker.ts'
+    const workerCount = 10
+
+    const workerManager = new WorkerManager(workerPath, workerCount)
 
     chunks.forEach((chunk) => {
       chunk.generateData()
@@ -47,7 +47,7 @@ export default class Game implements Experience {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  update(delta: number): void {}
+  update(delta: number): void { }
 
-  resize?(): void {}
+  resize?(): void { }
 }
