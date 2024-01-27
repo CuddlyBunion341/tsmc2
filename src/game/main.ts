@@ -24,7 +24,6 @@ export default class Game implements Experience {
     const workerManager = new WorkerManager(workerPath, workerCount)
 
     chunks.forEach((chunk) => {
-      chunk.generateData()
       this.engine.scene.add(chunk.mesh)
 
       const task = chunk.prepareGeneratorWorkerData()
@@ -34,7 +33,7 @@ export default class Game implements Experience {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         callback: (args: any) => {
           task.callback(args)
-          chunk.updateMeshGeometry()
+          requestAnimationFrame(() => chunk.updateMeshGeometry())
         }
       })
     })
