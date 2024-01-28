@@ -85,7 +85,7 @@ export class ChunkMesher {
 
   private static isSolid(block: number) {
     if (block === 0) return false
-    return !blocks[block].transparent
+    return !blocks[block]?.transparent
   }
 
   private isSolid(x: number, y: number, z: number) {

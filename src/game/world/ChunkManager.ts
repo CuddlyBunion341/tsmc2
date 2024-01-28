@@ -15,7 +15,7 @@ export class ChunkManager {
   }
 
   public createChunksAroundOrigin(x: number, y: number, z: number) {
-    const newChunks = []
+    const newChunks: Chunk[] = []
 
     for (let cx = x - this.renderDistanceX; cx <= x + this.renderDistanceX; cx++) {
       for (let cy = y - this.renderDistanceY; cy <= y + this.renderDistanceY; cy++) {
@@ -33,7 +33,7 @@ export class ChunkManager {
   }
 
   public getChunksToUnload(x: number, y: number, z: number) {
-    const chunksToRemove = []
+    const chunksToRemove: Chunk[] = []
 
     for (const chunk of this.chunks.chunks.values()) {
       const dx = Math.abs(chunk.x - x)

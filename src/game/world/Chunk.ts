@@ -31,23 +31,24 @@ export class Chunk {
     this.mesh.material = new THREE.MeshMatcapMaterial()
   }
 
-  // @Benchmark
-  generateData() {
-    // TODO: extract into web worker
-
-    for (let x = -1; x < this.chunkData.width + 1; x++) {
-      for (let y = -1; y < this.chunkData.height + 1; y++) {
-        for (let z = -1; z < this.chunkData.depth + 1; z++) {
-          const block = this.terrainGenerator.getBlock(
-            x + this.x * this.chunkData.width,
-            y + this.y * this.chunkData.height,
-            z + this.z * this.chunkData.depth
-          )
-
-          this.chunkData.set(x, y, z, block)
-        }
-      }
+  prepareGeneratorWorkerData() {
+    const payload = {
+      chunkX: this.x,
+      chunkY: this.y,
+      chunkZ: this.z,
+      chunkWidth: this.chunkData.width,
+      chunkHeight: this.chunkData.height,
+      chunkDepth: this.chunkData.depth,
+      terrainGeneratorSeed: this.terrainGenerator.seed
     }
+
+    const transferable = [this.chunkData.data.data.buffer]
+
+    const callback = (payload: { data: ArrayBuffer }) => {
+      this.chunkData.data.data = new Uint8Array(payload.data)
+    }
+
+    return { payload, transferable, callback }
   }
 
   // @Benchmark
