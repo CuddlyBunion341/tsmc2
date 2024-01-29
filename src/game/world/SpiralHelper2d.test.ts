@@ -58,4 +58,21 @@ describe('#generateSpiral()', () => {
       { x: 2, y: 2 },
     ])
   })
+
+  test('should generate correct positions for a different origin', () => {
+    const helper = new SpiralHelper2d(1, { x: 3, y: 5 })
+    const positions = helper.generateSpiral()
+
+    expect(positions).toEqual([
+      { x: 3, y: 5 },
+      { x: 4, y: 5 },
+      { x: 4, y: 4 },
+      { x: 3, y: 4 },
+      { x: 2, y: 4 },
+      { x: 2, y: 5 },
+      { x: 2, y: 6 },
+      { x: 3, y: 6 },
+      { x: 4, y: 6 },
+    ])
+  })
 })
