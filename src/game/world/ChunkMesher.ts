@@ -7,8 +7,8 @@ export type Vertex = {
   uv: [number, number]
 }
 
-const FACE_COUNT = 6
-const FACE_VERTEX_COUNT = 4
+export const FACE_COUNT = 6
+export const FACE_VERTEX_COUNT = 4
 
 export class ChunkMesher {
   static geometryAttributes = [
@@ -83,12 +83,12 @@ export class ChunkMesher {
     return geometry
   }
 
-  private static isSolid(block: number) {
+  protected static isSolid(block: number) {
     if (block === 0) return false
     return !blocks[block]?.transparent
   }
 
-  private isSolid(x: number, y: number, z: number) {
+  protected isSolid(x: number, y: number, z: number) {
     return ChunkMesher.isSolid(this.blockGetter(x, y, z))
   }
 
