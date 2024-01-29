@@ -28,14 +28,15 @@ export class SpiralHelper2d {
 
     let { x, y } = this.origin
 
-    while (this.radius < this.maxRadius || this.directionIndex % 4 !== 1) {
+    while (this.radius < this.maxRadius || this.directionIndex === 0) {
       for (let i = 0; i < this.stepSize; i++) {
         this.positions.push({ x, y })
-        x += SpiralHelper2d.directions[this.directionIndex % 4].x
-        y += SpiralHelper2d.directions[this.directionIndex % 4].y
+        x += SpiralHelper2d.directions[this.directionIndex].x
+        y += SpiralHelper2d.directions[this.directionIndex].y
       }
 
       this.directionIndex++
+      this.directionIndex %= 4
 
       if (this.directionIndex % 2 === 0) this.stepSize++
       if (this.directionIndex % 4 === 0) this.radius++
