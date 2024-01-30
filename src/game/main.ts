@@ -32,9 +32,9 @@ export default class Game implements Experience {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       callback: (args: any) => {
         task.callback(args)
-        chunk.updateMeshGeometry()
+        // chunk.updateMeshGeometry()
 
-        const distanceField = new DistanceField(chunk.chunkData.data, 1, 20)
+        const distanceField = new DistanceField(chunk.chunkData.data, 4, 20)
         distanceField.calculateDistanceField()
 
         const src = distanceField.getTexture()
@@ -42,7 +42,7 @@ export default class Game implements Experience {
         image.src = src
 
         document.body.appendChild(image)
-        image.setAttribute('style', 'position: absolute; height: 50%; left: 0; top: 0; border: 1px solid red;')
+        image.setAttribute('style', 'position: absolute; height: 50%; left: 0; top: 0; border: 1px solid red; image-rendering: pixelated; ')
       }
     })
   }

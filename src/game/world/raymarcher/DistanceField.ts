@@ -17,20 +17,21 @@ export class DistanceField extends Matrix3d {
   calculateDistanceField() {
     // this.fill(Math.min(this.width, this.height, this.depth) * this.resolutionFactor)
 
-    // DistanceField.sweepDirections.forEach(direction => {
-    //   const { dx, dy, dz } = direction
-    // })
+    const y = this.yLevel * this.resolutionFactor
 
-    const y = this.yLevel
-
-    let steps = 0
     for (let z = 0; z < this.depth; z++) {
+      let steps = 0
       for (let x = 0; x < this.width; x++) {
         if (this.isVoxelEmpty(x, y, z)) {
-          this.set(x, y, z, 0)
-          // TODO: fix
-        } else {
+          steps++
           this.set(x, y, z, 1)
+        } else {
+          this.set(x, y, z, 0)
+          for (let dx = 0; dx < steps; dx++) {
+            this.set(x - dx, y, z, dx)
+          }
+
+          steps = 0
         }
       }
     }
@@ -56,12 +57,12 @@ export class DistanceField extends Matrix3d {
     const ctx = canvas.getContext('2d')
     if (!ctx) throw new Error('Ctx could not be retrieved')
 
-    const y = this.yLevel
+    const y = this.yLevel * this.resolutionFactor
 
     for (let x = 0; x < this.width; x++) {
       for (let z = 0; z < this.depth; z++) {
-        const value = this.get(x, y, z) * 255
-        ctx.fillStyle = `rgba(${value}, ${value}, ${value})`
+        const value = this.get(x, y, z) / this.resolutionFactor * 10
+        ctx.fillStyle = `rgba(${value}, ${value}, ${value}, ${value})`
         ctx.fillRect(x, z, 1, 1)
       }
     }
