@@ -14,34 +14,25 @@ export default class Game implements Experience {
   @Benchmark
   init(): void {
     const terrainGenerator = new TerrainGenerator(69420)
-    const chunkManager = new ChunkManager(terrainGenerator, 8, 2, 8)
+    const chunkManager = new ChunkManager(terrainGenerator, 0, 0, 0)
 
-    const chunks = chunkManager.createChunksAroundOrigin(0, 0, 0)
+    const chunks = chunkManager.createChunksAroundOrigin(0, -1, 0)
 
     const workerPath = './src/game/world/workers/TerrainGenerationWorker.ts'
-    const workerCount = navigator.hardwareConcurrency
+    const workerManager = new WorkerManager(workerPath, 1)
 
-    const workerManager = new WorkerManager(workerPath, workerCount)
+    const chunk = chunks[0]
+    this.engine.scene.add(chunk.mesh)
 
-    chunks.forEach((chunk) => {
-      this.engine.scene.add(chunk.mesh)
+    const task = chunk.prepareGeneratorWorkerData()
 
-      const task = chunk.prepareGeneratorWorkerData()
-
-      workerManager.enqueueTask({
-        payload: task.payload,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        callback: (args: any) => {
-          task.callback(args)
-          requestAnimationFrame(() => chunk.updateMeshGeometry())
-        }
-      })
-    })
-
-    chunks.forEach((chunk) => {
-      setTimeout(() => {
+    workerManager.enqueueTask({
+      payload: task.payload,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      callback: (args: any) => {
+        task.callback(args)
         chunk.updateMeshGeometry()
-      }, Math.random())
+      }
     })
   }
 
