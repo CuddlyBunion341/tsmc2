@@ -8,7 +8,7 @@ export class Sizes extends EventEmitter {
   public height!: number
   public pixelRatio: number = Math.min(window.devicePixelRatio, 2)
   public aspectRatio!: number
-  public renderScale: number = 2
+  public renderScale: number = 1
 
   public sizing: Sizing = 'contain'
 
