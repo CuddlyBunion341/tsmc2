@@ -12,6 +12,10 @@ export class Matrix3d {
     this.data = new Uint8Array(width * height * depth).fill(defaultValue)
   }
 
+  fill(value: number) {
+    this.data.fill(value)
+  }
+
   get(x: number, y: number, z: number) {
     return this.data[this.getIndex(x, y, z)]
   }
