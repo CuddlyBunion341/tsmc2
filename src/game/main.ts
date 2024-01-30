@@ -4,6 +4,7 @@ import { Resource } from '../engine/Resources'
 import { Benchmark } from './utilities/Benchmark'
 import { ChunkManager } from './world/ChunkManager'
 import { TerrainGenerator } from './world/TerrainGenerator'
+import { DistanceField } from './world/raymarcher/DistanceField'
 import { WorkerManager } from './world/workers/WorkerManager'
 
 export default class Game implements Experience {
@@ -32,6 +33,16 @@ export default class Game implements Experience {
       callback: (args: any) => {
         task.callback(args)
         chunk.updateMeshGeometry()
+
+        const distanceField = new DistanceField(chunk.chunkData.data, 1, 20)
+        distanceField.calculateDistanceField()
+
+        const src = distanceField.getTexture()
+        const image = new Image()
+        image.src = src
+
+        document.body.appendChild(image)
+        image.setAttribute('style', 'position: absolute; height: 50%; left: 0; top: 0; border: 1px solid red;')
       }
     })
   }
