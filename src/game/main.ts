@@ -39,12 +39,6 @@ export default class Game implements Experience {
         }
       })
     })
-
-    chunks.forEach((chunk) => {
-      setTimeout(() => {
-        chunk.updateMeshGeometry()
-      }, Math.random())
-    })
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
