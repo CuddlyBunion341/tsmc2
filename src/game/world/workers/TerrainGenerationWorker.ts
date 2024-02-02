@@ -3,8 +3,6 @@ import { Chunk, ChunkMessageData } from '../Chunk'
 self.onmessage = (message: { data: ChunkMessageData }) => {
   const { data } = message
 
-  console.log('Data', message)
-
   const chunk = Chunk.fromMessageData(data)
   chunk.generateTerrain()
 

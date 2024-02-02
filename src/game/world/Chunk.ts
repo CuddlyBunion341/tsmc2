@@ -62,9 +62,9 @@ export class Chunk {
   }
 
   generateTerrain() {
-    for (let x = 0; x < this.chunkData.width; x++) {
-      for (let y = 0; y < this.chunkData.height; y++) {
-        for (let z = 0; z < this.chunkData.depth; z++) {
+    for (let x = -1; x < this.chunkData.width + 1; x++) {
+      for (let y = -1; y < this.chunkData.height + 1; y++) {
+        for (let z = -1; z < this.chunkData.depth + 1; z++) {
           const block = this.terrainGenerator.getBlock(
             x + this.position.x * this.chunkData.width,
             y + this.position.y * this.chunkData.height,

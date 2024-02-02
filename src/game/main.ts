@@ -1,3 +1,5 @@
+import * as THREE from 'three'
+
 import { Engine } from '../engine/Engine'
 import { Experience } from '../engine/Experience'
 import { Resource } from '../engine/Resources'
@@ -14,7 +16,7 @@ export default class Game implements Experience {
   @Benchmark
   init(): void {
     const terrainGenerator = new TerrainGenerator(69420)
-    const chunkManager = new ChunkManager(terrainGenerator, 8, 2, 8)
+    const chunkManager = new ChunkManager(terrainGenerator, new THREE.Vector3(8, 2, 8))
 
     const chunks = chunkManager.createChunksAroundOrigin(0, 0, 0)
 
