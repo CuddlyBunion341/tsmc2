@@ -10,31 +10,51 @@ export class DistanceField extends Matrix3d {
     { dx: 0, dy: 0, dz: -1 },
   ]
 
-  constructor(public voxelData: Matrix3d, public resolutionFactor: number, public yLevel: number) {
+  static readonly directionDimensions = {
+    dx: 'width',
+    dy: 'height',
+    dz: 'depth',
+  } as const
+
+  constructor(public voxelData: Matrix3d, public resolutionFactor: number) {
     super(voxelData.width * resolutionFactor, voxelData.height * resolutionFactor, voxelData.depth * resolutionFactor)
   }
 
   calculateDistanceField() {
     // this.fill(Math.min(this.width, this.height, this.depth) * this.resolutionFactor)
 
-    const y = this.yLevel * this.resolutionFactor
+    DistanceField.sweepDirections.forEach((direction) => {
+      const { dx, dy, dz } = direction
 
-    for (let z = 0; z < this.depth; z++) {
-      let steps = 0
-      for (let x = 0; x < this.width; x++) {
-        if (this.isVoxelEmpty(x, y, z)) {
-          steps++
-          this.set(x, y, z, 1)
+      const constructLoop = (key: keyof typeof direction, callback: (value: number) => void) => {
+        const maxValue = this[DistanceField.directionDimensions[key]]
+
+        if (direction[key] === -1) {
+          for (let i = maxValue; i >= 0; i--) callback(i)
         } else {
-          this.set(x, y, z, 0)
-          for (let dx = 0; dx < steps; dx++) {
-            this.set(x - dx, y, z, dx)
-          }
-
-          steps = 0
+          for (let i = 0; i < maxValue; i++) callback(i)
         }
       }
-    }
+
+      constructLoop('dx', (x: number) => {
+        constructLoop('dy', (y: number) => {
+          let steps = 0
+          constructLoop('dz', (z: number) => {
+            if (this.isVoxelEmpty(x, y, z)) {
+              steps++
+              this.set(x, y, z, 1)
+            } else {
+              this.set(x, y, z, 0)
+              for (let dz = 0; dz < steps; dz++) {
+                this.set(z - dz, y, z, dz)
+              }
+
+              steps = 0
+            }
+          })
+        })
+      })
+    })
   }
 
   isVoxelEmpty(x: number, y: number, z: number) {
@@ -50,14 +70,14 @@ export class DistanceField extends Matrix3d {
   }
 
 
-  getTexture() {
+  getTexture(yLevel: number) {
     const canvas = document.createElement('canvas')
     canvas.width = this.width
     canvas.height = this.depth
     const ctx = canvas.getContext('2d')
     if (!ctx) throw new Error('Ctx could not be retrieved')
 
-    const y = this.yLevel * this.resolutionFactor
+    const y = yLevel * this.resolutionFactor
 
     for (let x = 0; x < this.width; x++) {
       for (let z = 0; z < this.depth; z++) {
