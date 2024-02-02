@@ -1,12 +1,12 @@
 import { Chunk, ChunkMessageData } from '../Chunk'
 
-self.onmessage = (message: { data: ChunkMessageData }) => {
+self.onmessage = (message: MessageEvent<ChunkMessageData>) => {
   const { data } = message
 
   const chunk = Chunk.fromMessageData(data)
   chunk.generateTerrain()
 
-  const arrayBuffer = chunk.chunkData.data.data.buffer
+  const uint8Array = chunk.chunkData.data.data
 
-  postMessage(arrayBuffer, [arrayBuffer])
+  self.postMessage(uint8Array, { transfer: [uint8Array.buffer] })
 }
