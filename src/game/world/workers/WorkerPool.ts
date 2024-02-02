@@ -1,18 +1,14 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type Callback = (args: any) => void
-
-export type WorkerTask = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  message: any
+export interface WorkerTask<T, U> {
+  message: T
   transferable?: Transferable[]
-  callback: Callback
+  callback: (args: MessageEvent<U>) => void
 }
 
-export class WorkerManager {
+export class WorkerManager<T, U> {
   public idleWorkers: Worker[] = []
   public activeWorkers: Worker[] = []
 
-  public taskQueue: WorkerTask[] = []
+  public taskQueue: WorkerTask<T, U>[] = []
 
   constructor(public readonly scriptUrl: string, public readonly workerCount: number) {
     this.initializeWebWorkers()
@@ -25,7 +21,7 @@ export class WorkerManager {
     }
   }
 
-  public enqueueTask(task: WorkerTask) {
+  public enqueueTask(task: WorkerTask<T, U>) {
     const { message, callback, transferable } = task
 
     const idleWorker = this.idleWorkers.pop()
@@ -36,7 +32,7 @@ export class WorkerManager {
     }
 
     idleWorker.postMessage(message, transferable || [])
-    idleWorker.onmessage = (message: unknown) => {
+    idleWorker.onmessage = (message: MessageEvent<U>) => {
       callback(message)
       this.idleWorkers.push(idleWorker)
       requestAnimationFrame(() => {

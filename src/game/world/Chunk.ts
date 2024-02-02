@@ -87,7 +87,7 @@ export class Chunk {
       generatorSeed: this.terrainGenerator.seed
     }
 
-    const callback = (message: { data: ArrayBuffer }) => {
+    const callback = (message: MessageEvent<ArrayBuffer>) => {
       this.chunkData.data.data = new Uint8Array(message.data)
     }
 

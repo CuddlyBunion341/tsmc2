@@ -6,7 +6,8 @@ import { Resource } from '../engine/Resources'
 import { Benchmark } from './utilities/Benchmark'
 import { ChunkManager } from './world/ChunkManager'
 import { TerrainGenerator } from './world/TerrainGenerator'
-import { WorkerManager } from './world/workers/WorkerManager'
+import { WorkerManager } from './world/workers/WorkerPool'
+import { ChunkMessageData } from './world/Chunk'
 
 export default class Game implements Experience {
   resources: Resource[] = []
@@ -23,7 +24,10 @@ export default class Game implements Experience {
     const workerPath = './src/game/world/workers/TerrainGenerationWorker.ts'
     const workerCount = navigator.hardwareConcurrency
 
-    const workerManager = new WorkerManager(workerPath, workerCount)
+    const workerManager = new WorkerManager<ChunkMessageData, ArrayBuffer>(
+      workerPath,
+      workerCount
+    )
 
     chunks.forEach((chunk) => {
       this.engine.scene.add(chunk.mesh)
@@ -32,8 +36,7 @@ export default class Game implements Experience {
 
       workerManager.enqueueTask({
         message: task.message,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        callback: (args: any) => {
+        callback: (args: MessageEvent<ArrayBuffer>) => {
           task.callback(args)
           requestAnimationFrame(() => chunk.updateMeshGeometry())
         }
