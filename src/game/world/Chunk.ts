@@ -18,7 +18,6 @@ export type ChunkMessageData = {
 }
 
 export class Chunk {
-  public static readonly SIZE = 32
   public readonly chunkData: ChunkData
   public readonly chunkMesher: ChunkMesher
   public readonly mesh: THREE.Mesh
