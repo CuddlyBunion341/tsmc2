@@ -8,7 +8,8 @@ export class ChunkManager {
 
   constructor(
     public terrainGenerator: TerrainGenerator,
-    public renderDistance: THREE.Vector3
+    public renderDistance: THREE.Vector3,
+    public readonly chunkSize = new THREE.Vector3(32, 32, 32)
   ) {
     this.chunks = new ChunkStorage()
   }
@@ -24,7 +25,7 @@ export class ChunkManager {
           const newChunk = new Chunk(
             this.terrainGenerator,
             new THREE.Vector3(cx, cy, cz),
-            new THREE.Vector3(32, 32, 32)
+            new THREE.Vector3(this.chunkSize.x, this.chunkSize.y, this.chunkSize.z)
           )
           this.chunks.addChunk(newChunk)
           newChunks.push(newChunk)
