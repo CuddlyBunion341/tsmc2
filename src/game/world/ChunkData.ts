@@ -1,7 +1,7 @@
-import { Matrix3d } from '../util/Matrix3d'
+import { VoxelGrid } from '../util/Matrix3d'
 
 export class ChunkData {
-  public readonly data: Matrix3d
+  public readonly data: VoxelGrid
 
   constructor(
     public readonly width: number = 32,
@@ -10,7 +10,7 @@ export class ChunkData {
   ) {
     // use a 1 block border around the chunk to avoid using neighbor references
     // this results in 2 extra blocks in each dimension
-    this.data = new Matrix3d(width + 2, height + 2, depth + 2, 0)
+    this.data = new VoxelGrid(width + 2, height + 2, depth + 2, 0)
   }
 
   get(x: number, y: number, z: number): number {

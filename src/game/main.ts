@@ -9,7 +9,7 @@ import { WorkerManager } from './world/workers/WorkerManager'
 export default class Game implements Experience {
   resources: Resource[] = []
 
-  constructor(private engine: Engine) { }
+  constructor(private engine: Engine) {}
 
   @Benchmark
   init(): void {
@@ -26,10 +26,10 @@ export default class Game implements Experience {
     chunks.forEach((chunk) => {
       this.engine.scene.add(chunk.mesh)
 
-      const task = chunk.prepareGeneratorWorkerData()
+      const task = chunk.generateWorkerTask()
 
       workerManager.enqueueTask({
-        payload: task.payload,
+        message: task.message,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         callback: (args: any) => {
           task.callback(args)
@@ -46,7 +46,7 @@ export default class Game implements Experience {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  update(delta: number): void { }
+  update(delta: number): void {}
 
-  resize?(): void { }
+  resize?(): void {}
 }

@@ -14,7 +14,7 @@ describe('#constructor()', () => {
 describe('#get()', () => {
   const chunkData = new ChunkData(32, 32, 32)
 
-  it('calls the Matrix3d method with correct params', () => {
+  it('calls the VoxelGrid method with correct params', () => {
     chunkData.data.set(1, 2, 3, 4)
     expect(chunkData.get(0, 1, 2)).toEqual(4)
   })
@@ -23,7 +23,7 @@ describe('#get()', () => {
 describe('#set()', () => {
   const chunkData = new ChunkData(32, 32, 32)
 
-  it('calls the Matrix3d method with correct params', () => {
+  it('calls the VoxelGrid method with correct params', () => {
     chunkData.set(0, 1, 2, 5)
     expect(chunkData.data.get(1, 2, 3)).toEqual(5)
   })

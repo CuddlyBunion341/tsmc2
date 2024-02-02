@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest'
-import { Matrix3d } from './Matrix3d'
+import { VoxelGrid } from './VoxelGrid'
 
 describe('#getIndex()', () => {
-  const chunkData = new Matrix3d(32, 32, 32)
+  const chunkData = new VoxelGrid(32, 32, 32)
 
   it('should return the correct index for the x axis', () => {
     expect(chunkData.getIndex(0, 0, 0)).toBe(0)
@@ -24,7 +24,7 @@ describe('#getIndex()', () => {
 })
 
 describe('#get(), #set()', () => {
-  const chunkData = new Matrix3d(32, 32, 32, 5)
+  const chunkData = new VoxelGrid(32, 32, 32, 5)
   it('should fill the matrix with the default value', () => {
     expect(chunkData.get(0, 0, 0)).toBe(5)
   })

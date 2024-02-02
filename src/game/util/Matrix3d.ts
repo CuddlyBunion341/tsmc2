@@ -1,6 +1,6 @@
-import { TypedArray } from "three"
+import { TypedArray } from 'three'
 
-export class Matrix3d {
+export class VoxelGrid {
   public data: TypedArray
 
   constructor(

@@ -1,3 +1,4 @@
+import * as THREE from 'three'
 import { Chunk } from './Chunk'
 import { ChunkStorage } from './ChunkStorage'
 import { TerrainGenerator } from './TerrainGenerator'
@@ -22,7 +23,11 @@ export class ChunkManager {
         for (let cz = z - this.renderDistanceZ; cz <= z + this.renderDistanceZ; cz++) {
           const chunk = this.chunks.getChunk(cx, cy, cz)
           if (chunk) continue
-          const newChunk = new Chunk(this.terrainGenerator, cx, cy, cz)
+          const newChunk = new Chunk(
+            this.terrainGenerator,
+            new THREE.Vector3(cx, cy, cz),
+            new THREE.Vector3(32, 32, 32)
+          )
           this.chunks.addChunk(newChunk)
           newChunks.push(newChunk)
         }
@@ -36,9 +41,9 @@ export class ChunkManager {
     const chunksToRemove: Chunk[] = []
 
     for (const chunk of this.chunks.chunks.values()) {
-      const dx = Math.abs(chunk.x - x)
-      const dy = Math.abs(chunk.y - y)
-      const dz = Math.abs(chunk.z - z)
+      const dx = Math.abs(chunk.position.x - x)
+      const dy = Math.abs(chunk.position.y - y)
+      const dz = Math.abs(chunk.position.z - z)
       if (
         dx > this.renderDistanceX ||
         dy > this.renderDistanceY ||

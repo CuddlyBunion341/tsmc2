@@ -2,7 +2,8 @@
 export type Callback = (args: any) => void
 
 export type WorkerTask = {
-  payload: unknown
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  message: any
   transferable?: Transferable[]
   callback: Callback
 }
@@ -25,7 +26,7 @@ export class WorkerManager {
   }
 
   public enqueueTask(task: WorkerTask) {
-    const { payload, callback, transferable } = task
+    const { message, callback, transferable } = task
 
     const idleWorker = this.idleWorkers.pop()
 
@@ -34,7 +35,7 @@ export class WorkerManager {
       return
     }
 
-    idleWorker.postMessage(payload, transferable || [])
+    idleWorker.postMessage(message, transferable || [])
     idleWorker.onmessage = (message: unknown) => {
       callback(message)
       this.idleWorkers.push(idleWorker)
