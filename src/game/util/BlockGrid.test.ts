@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { Matrix2d } from './Matrix2d'
+import { Matrix2d } from './BlockGrid'
 
 describe('#getIndex()', () => {
   const data = new Matrix2d(32, 32)

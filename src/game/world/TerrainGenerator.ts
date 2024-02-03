@@ -1,3 +1,4 @@
+import * as THREE from 'three'
 import { FractalNoise2d } from '../utilities/Noise'
 import { blockIds } from './blocks'
 
@@ -11,7 +12,9 @@ export class TerrainGenerator {
     this.noise2d.persistence = 2
   }
 
-  public getBlock(x: number, y: number, z: number) {
+  public getBlock(blockPosition: THREE.Vector3) {
+    const { x, y, z } = blockPosition
+
     const height = this.noise2d.get(x, z) * 20
 
     if (y > height) return blockIds.air

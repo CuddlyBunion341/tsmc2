@@ -19,7 +19,7 @@ export default class Game implements Experience {
     const terrainGenerator = new TerrainGenerator(69420)
     const chunkManager = new ChunkManager(terrainGenerator, new THREE.Vector3(8, 2, 8))
 
-    const chunks = chunkManager.createChunksAroundOrigin(0, 0, 0)
+    const chunks = chunkManager.createChunksAroundOrigin(new THREE.Vector3(0, 0, 0))
 
     const workerPath = './src/game/world/workers/TerrainGenerationWorker.ts'
     const workerCount = navigator.hardwareConcurrency
@@ -32,13 +32,13 @@ export default class Game implements Experience {
     chunks.forEach((chunk) => {
       this.engine.scene.add(chunk.mesh)
 
-      const task = chunk.generateWorkerTask()
+      const task = chunk.generateTerrainGenerationWorkerTask()
 
       workerManager.enqueueTask({
         message: task.message,
         callback: (args: MessageEvent<ArrayBuffer>) => {
           task.callback(args)
-          requestAnimationFrame(() => chunk.updateMeshGeometry())
+          chunk.updateMeshGeometry()
         }
       })
     })

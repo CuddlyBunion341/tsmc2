@@ -9,23 +9,29 @@ export class ChunkManager {
   constructor(
     public terrainGenerator: TerrainGenerator,
     public renderDistance: THREE.Vector3,
-    public readonly chunkSize = new THREE.Vector3(32, 32, 32)
+    chunkSize = new THREE.Vector3(32, 32, 32)
   ) {
-    this.chunks = new ChunkStorage()
+    this.chunks = new ChunkStorage(chunkSize)
   }
 
-  public createChunksAroundOrigin(x: number, y: number, z: number) {
+  public createChunksAroundOrigin(origin: THREE.Vector3) {
     const newChunks: Chunk[] = []
+
+    const { x, y, z } = origin
 
     for (let cx = x - this.renderDistance.x; cx <= x + this.renderDistance.x; cx++) {
       for (let cy = y - this.renderDistance.y; cy <= y + this.renderDistance.y; cy++) {
         for (let cz = z - this.renderDistance.z; cz <= z + this.renderDistance.z; cz++) {
-          const chunk = this.chunks.getChunk(cx, cy, cz)
+          const chunk = this.chunks.getChunk(new THREE.Vector3(cx, cy, cz))
           if (chunk) continue
           const newChunk = new Chunk(
             this.terrainGenerator,
             new THREE.Vector3(cx, cy, cz),
-            new THREE.Vector3(this.chunkSize.x, this.chunkSize.y, this.chunkSize.z)
+            new THREE.Vector3(
+              this.chunks.chunkDimensions.x,
+              this.chunks.chunkDimensions.y,
+              this.chunks.chunkDimensions.z
+            )
           )
           this.chunks.addChunk(newChunk)
           newChunks.push(newChunk)
@@ -36,8 +42,10 @@ export class ChunkManager {
     return newChunks
   }
 
-  public getChunksToUnload(x: number, y: number, z: number) {
+  public getChunksToUnload(origin: THREE.Vector3) {
     const chunksToRemove: Chunk[] = []
+
+    const { x, y, z } = origin
 
     for (const chunk of this.chunks.chunks.values()) {
       const dx = Math.abs(chunk.position.x - x)

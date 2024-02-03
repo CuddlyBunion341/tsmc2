@@ -1,4 +1,4 @@
-import { Matrix2d } from '../util/Matrix2d'
+import { Matrix2d } from '../util/BlockGrid'
 
 export interface Area<T> {
   value: T

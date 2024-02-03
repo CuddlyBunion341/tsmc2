@@ -12,7 +12,7 @@ const buildChunkManager = () => {
 describe('#createChunksAroundOrigin()', () => {
   it('should create the correct amount of chunks', () => {
     const chunkManager = buildChunkManager()
-    const chunks = chunkManager.createChunksAroundOrigin(0, 0, 0)
+    const chunks = chunkManager.createChunksAroundOrigin(new THREE.Vector3(0, 0, 0))
     expect(chunks).toHaveLength(27)
   })
 })
@@ -20,15 +20,15 @@ describe('#createChunksAroundOrigin()', () => {
 describe('#getChunksToUnload()', () => {
   it('should return no chunks if all are within render distance', () => {
     const chunkManager = buildChunkManager()
-    chunkManager.createChunksAroundOrigin(0, 0, 0)
-    const chunksToUnload = chunkManager.getChunksToUnload(0, 0, 0)
+    chunkManager.createChunksAroundOrigin(new THREE.Vector3(0, 0, 0))
+    const chunksToUnload = chunkManager.getChunksToUnload(new THREE.Vector3(0, 0, 0))
     expect(chunksToUnload).toHaveLength(0)
   })
 
   it('should return the correct chunks to unload', () => {
     const chunkManager = buildChunkManager()
-    chunkManager.createChunksAroundOrigin(0, 0, 0)
-    const chunksToUnload = chunkManager.getChunksToUnload(1, 0, 0)
+    chunkManager.createChunksAroundOrigin(new THREE.Vector3(0, 0, 0))
+    const chunksToUnload = chunkManager.getChunksToUnload(new THREE.Vector3(1, 0, 0))
     expect(chunksToUnload).toHaveLength(9)
   })
 })

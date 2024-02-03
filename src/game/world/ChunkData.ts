@@ -1,23 +1,12 @@
-import { VoxelGrid } from '../util/Matrix3d'
+import * as THREE from 'three'
+import { VoxelGrid } from '../util/BlockLattice'
 
-export class ChunkData {
-  public readonly data: VoxelGrid
-
-  constructor(
-    public readonly width: number = 32,
-    public readonly height: number = 32,
-    public readonly depth: number = 32
-  ) {
-    // use a 1 block border around the chunk to avoid using neighbor references
-    // this results in 2 extra blocks in each dimension
-    this.data = new VoxelGrid(width + 2, height + 2, depth + 2, 0)
+export class ChunkData extends VoxelGrid {
+  constructor(dimensions: THREE.Vector3) {
+    super(dimensions.clone().addScalar(2), 0)
   }
 
-  get(x: number, y: number, z: number): number {
-    return this.data.get(x + 1, y + 1, z + 1)
-  }
-
-  set(x: number, y: number, z: number, value: number): void {
-    this.data.set(x + 1, y + 1, z + 1, value)
+  getIndex(blockPosition: THREE.Vector3) {
+    return super.getIndex(blockPosition.clone().addScalar(1))
   }
 }

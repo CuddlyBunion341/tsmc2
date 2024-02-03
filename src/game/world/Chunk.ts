@@ -40,42 +40,30 @@ export class Chunk {
     public readonly position: THREE.Vector3,
     public readonly dimensions: THREE.Vector3
   ) {
-    this.chunkData = new ChunkData(
-      this.dimensions.x,
-      this.dimensions.y,
-      this.dimensions.z
-    )
-    this.chunkMesher = new ChunkMesher(
-      this.chunkData.width,
-      this.chunkData.height,
-      this.chunkData.depth,
-      (x: number, y: number, z: number) => this.chunkData.get(x, y, z)
-    )
+    this.chunkData = new ChunkData(dimensions)
+    this.chunkMesher = new ChunkMesher(dimensions, this.chunkData)
     this.mesh = new THREE.Mesh()
-    this.mesh.position.set(
-      this.position.x * this.chunkData.width,
-      this.position.y * this.chunkData.height,
-      this.position.z * this.chunkData.depth
-    )
+    this.mesh.position.add(this.position.clone().multiply(this.dimensions))
     this.mesh.material = new THREE.MeshMatcapMaterial()
   }
 
   generateTerrain() {
-    for (let x = -1; x < this.chunkData.width + 1; x++) {
-      for (let y = -1; y < this.chunkData.height + 1; y++) {
-        for (let z = -1; z < this.chunkData.depth + 1; z++) {
-          const block = this.terrainGenerator.getBlock(
-            x + this.position.x * this.chunkData.width,
-            y + this.position.y * this.chunkData.height,
-            z + this.position.z * this.chunkData.depth
-          )
-          this.chunkData.set(x, y, z, block)
+    for (let x = -1; x < this.dimensions.x + 1; x++) {
+      for (let y = -1; y < this.dimensions.y + 1; y++) {
+        for (let z = -1; z < this.dimensions.z + 1; z++) {
+          const chunkPosition = new THREE.Vector3(x, y, z)
+          const worldPosition = chunkPosition
+            .clone()
+            .add(this.position.clone().multiply(this.dimensions))
+
+          const block = this.terrainGenerator.getBlock(worldPosition)
+          this.chunkData.set(chunkPosition, block)
         }
       }
     }
   }
 
-  generateWorkerTask() {
+  generateTerrainGenerationWorkerTask() {
     const message = {
       position: { x: this.position.x, y: this.position.y, z: this.position.z },
       dimensions: {
@@ -87,7 +75,7 @@ export class Chunk {
     }
 
     const callback = (message: MessageEvent<ArrayBuffer>) => {
-      this.chunkData.data.data = new Uint8Array(message.data)
+      this.chunkData.data = new Uint8Array(message.data)
     }
 
     return { message, callback }
