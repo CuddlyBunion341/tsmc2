@@ -10,7 +10,7 @@ import { WorkerManager } from './world/workers/WorkerManager'
 export default class Game implements Experience {
   resources: Resource[] = []
 
-  constructor(private engine: Engine) { }
+  constructor(private engine: Engine) {}
 
   @Benchmark
   init(): void {
@@ -32,23 +32,26 @@ export default class Game implements Experience {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       callback: (args: any) => {
         task.callback(args)
-        // chunk.updateMeshGeometry()
+        chunk.updateMeshGeometry()
 
-        const distanceField = new DistanceField(chunk.chunkData.data, 4, 20)
+        const distanceField = new DistanceField(chunk.chunkData, 1)
         distanceField.calculateDistanceField()
 
-        const src = distanceField.getTexture()
+        const src = distanceField.getTexture(20)
         const image = new Image()
         image.src = src
 
         document.body.appendChild(image)
-        image.setAttribute('style', 'position: absolute; height: 50%; left: 0; top: 0; border: 1px solid red; image-rendering: pixelated; ')
+        image.setAttribute(
+          'style',
+          'position: absolute; height: 50%; left: 0; top: 0; border: 1px solid red; image-rendering: pixelated; '
+        )
       }
     })
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  update(delta: number): void { }
+  update(delta: number): void {}
 
-  resize?(): void { }
+  resize?(): void {}
 }

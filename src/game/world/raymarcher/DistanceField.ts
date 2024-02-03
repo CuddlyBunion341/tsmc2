@@ -1,4 +1,6 @@
-import { Matrix3d } from "../../util/Matrix3d"
+import { Vector3 } from 'three'
+import { Matrix3d } from '../../util/Matrix3d'
+import { ChunkData } from '../ChunkData'
 
 export class DistanceField extends Matrix3d {
   static sweepDirections = [
@@ -7,53 +9,53 @@ export class DistanceField extends Matrix3d {
     { dx: 0, dy: 1, dz: 0 },
     { dx: 0, dy: -1, dz: 0 },
     { dx: 0, dy: 0, dz: 1 },
-    { dx: 0, dy: 0, dz: -1 },
+    { dx: 0, dy: 0, dz: -1 }
   ]
 
   static readonly directionDimensions = {
     dx: 'width',
     dy: 'height',
-    dz: 'depth',
+    dz: 'depth'
   } as const
 
-  constructor(public voxelData: Matrix3d, public resolutionFactor: number) {
-    super(voxelData.width * resolutionFactor, voxelData.height * resolutionFactor, voxelData.depth * resolutionFactor)
+  constructor(public voxelData: ChunkData, public resolutionFactor: number) {
+    super(
+      voxelData.width * resolutionFactor,
+      voxelData.height * resolutionFactor,
+      voxelData.depth * resolutionFactor
+    )
   }
 
   calculateDistanceField() {
-    // this.fill(Math.min(this.width, this.height, this.depth) * this.resolutionFactor)
+    this.fill(Math.min(this.width, this.height, this.depth) * this.resolutionFactor)
 
     DistanceField.sweepDirections.forEach((direction) => {
       const { dx, dy, dz } = direction
 
-      const constructLoop = (key: keyof typeof direction, callback: (value: number) => void) => {
-        const maxValue = this[DistanceField.directionDimensions[key]]
+      const directionVector = new Vector3(dx, dy, dz)
+      const dimensionVector = new Vector3(this.width, this.height, this.depth)
 
-        if (direction[key] === -1) {
-          for (let i = maxValue; i >= 0; i--) callback(i)
-        } else {
-          for (let i = 0; i < maxValue; i++) callback(i)
+      for (let y = 0; y < dimensionVector.y; y++) {
+        for (let x = 0; x < dimensionVector.x; x++) {
+          let steps = 0
+          for (let z = 0; z < dimensionVector.z; z++) {
+            if (this.isVoxelEmpty(x, y, z) && z < dimensionVector.z - 1) {
+              steps++
+              continue
+            }
+
+            for (let delta = 1; delta <= steps; delta++) {
+              const position = directionVector
+                .clone()
+                .multiplyScalar(delta)
+                .add(new Vector3(x, y, z))
+              const value = Math.min(delta, this.get(position.x, position.y, position.z))
+              this.set(position.x, position.y, position.z, value)
+            }
+            steps = 0
+          }
         }
       }
-
-      constructLoop('dx', (x: number) => {
-        constructLoop('dy', (y: number) => {
-          let steps = 0
-          constructLoop('dz', (z: number) => {
-            if (this.isVoxelEmpty(x, y, z)) {
-              steps++
-              this.set(x, y, z, 1)
-            } else {
-              this.set(x, y, z, 0)
-              for (let dz = 0; dz < steps; dz++) {
-                this.set(z - dz, y, z, dz)
-              }
-
-              steps = 0
-            }
-          })
-        })
-      })
     })
   }
 
@@ -65,10 +67,9 @@ export class DistanceField extends Matrix3d {
     return this.voxelData.get(
       Math.floor(x / this.resolutionFactor),
       Math.floor(y / this.resolutionFactor),
-      Math.floor(z / this.resolutionFactor),
+      Math.floor(z / this.resolutionFactor)
     )
   }
-
 
   getTexture(yLevel: number) {
     const canvas = document.createElement('canvas')
@@ -81,7 +82,7 @@ export class DistanceField extends Matrix3d {
 
     for (let x = 0; x < this.width; x++) {
       for (let z = 0; z < this.depth; z++) {
-        const value = this.get(x, y, z) / this.resolutionFactor * 10
+        const value = (this.get(x, y, z) / this.resolutionFactor) * 10
         ctx.fillStyle = `rgba(${value}, ${value}, ${value}, ${value})`
         ctx.fillRect(x, z, 1, 1)
       }
