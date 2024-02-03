@@ -39,7 +39,7 @@ export class WorkerManager<T, U> {
     }
 
     this.activeWorkers.push(idleWorker)
-  }
+}
 
   public enqueueTaskFromQueue() {
     if (this.taskQueue.length === 0) return
