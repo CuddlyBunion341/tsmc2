@@ -24,12 +24,19 @@ export class DistanceField extends Matrix3d {
       voxelData.height * resolutionFactor,
       voxelData.depth * resolutionFactor
     )
+    const maxDimension = Math.max(this.width, this.height, this.depth)
+    const maxFieldValue = 255
+    if (resolutionFactor * maxDimension >= maxFieldValue) {
+      throw new Error('Resolution factor is too high')
+    }
   }
 
   calculateDistanceField() {
     this.fill(Math.min(this.width, this.height, this.depth) * this.resolutionFactor)
 
-    DistanceField.sweepDirections.forEach((direction) => {
+    DistanceField.sweepDirections.forEach((direction, index) => {
+      if (index > 0) return
+
       const { dx, dy, dz } = direction
 
       const directionVector = new Vector3(dx, dy, dz)
@@ -39,12 +46,13 @@ export class DistanceField extends Matrix3d {
         for (let x = 0; x < dimensionVector.x; x++) {
           let steps = 0
           for (let z = 0; z < dimensionVector.z; z++) {
-            if (this.isVoxelEmpty(x, y, z) && z < dimensionVector.z - 1) {
+            if (this.isVoxelEmpty(x, y, z) || z == dimensionVector.z - 1) {
               steps++
+              this.set(x, y, z, steps * this.resolutionFactor)
               continue
             }
 
-            for (let delta = 1; delta <= steps; delta++) {
+            for (let delta = 0; delta <= steps; delta++) {
               const position = directionVector
                 .clone()
                 .multiplyScalar(delta)
