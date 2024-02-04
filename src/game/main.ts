@@ -37,7 +37,7 @@ export default class Game implements Experience {
         const distanceField = new DistanceField(chunk.chunkData, 1)
         distanceField.calculateDistanceField()
 
-        const src = distanceField.getTexture(20)
+        const src = distanceField.generateTexture(20)
         const image = new Image()
         image.src = src
 

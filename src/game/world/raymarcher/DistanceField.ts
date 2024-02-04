@@ -32,39 +32,35 @@ export class DistanceField extends Matrix3d {
   }
 
   calculateDistanceField() {
-    this.fill(Math.min(this.width, this.height, this.depth) * this.resolutionFactor)
+    this.fill(255)
 
-    DistanceField.sweepDirections.forEach((direction, index) => {
-      if (index > 0) return
+    const directionVector = new Vector3(0, 0, 1)
+    const dimensionVector = new Vector3(this.width, this.height, this.depth)
 
-      const { dx, dy, dz } = direction
+    for (let y = 0; y < dimensionVector.y; y++) {
+      for (let x = 0; x < dimensionVector.x; x++) {
+        let steps = 0
+        for (let z = 0; z < dimensionVector.z; z++) {
+          const empty = this.isVoxelEmpty(x, y, z)
+          const onEdge = z == dimensionVector.z - 1
 
-      const directionVector = new Vector3(dx, dy, dz)
-      const dimensionVector = new Vector3(this.width, this.height, this.depth)
-
-      for (let y = 0; y < dimensionVector.y; y++) {
-        for (let x = 0; x < dimensionVector.x; x++) {
-          let steps = 0
-          for (let z = 0; z < dimensionVector.z; z++) {
-            if (this.isVoxelEmpty(x, y, z) || z == dimensionVector.z - 1) {
-              steps++
-              this.set(x, y, z, steps * this.resolutionFactor)
-              continue
-            }
-
-            for (let delta = 0; delta <= steps; delta++) {
-              const position = directionVector
-                .clone()
-                .multiplyScalar(delta)
-                .add(new Vector3(x, y, z))
-              const value = Math.min(delta, this.get(position.x, position.y, position.z))
-              this.set(position.x, position.y, position.z, value)
-            }
-            steps = 0
+          if (empty && !onEdge) {
+            steps++
+            continue
           }
+
+          for (let delta = 0; delta <= steps; delta++) {
+            const position = directionVector
+              .clone()
+              .multiplyScalar(-delta)
+              .add(new Vector3(x, y, z))
+            const value = Math.min(delta, this.get(position.x, position.y, position.z))
+            this.set(position.x, position.y, position.z, value)
+          }
+          steps = 0
         }
       }
-    })
+    }
   }
 
   isVoxelEmpty(x: number, y: number, z: number) {
@@ -79,7 +75,7 @@ export class DistanceField extends Matrix3d {
     )
   }
 
-  getTexture(yLevel: number) {
+  generateTexture(yLevel: number) {
     const canvas = document.createElement('canvas')
     canvas.width = this.width
     canvas.height = this.depth
