@@ -34,8 +34,8 @@ export class DistanceField extends Matrix3d {
   calculateDistanceField() {
     this.fill(255)
 
-    const directionVector = new Vector3(0, 0, 1)
     const dimensionVector = new Vector3(this.width, this.height, this.depth)
+    let directionVector = new Vector3(0, 0, 1)
 
     for (let y = 0; y < dimensionVector.y; y++) {
       for (let x = 0; x < dimensionVector.x; x++) {
@@ -70,6 +70,60 @@ export class DistanceField extends Matrix3d {
         for (let z = dimensionVector.z - 1; z >= 0; z--) {
           const empty = this.isVoxelEmpty(x, y, z)
           const onEdge = z == 0
+
+          if (empty && !onEdge) {
+            steps++
+            continue
+          }
+
+          for (let delta = 0; delta <= steps; delta++) {
+            const position = directionVector
+              .clone()
+              .multiplyScalar(-delta)
+              .add(new Vector3(x, y, z))
+            const value = Math.min(delta, this.get(position.x, position.y, position.z))
+            this.set(position.x, position.y, position.z, value)
+          }
+          steps = 0
+        }
+      }
+    }
+
+    directionVector = new Vector3(1, 0, 0)
+
+    for (let y = 0; y < dimensionVector.y; y++) {
+      for (let z = 0; z < dimensionVector.z; z++) {
+        let steps = 0
+        for (let x = 0; x < dimensionVector.x; x++) {
+          const empty = this.isVoxelEmpty(x, y, z)
+          const onEdge = x == dimensionVector.x - 1
+
+          if (empty && !onEdge) {
+            steps++
+            continue
+          }
+
+          for (let delta = 0; delta <= steps; delta++) {
+            const position = directionVector
+              .clone()
+              .multiplyScalar(-delta)
+              .add(new Vector3(x, y, z))
+            const value = Math.min(delta, this.get(position.x, position.y, position.z))
+            this.set(position.x, position.y, position.z, value)
+          }
+          steps = 0
+        }
+      }
+    }
+
+    directionVector.multiplyScalar(-1)
+
+    for (let y = 0; y < dimensionVector.y; y++) {
+      for (let z = 0; z < dimensionVector.z; z++) {
+        let steps = 0
+        for (let x = dimensionVector.x - 1; x >= 0; x--) {
+          const empty = this.isVoxelEmpty(x, y, z)
+          const onEdge = x == 0
 
           if (empty && !onEdge) {
             steps++
