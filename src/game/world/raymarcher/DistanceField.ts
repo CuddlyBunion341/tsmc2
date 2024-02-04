@@ -61,6 +61,33 @@ export class DistanceField extends Matrix3d {
         }
       }
     }
+
+    directionVector.multiplyScalar(-1)
+
+    for (let y = 0; y < dimensionVector.y; y++) {
+      for (let x = 0; x < dimensionVector.x; x++) {
+        let steps = 0
+        for (let z = dimensionVector.z - 1; z >= 0; z--) {
+          const empty = this.isVoxelEmpty(x, y, z)
+          const onEdge = z == 0
+
+          if (empty && !onEdge) {
+            steps++
+            continue
+          }
+
+          for (let delta = 0; delta <= steps; delta++) {
+            const position = directionVector
+              .clone()
+              .multiplyScalar(-delta)
+              .add(new Vector3(x, y, z))
+            const value = Math.min(delta, this.get(position.x, position.y, position.z))
+            this.set(position.x, position.y, position.z, value)
+          }
+          steps = 0
+        }
+      }
+    }
   }
 
   isVoxelEmpty(x: number, y: number, z: number) {
