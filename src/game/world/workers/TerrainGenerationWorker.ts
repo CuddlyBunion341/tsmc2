@@ -1,35 +1,12 @@
-import { ChunkData } from '../ChunkData'
-import { TerrainGenerator } from '../TerrainGenerator'
+import { Chunk, ChunkMessageData } from '../Chunk'
 
-self.onmessage = (message) => {
+self.onmessage = (message: MessageEvent<ChunkMessageData>) => {
   const { data } = message
-  const {
-    chunkX,
-    chunkY,
-    chunkZ,
-    chunkWidth,
-    chunkHeight,
-    chunkDepth,
-    terrainGeneratorSeed
-  } = data
 
-  const terrainGenerator = new TerrainGenerator(terrainGeneratorSeed)
-  const chunkData = new ChunkData(chunkWidth, chunkHeight, chunkDepth)
+  const chunk = Chunk.fromMessageData(data)
+  chunk.generateTerrain()
 
-  for (let x = -1; x < chunkWidth + 1; x++) {
-    for (let y = -1; y < chunkHeight + 1; y++) {
-      for (let z = -1; z < chunkDepth + 1; z++) {
-        const block = terrainGenerator.getBlock(
-          x + chunkX * chunkWidth,
-          y + chunkY * chunkHeight,
-          z + chunkZ * chunkDepth
-        )
-        chunkData.set(x, y, z, block)
-      }
-    }
-  }
+  const uint8Array = chunk.chunkData.data
 
-  const arrayBuffer = chunkData.data.data.buffer
-
-  postMessage(arrayBuffer, [arrayBuffer])
+  self.postMessage(uint8Array, { transfer: [uint8Array.buffer] })
 }

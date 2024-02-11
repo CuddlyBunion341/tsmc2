@@ -1,3 +1,4 @@
+import * as THREE from 'three'
 import { describe, it, expect, beforeEach } from 'vitest'
 import { ChunkMesher, Vertex } from './ChunkMesher'
 import { ChunkData } from './ChunkData'
@@ -18,8 +19,11 @@ const assertVertexData = (vertex: Vertex) => {
 
 describe('#generateFaceGeometry()', () => {
   it('should generate the correct face', () => {
-    const chunkMesher = new ChunkMesher(0, 0, 0, () => 0)
-    const faceVertices = chunkMesher.generateFaceVertices(0, 0, 0, 0)
+    const chunkMesher = new ChunkMesher(
+      new THREE.Vector3(1, 1, 1),
+      new ChunkData(new THREE.Vector3(1, 1, 1))
+    )
+    const faceVertices = chunkMesher.generateFaceVertices(0, new THREE.Vector3(0, 0, 0))
     expect(faceVertices).toHaveLength(4)
   })
 })
@@ -29,32 +33,28 @@ describe('#generateVertexData()', () => {
   let chunkMesher: ChunkMesher
 
   beforeEach(() => {
-    chunkData = new ChunkData()
-    chunkMesher = new ChunkMesher(
-      chunkData.width,
-      chunkData.height,
-      chunkData.depth,
-      (x, y, z) => chunkData.get(x, y, z)
-    )
+    const dimensions = new THREE.Vector3(32, 32, 32)
+    chunkData = new ChunkData(dimensions)
+    chunkMesher = new ChunkMesher(dimensions, chunkData)
   })
 
   it('should generate correct vertices for a cube', () => {
-    chunkData.set(0, 0, 0, blockIds.stone)
+    chunkData.set(new THREE.Vector3(0, 0, 0), blockIds.stone)
     const { vertices } = chunkMesher.generateChunkVertices()
     expect(vertices).toHaveLength(4 * 6)
     vertices.forEach(assertVertexData)
   })
 
   it('should generate correct vertices when face culling', () => {
-    chunkData.set(0, 0, 0, blockIds.stone)
-    chunkData.set(1, 0, 0, blockIds.stone)
+    chunkData.set(new THREE.Vector3(0, 0, 0), blockIds.stone)
+    chunkData.set(new THREE.Vector3(1, 0, 0), blockIds.stone)
     const { vertices } = chunkMesher.generateChunkVertices()
     expect(vertices).toHaveLength(4 * 6 + 4 * 4)
     vertices.forEach(assertVertexData)
   })
 
   it('should generate the correct amount of indices', () => {
-    chunkData.set(0, 0, 0, blockIds.stone)
+    chunkData.set(new THREE.Vector3(0, 0, 0), blockIds.stone)
     const { indices } = chunkMesher.generateChunkVertices()
     expect(indices).toHaveLength(6 * 6)
   })

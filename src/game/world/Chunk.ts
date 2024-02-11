@@ -3,52 +3,84 @@ import { ChunkMesher } from './ChunkMesher'
 import * as THREE from 'three'
 import { TerrainGenerator } from './TerrainGenerator'
 
+export type ChunkMessageData = {
+  position: {
+    x: number
+    y: number
+    z: number
+  }
+  dimensions: {
+    width: number
+    height: number
+    depth: number
+  }
+  generatorSeed: number
+}
+
 export class Chunk {
-  public static readonly SIZE = 32
   public readonly chunkData: ChunkData
   public readonly chunkMesher: ChunkMesher
   public readonly mesh: THREE.Mesh
 
+  public static fromMessageData(data: ChunkMessageData) {
+    const { position, dimensions, generatorSeed } = data
+    const { x, y, z } = position
+    const { width, height, depth } = dimensions
+
+    const chunk = new Chunk(
+      new TerrainGenerator(generatorSeed),
+      new THREE.Vector3(x, y, z),
+      new THREE.Vector3(width, height, depth)
+    )
+    return chunk
+  }
+
   constructor(
     public readonly terrainGenerator: TerrainGenerator,
-    public readonly x: number,
-    public readonly y: number,
-    public readonly z: number
+    public readonly position: THREE.Vector3,
+    public readonly dimensions: THREE.Vector3
   ) {
-    this.chunkData = new ChunkData(Chunk.SIZE, Chunk.SIZE, Chunk.SIZE)
-    this.chunkMesher = new ChunkMesher(
-      this.chunkData.width,
-      this.chunkData.height,
-      this.chunkData.depth,
-      (x: number, y: number, z: number) => this.chunkData.get(x, y, z)
-    )
+    this.chunkData = new ChunkData(dimensions)
+    this.chunkMesher = new ChunkMesher(dimensions, this.chunkData)
     this.mesh = new THREE.Mesh()
-    this.mesh.position.set(
-      this.x * this.chunkData.width,
-      this.y * this.chunkData.height,
-      this.z * this.chunkData.depth
-    )
+    this.mesh.position.add(this.position.clone().multiply(this.dimensions))
     this.mesh.material = new THREE.MeshMatcapMaterial()
   }
 
-  prepareGeneratorWorkerData() {
-    const payload = {
-      chunkX: this.x,
-      chunkY: this.y,
-      chunkZ: this.z,
-      chunkWidth: this.chunkData.width,
-      chunkHeight: this.chunkData.height,
-      chunkDepth: this.chunkData.depth,
-      terrainGeneratorSeed: this.terrainGenerator.seed
+  generateTerrain() {
+    const chunkPosition = new THREE.Vector3(0,0,0)
+
+    for (let x = -1; x < this.dimensions.x + 1; x++) {
+      for (let y = -1; y < this.dimensions.y + 1; y++) {
+        for (let z = -1; z < this.dimensions.z + 1; z++) {
+          chunkPosition.set(x,y,z)
+          const worldPosition = chunkPosition
+            .clone()
+            .add(this.position.clone().multiply(this.dimensions))
+
+          const block = this.terrainGenerator.getBlock(worldPosition)
+          this.chunkData.set(chunkPosition, block)
+        }
+      }
+    }
+  }
+
+  generateTerrainGenerationWorkerTask() {
+    const message = {
+      position: { x: this.position.x, y: this.position.y, z: this.position.z },
+      dimensions: {
+        width: this.dimensions.x,
+        height: this.dimensions.y,
+        depth: this.dimensions.z
+      },
+      generatorSeed: this.terrainGenerator.seed
     }
 
-    const transferable = [this.chunkData.data.data.buffer]
-
-    const callback = (payload: { data: ArrayBuffer }) => {
-      this.chunkData.data.data = new Uint8Array(payload.data)
+    const callback = (message: MessageEvent<ArrayBuffer>) => {
+      this.chunkData.data = new Uint8Array(message.data)
     }
 
-    return { payload, transferable, callback }
+    return { message, callback }
   }
 
   // @Benchmark

@@ -1,35 +1,42 @@
+import * as THREE from 'three'
 import { Chunk } from './Chunk'
 
 export class ChunkStorage {
   public readonly chunks: Map<string, Chunk>
 
-  constructor() {
+  constructor(public chunkDimensions: THREE.Vector3) {
     this.chunks = new Map()
   }
 
-  getBlock(x: number, y: number, z: number) {
-    const chunk = this.getBlockChunk(x, y, z)
-    if (!chunk) return 0
-    return chunk.chunkData.get(x % Chunk.SIZE, y % Chunk.SIZE, z % Chunk.SIZE)
-  }
+  getBlock(blockPosition: THREE.Vector3) {
+    const chunk = this.getBlockChunk(blockPosition)
+    if (!chunk) throw new Error(`Chunk not found for block at ${blockPosition}`)
 
-  getBlockChunk(x: number, y: number, z: number) {
-    return this.getChunk(
-      Math.floor(x / Chunk.SIZE),
-      Math.floor(y / Chunk.SIZE),
-      Math.floor(z / Chunk.SIZE)
+    const { x, y, z } = blockPosition
+
+    const localPosition = new THREE.Vector3(
+      x % this.chunkDimensions.x,
+      y % this.chunkDimensions.y,
+      z % this.chunkDimensions.z
     )
+
+    return chunk.chunkData.get(localPosition)
   }
 
-  getChunk(x: number, y: number, z: number) {
-    return this.chunks.get(this.getChunkKey(x, y, z))
+  getBlockChunk(blockPosition: THREE.Vector3) {
+    return this.getChunk(blockPosition.clone().divide(this.chunkDimensions).floor())
+  }
+
+  getChunk(chunkPosition: THREE.Vector3) {
+    return this.chunks.get(this.getChunkKey(chunkPosition))
   }
 
   addChunk(chunk: Chunk) {
-    this.chunks.set(this.getChunkKey(chunk.x, chunk.y, chunk.z), chunk)
+    this.chunks.set(this.getChunkKey(chunk.position), chunk)
   }
 
-  getChunkKey(x: number, y: number, z: number) {
+  getChunkKey(chunkPosition: THREE.Vector3) {
+    const { x, y, z } = chunkPosition
     return `${x},${y},${z}`
   }
 }

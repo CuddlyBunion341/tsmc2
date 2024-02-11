@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { blocks } from './blocks'
+import { ChunkData } from './ChunkData'
 
 export type Vertex = {
   position: [number, number, number]
@@ -53,10 +54,8 @@ export class ChunkMesher {
   static vertexIndices = [0, 1, 2, 2, 1, 3] as const
 
   constructor(
-    public readonly width: number,
-    public readonly height: number,
-    public readonly depth: number,
-    public readonly blockGetter: (x: number, y: number, z: number) => number
+    public readonly dimensions: THREE.Vector3,
+    public readonly chunkData: ChunkData
   ) {}
 
   generateMesh() {
@@ -88,8 +87,8 @@ export class ChunkMesher {
     return !blocks[block]?.transparent
   }
 
-  private isSolid(x: number, y: number, z: number) {
-    return ChunkMesher.isSolid(this.blockGetter(x, y, z))
+  private isSolid(blockPosition: THREE.Vector3) {
+    return ChunkMesher.isSolid(this.chunkData.get(blockPosition))
   }
 
   generateChunkVertices() {
@@ -98,26 +97,30 @@ export class ChunkMesher {
 
     let lastIndex = 0
 
-    for (let x = 0; x < this.width; x++) {
-      for (let y = 0; y < this.height; y++) {
-        for (let z = 0; z < this.depth; z++) {
-          const block = this.blockGetter(x, y, z)
+    const blockPosition = new THREE.Vector3(0,0,0)
+    const neighborPosition = new THREE.Vector3(0,0,0)
+
+    for (let x = 0; x < this.dimensions.x; x++) {
+      for (let y = 0; y < this.dimensions.y; y++) {
+        for (let z = 0; z < this.dimensions.z; z++) {
+          blockPosition.set(x, y,z)
+          const block = this.chunkData.get(blockPosition)
           if (!ChunkMesher.isSolid(block)) continue
 
           // use a face mask to determine which faces to render
           let faceMask = 0b000000
-          if (!this.isSolid(x - 1, y, z)) faceMask |= 0b000001 // 1
-          if (!this.isSolid(x + 1, y, z)) faceMask |= 0b000010 // 2
-          if (!this.isSolid(x, y - 1, z)) faceMask |= 0b000100 // 4
-          if (!this.isSolid(x, y + 1, z)) faceMask |= 0b001000 // 8
-          if (!this.isSolid(x, y, z - 1)) faceMask |= 0b010000 // 16
-          if (!this.isSolid(x, y, z + 1)) faceMask |= 0b100000 // 32
+          if (!this.isSolid(neighborPosition.set(x - 1, y, z))) faceMask |= 0b000001 // 1
+          if (!this.isSolid(neighborPosition.set(x + 1, y, z))) faceMask |= 0b000010 // 2
+          if (!this.isSolid(neighborPosition.set(x, y - 1, z))) faceMask |= 0b000100 // 4
+          if (!this.isSolid(neighborPosition.set(x, y + 1, z))) faceMask |= 0b001000 // 8
+          if (!this.isSolid(neighborPosition.set(x, y, z - 1))) faceMask |= 0b010000 // 16
+          if (!this.isSolid(neighborPosition.set(x, y, z + 1))) faceMask |= 0b100000 // 32
           if (faceMask === 0b000000) continue
 
           for (let i = 0; i < FACE_COUNT; i++) {
             // check if the current face is visible
             if ((faceMask & (1 << i)) === 0) continue
-            const faceVertices = this.generateFaceVertices(i, x, y, z)
+            const faceVertices = this.generateFaceVertices(i, blockPosition)
             vertices.push(...faceVertices)
 
             indices.push(...ChunkMesher.vertexIndices.map((v) => lastIndex + v))
@@ -130,17 +133,18 @@ export class ChunkMesher {
     return { vertices, indices }
   }
 
-  generateFaceVertices(faceIndex: number, x: number, y: number, z: number) {
+  generateFaceVertices(faceIndex: number, blockPosition: THREE.Vector3) {
     const firstFaceVertexIndex = faceIndex * FACE_VERTEX_COUNT
 
     const faceVertices = ChunkMesher.vertexData
       .slice(firstFaceVertexIndex, firstFaceVertexIndex + FACE_VERTEX_COUNT)
       .map((vertex) => {
         const position: [number, number, number] = [
-          vertex.position[0] / 2 + x,
-          vertex.position[1] / 2 + y,
-          vertex.position[2] / 2 + z
+          vertex.position[0] / 2 + blockPosition.x,
+          vertex.position[1] / 2 + blockPosition.y,
+          vertex.position[2] / 2 + blockPosition.z
         ]
+
         // TODO: calculate light level
         // TODO: calculate AO
         // TODO: calculate UVs

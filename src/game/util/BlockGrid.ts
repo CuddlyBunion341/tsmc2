@@ -1,4 +1,4 @@
-export class Matrix2d<T> {
+export class BlockGrid<T> {
   public readonly data: T[]
 
   constructor(
