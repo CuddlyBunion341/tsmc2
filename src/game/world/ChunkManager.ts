@@ -19,13 +19,13 @@ export class ChunkManager {
 
     const { x, y, z } = origin
 
-    const chunkPosition = new THREE.Vector3(0,0,0)
+    const chunkPosition = new THREE.Vector3(0, 0, 0)
 
     const chunkDimensions = new THREE.Vector3(
-              this.chunks.chunkDimensions.x,
-              this.chunks.chunkDimensions.y,
-              this.chunks.chunkDimensions.z
-            )
+      this.chunks.chunkDimensions.x,
+      this.chunks.chunkDimensions.y,
+      this.chunks.chunkDimensions.z
+    )
 
     for (let cx = x - this.renderDistance.x; cx <= x + this.renderDistance.x; cx++) {
       for (let cy = y - this.renderDistance.y; cy <= y + this.renderDistance.y; cy++) {
