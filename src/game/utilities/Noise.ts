@@ -5,13 +5,6 @@
 import { NoiseFunction2D, createNoise2D } from 'simplex-noise'
 import { MersenneTwister19937, Random } from 'random-js'
 
-// interface FractalNoise {
-//   amplitude: number
-//   frequency: number
-//   lacunarity: number
-//   persistence: number
-// }
-
 export function seededRandomizer(seed: number) {
   const engine = MersenneTwister19937.seed(seed)
   const random = new Random(engine)

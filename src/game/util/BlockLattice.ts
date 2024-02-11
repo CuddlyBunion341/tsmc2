@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 
-export class VoxelGrid {
+export class BlockLattice {
   public data: THREE.TypedArray
 
   constructor(public readonly dimensions: THREE.Vector3, defaultValue: number = 0) {

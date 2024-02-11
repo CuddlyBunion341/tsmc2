@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest'
-import { Matrix2d } from './BlockGrid'
+import { BlockGrid } from './BlockGrid'
 
 describe('#getIndex()', () => {
-  const data = new Matrix2d(32, 32)
+  const data = new BlockGrid(32, 32)
 
   it('should return the correct index for the x axis', () => {
     expect(data.getIndex(0, 0)).toBe(0)
@@ -18,7 +18,7 @@ describe('#getIndex()', () => {
 })
 
 describe('#get(), #set()', () => {
-  const data = new Matrix2d(32, 32, 5)
+  const data = new BlockGrid(32, 32, 5)
   it('should fill the matrix with the default value', () => {
     expect(data.get(0, 0)).toBe(5)
     expect(data.get(5, 5)).toBe(5)

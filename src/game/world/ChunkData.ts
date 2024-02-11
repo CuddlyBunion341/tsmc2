@@ -1,7 +1,7 @@
 import * as THREE from 'three'
-import { VoxelGrid } from '../util/BlockLattice'
+import { BlockLattice } from '../util/BlockLattice'
 
-export class ChunkData extends VoxelGrid {
+export class ChunkData extends BlockLattice {
   constructor(dimensions: THREE.Vector3) {
     super(dimensions.clone().addScalar(2), 0)
   }

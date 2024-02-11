@@ -1,9 +1,9 @@
 import * as THREE from 'three'
 import { describe, it, expect } from 'vitest'
-import { VoxelGrid } from './BlockLattice'
+import { BlockLattice } from './BlockLattice'
 
 describe('#getIndex()', () => {
-  const chunkData = new VoxelGrid(new THREE.Vector3(32, 32, 32))
+  const chunkData = new BlockLattice(new THREE.Vector3(32, 32, 32))
 
   it('should return the correct index for the x axis', () => {
     expect(chunkData.getIndex(new THREE.Vector3(0, 0, 0))).toBe(0)
@@ -25,7 +25,7 @@ describe('#getIndex()', () => {
 })
 
 describe('#get(), #set()', () => {
-  const chunkData = new VoxelGrid(new THREE.Vector3(32, 32, 32), 5)
+  const chunkData = new BlockLattice(new THREE.Vector3(32, 32, 32), 5)
   it('should fill the matrix with the default value', () => {
     expect(chunkData.get(new THREE.Vector3(0, 0, 0))).toBe(5)
   })

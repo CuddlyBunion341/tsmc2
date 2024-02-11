@@ -1,4 +1,4 @@
-import { Matrix2d } from '../util/BlockGrid'
+import { BlockGrid } from '../util/BlockGrid'
 
 export interface Area<T> {
   value: T
@@ -12,7 +12,7 @@ export interface Area<T> {
 export class GreedyMesher2d<T> {
   public areas: Area<T>[]
   public currentArea: Area<T>
-  public processed: Matrix2d<boolean>
+  public processed: BlockGrid<boolean>
   public isDone: boolean
 
   constructor(
@@ -24,7 +24,7 @@ export class GreedyMesher2d<T> {
   ) {
     this.areas = []
     this.currentArea = this.newArea(0, 0)
-    this.processed = new Matrix2d(width, height, false)
+    this.processed = new BlockGrid(width, height, false)
     this.isDone = false
   }
 
