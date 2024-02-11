@@ -15,12 +15,11 @@ export class ChunkManager {
   }
 
   public createChunksAroundOrigin(origin: THREE.Vector3) {
-    const newChunks: Chunk[] = []
-
     const { x, y, z } = origin
 
-    const chunkPosition = new THREE.Vector3(0, 0, 0)
+    const newChunks: Chunk[] = []
 
+    const chunkPosition = new THREE.Vector3(0, 0, 0)
     const chunkDimensions = new THREE.Vector3(
       this.chunks.chunkDimensions.x,
       this.chunks.chunkDimensions.y,
@@ -30,13 +29,17 @@ export class ChunkManager {
     for (let cx = x - this.renderDistance.x; cx <= x + this.renderDistance.x; cx++) {
       for (let cy = y - this.renderDistance.y; cy <= y + this.renderDistance.y; cy++) {
         for (let cz = z - this.renderDistance.z; cz <= z + this.renderDistance.z; cz++) {
-          const chunk = this.chunks.getChunk(chunkPosition.set(cx, cy, cz))
+          chunkPosition.set(cx, cy, cz)
+
+          const chunk = this.chunks.getChunk(chunkPosition)
           if (chunk) continue
+
           const newChunk = new Chunk(
             this.terrainGenerator,
             chunkPosition.clone(),
             chunkDimensions
           )
+
           this.chunks.addChunk(newChunk)
           newChunks.push(newChunk)
         }
@@ -52,13 +55,15 @@ export class ChunkManager {
     const { x, y, z } = origin
 
     for (const chunk of this.chunks.chunks.values()) {
-      const dx = Math.abs(chunk.position.x - x)
-      const dy = Math.abs(chunk.position.y - y)
-      const dz = Math.abs(chunk.position.z - z)
+      const distance = new THREE.Vector3(
+        Math.abs(chunk.position.x - x),
+        Math.abs(chunk.position.y - y),
+        Math.abs(chunk.position.z - z)
+      )
       if (
-        dx > this.renderDistance.x ||
-        dy > this.renderDistance.y ||
-        dz > this.renderDistance.z
+        distance.x > this.renderDistance.x ||
+        distance.y > this.renderDistance.y ||
+        distance.z > this.renderDistance.z
       ) {
         chunksToRemove.push(chunk)
       }
