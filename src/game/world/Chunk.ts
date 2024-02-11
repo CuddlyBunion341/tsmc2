@@ -48,10 +48,12 @@ export class Chunk {
   }
 
   generateTerrain() {
+    const chunkPosition = new THREE.Vector3(0,0,0)
+
     for (let x = -1; x < this.dimensions.x + 1; x++) {
       for (let y = -1; y < this.dimensions.y + 1; y++) {
         for (let z = -1; z < this.dimensions.z + 1; z++) {
-          const chunkPosition = new THREE.Vector3(x, y, z)
+          chunkPosition.set(x,y,z)
           const worldPosition = chunkPosition
             .clone()
             .add(this.position.clone().multiply(this.dimensions))

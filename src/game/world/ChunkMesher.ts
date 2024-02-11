@@ -97,21 +97,24 @@ export class ChunkMesher {
 
     let lastIndex = 0
 
+    const blockPosition = new THREE.Vector3(0,0,0)
+    const neighborPosition = new THREE.Vector3(0,0,0)
+
     for (let x = 0; x < this.dimensions.x; x++) {
       for (let y = 0; y < this.dimensions.y; y++) {
         for (let z = 0; z < this.dimensions.z; z++) {
-          const blockPosition = new THREE.Vector3(x, y, z)
+          blockPosition.set(x, y,z)
           const block = this.chunkData.get(blockPosition)
           if (!ChunkMesher.isSolid(block)) continue
 
           // use a face mask to determine which faces to render
           let faceMask = 0b000000
-          if (!this.isSolid(new THREE.Vector3(x - 1, y, z))) faceMask |= 0b000001 // 1
-          if (!this.isSolid(new THREE.Vector3(x + 1, y, z))) faceMask |= 0b000010 // 2
-          if (!this.isSolid(new THREE.Vector3(x, y - 1, z))) faceMask |= 0b000100 // 4
-          if (!this.isSolid(new THREE.Vector3(x, y + 1, z))) faceMask |= 0b001000 // 8
-          if (!this.isSolid(new THREE.Vector3(x, y, z - 1))) faceMask |= 0b010000 // 16
-          if (!this.isSolid(new THREE.Vector3(x, y, z + 1))) faceMask |= 0b100000 // 32
+          if (!this.isSolid(neighborPosition.set(x - 1, y, z))) faceMask |= 0b000001 // 1
+          if (!this.isSolid(neighborPosition.set(x + 1, y, z))) faceMask |= 0b000010 // 2
+          if (!this.isSolid(neighborPosition.set(x, y - 1, z))) faceMask |= 0b000100 // 4
+          if (!this.isSolid(neighborPosition.set(x, y + 1, z))) faceMask |= 0b001000 // 8
+          if (!this.isSolid(neighborPosition.set(x, y, z - 1))) faceMask |= 0b010000 // 16
+          if (!this.isSolid(neighborPosition.set(x, y, z + 1))) faceMask |= 0b100000 // 32
           if (faceMask === 0b000000) continue
 
           for (let i = 0; i < FACE_COUNT; i++) {

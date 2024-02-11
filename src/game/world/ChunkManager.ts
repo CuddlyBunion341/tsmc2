@@ -19,19 +19,23 @@ export class ChunkManager {
 
     const { x, y, z } = origin
 
-    for (let cx = x - this.renderDistance.x; cx <= x + this.renderDistance.x; cx++) {
-      for (let cy = y - this.renderDistance.y; cy <= y + this.renderDistance.y; cy++) {
-        for (let cz = z - this.renderDistance.z; cz <= z + this.renderDistance.z; cz++) {
-          const chunk = this.chunks.getChunk(new THREE.Vector3(cx, cy, cz))
-          if (chunk) continue
-          const newChunk = new Chunk(
-            this.terrainGenerator,
-            new THREE.Vector3(cx, cy, cz),
-            new THREE.Vector3(
+    const chunkPosition = new THREE.Vector3(0,0,0)
+
+    const chunkDimensions = new THREE.Vector3(
               this.chunks.chunkDimensions.x,
               this.chunks.chunkDimensions.y,
               this.chunks.chunkDimensions.z
             )
+
+    for (let cx = x - this.renderDistance.x; cx <= x + this.renderDistance.x; cx++) {
+      for (let cy = y - this.renderDistance.y; cy <= y + this.renderDistance.y; cy++) {
+        for (let cz = z - this.renderDistance.z; cz <= z + this.renderDistance.z; cz++) {
+          const chunk = this.chunks.getChunk(chunkPosition.set(cx, cy, cz))
+          if (chunk) continue
+          const newChunk = new Chunk(
+            this.terrainGenerator,
+            chunkPosition.clone(),
+            chunkDimensions
           )
           this.chunks.addChunk(newChunk)
           newChunks.push(newChunk)
