@@ -6,7 +6,7 @@ export type Vertex = {
   position: [number, number, number]
   normal: [number, number, number]
   uv: [number, number]
-  color?: [number, number, number]
+  color: [number, number, number]
 }
 
 const FACE_COUNT = 6
@@ -22,35 +22,35 @@ export class ChunkMesher {
 
   static vertexData: Vertex[] = [
     // left
-    { position: [-1, -1, -1], normal: [-1, 0, 0], uv: [0, 0] },
-    { position: [-1, -1, 1], normal: [-1, 0, 0], uv: [1, 0] },
-    { position: [-1, 1, -1], normal: [-1, 0, 0], uv: [0, 1] },
-    { position: [-1, 1, 1], normal: [-1, 0, 0], uv: [1, 1] },
+    { color: [0, 0, 0], position: [-1, -1, -1], normal: [-1, 0, 0], uv: [0, 0] },
+    { color: [0, 0, 0], position: [-1, -1, 1], normal: [-1, 0, 0], uv: [1, 0] },
+    { color: [0, 0, 0], position: [-1, 1, -1], normal: [-1, 0, 0], uv: [0, 1] },
+    { color: [0, 0, 0], position: [-1, 1, 1], normal: [-1, 0, 0], uv: [1, 1] },
     // right
-    { position: [1, -1, 1], normal: [1, 0, 0], uv: [0, 0] },
-    { position: [1, -1, -1], normal: [1, 0, 0], uv: [1, 0] },
-    { position: [1, 1, 1], normal: [1, 0, 0], uv: [0, 1] },
-    { position: [1, 1, -1], normal: [1, 0, 0], uv: [1, 1] },
+    { color: [0, 0, 0], position: [1, -1, 1], normal: [1, 0, 0], uv: [0, 0] },
+    { color: [0, 0, 0], position: [1, -1, -1], normal: [1, 0, 0], uv: [1, 0] },
+    { color: [0, 0, 0], position: [1, 1, 1], normal: [1, 0, 0], uv: [0, 1] },
+    { color: [0, 0, 0], position: [1, 1, -1], normal: [1, 0, 0], uv: [1, 1] },
     // bottom
-    { position: [1, -1, 1], normal: [0, -1, 0], uv: [0, 0] },
-    { position: [-1, -1, 1], normal: [0, -1, 0], uv: [1, 0] },
-    { position: [1, -1, -1], normal: [0, -1, 0], uv: [0, 1] },
-    { position: [-1, -1, -1], normal: [0, -1, 0], uv: [1, 1] },
+    { color: [0, 0, 0], position: [1, -1, 1], normal: [0, -1, 0], uv: [0, 0] },
+    { color: [0, 0, 0], position: [-1, -1, 1], normal: [0, -1, 0], uv: [1, 0] },
+    { color: [0, 0, 0], position: [1, -1, -1], normal: [0, -1, 0], uv: [0, 1] },
+    { color: [0, 0, 0], position: [-1, -1, -1], normal: [0, -1, 0], uv: [1, 1] },
     // top
-    { position: [1, 1, -1], normal: [0, 1, 0], uv: [0, 0] },
-    { position: [-1, 1, -1], normal: [0, 1, 0], uv: [1, 0] },
-    { position: [1, 1, 1], normal: [0, 1, 0], uv: [0, 1] },
-    { position: [-1, 1, 1], normal: [0, 1, 0], uv: [1, 1] },
+    { color: [0, 0, 0], position: [1, 1, -1], normal: [0, 1, 0], uv: [0, 0] },
+    { color: [0, 0, 0], position: [-1, 1, -1], normal: [0, 1, 0], uv: [1, 0] },
+    { color: [0, 0, 0], position: [1, 1, 1], normal: [0, 1, 0], uv: [0, 1] },
+    { color: [0, 0, 0], position: [-1, 1, 1], normal: [0, 1, 0], uv: [1, 1] },
     // back
-    { position: [1, -1, -1], normal: [0, 0, -1], uv: [0, 0] },
-    { position: [-1, -1, -1], normal: [0, 0, -1], uv: [1, 0] },
-    { position: [1, 1, -1], normal: [0, 0, -1], uv: [0, 1] },
-    { position: [-1, 1, -1], normal: [0, 0, -1], uv: [1, 1] },
+    { color: [0, 0, 0], position: [1, -1, -1], normal: [0, 0, -1], uv: [0, 0] },
+    { color: [0, 0, 0], position: [-1, -1, -1], normal: [0, 0, -1], uv: [1, 0] },
+    { color: [0, 0, 0], position: [1, 1, -1], normal: [0, 0, -1], uv: [0, 1] },
+    { color: [0, 0, 0], position: [-1, 1, -1], normal: [0, 0, -1], uv: [1, 1] },
     // front
-    { position: [-1, -1, 1], normal: [0, 0, 1], uv: [0, 0] },
-    { position: [1, -1, 1], normal: [0, 0, 1], uv: [1, 0] },
-    { position: [-1, 1, 1], normal: [0, 0, 1], uv: [0, 1] },
-    { position: [1, 1, 1], normal: [0, 0, 1], uv: [1, 1] }
+    { color: [0, 0, 0], position: [-1, -1, 1], normal: [0, 0, 1], uv: [0, 0] },
+    { color: [0, 0, 0], position: [1, -1, 1], normal: [0, 0, 1], uv: [1, 0] },
+    { color: [0, 0, 0], position: [-1, 1, 1], normal: [0, 0, 1], uv: [0, 1] },
+    { color: [0, 0, 0], position: [1, 1, 1], normal: [0, 0, 1], uv: [1, 1] }
   ] as const
 
   static vertexIndices = [0, 1, 2, 2, 1, 3] as const
@@ -58,7 +58,7 @@ export class ChunkMesher {
   constructor(
     public readonly dimensions: THREE.Vector3,
     public readonly chunkData: ChunkData
-  ) {}
+  ) { }
 
   generateMesh() {
     const geometry = this.generateGeometry()
@@ -99,13 +99,13 @@ export class ChunkMesher {
 
     let lastIndex = 0
 
-    const blockPosition = new THREE.Vector3(0,0,0)
-    const neighborPosition = new THREE.Vector3(0,0,0)
+    const blockPosition = new THREE.Vector3(0, 0, 0)
+    const neighborPosition = new THREE.Vector3(0, 0, 0)
 
     for (let x = 0; x < this.dimensions.x; x++) {
       for (let y = 0; y < this.dimensions.y; y++) {
         for (let z = 0; z < this.dimensions.z; z++) {
-          blockPosition.set(x, y,z)
+          blockPosition.set(x, y, z)
           const block = this.chunkData.get(blockPosition)
           if (!ChunkMesher.isSolid(block)) continue
 
