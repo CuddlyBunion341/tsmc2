@@ -23,7 +23,7 @@ describe('#generateFaceGeometry()', () => {
       new THREE.Vector3(1, 1, 1),
       new ChunkData(new THREE.Vector3(1, 1, 1))
     )
-    const faceVertices = chunkMesher.generateFaceVertices(0, new THREE.Vector3(0, 0, 0))
+    const faceVertices = chunkMesher.generateFaceVertices(0, blockIds.stone, new THREE.Vector3(0, 0, 0))
     expect(faceVertices).toHaveLength(4)
   })
 })
