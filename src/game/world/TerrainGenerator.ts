@@ -18,6 +18,8 @@ export class TerrainGenerator {
     const height = this.noise2d.get(x, z) * 20
 
     if (y > height) return blockIds.air
+    if (y > 5) return blockIds.grass
+    if (y > 0) return blockIds.dirt
 
     return blockIds.stone
   }
