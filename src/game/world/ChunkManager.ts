@@ -20,12 +20,15 @@ export class ChunkManager {
 
     const newChunks: Chunk[] = []
 
-    const spiral = new SpiralHelper2d(this.renderDistanceX)
+    const spiralRadius = Math.min(this.renderDistance.x, this.renderDistance.z)
+
+    const spiral = new SpiralHelper2d(spiralRadius)
     const positions = spiral.generateSpiral()
 
     positions.forEach(position => {
-      for (let columnY = y - this.renderDistanceY; columnY <= y + this.renderDistanceY; columnY++) {
-        const chunk = new Chunk(this.terrainGenerator, position.x + x, columnY, position.y + z)
+      for (let columnY = y - this.renderDistance.y; columnY <= y + this.renderDistance.y; columnY++) {
+        const chunkPosition = new THREE.Vector3(position.x + x, columnY, position.y + z)
+        const chunk = new Chunk(this.terrainGenerator, chunkPosition, this.chunks.chunkDimensions)
         this.chunks.addChunk(chunk)
         newChunks.push(chunk)
       }
