@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { Chunk } from './Chunk'
 import { ChunkStorage } from './ChunkStorage'
+import { SpiralHelper2d } from './SpiralHelper2d'
 import { TerrainGenerator } from './TerrainGenerator'
 
 export class ChunkManager {
@@ -19,32 +20,19 @@ export class ChunkManager {
 
     const newChunks: Chunk[] = []
 
-    const chunkPosition = new THREE.Vector3(0, 0, 0)
-    const chunkDimensions = new THREE.Vector3(
-      this.chunks.chunkDimensions.x,
-      this.chunks.chunkDimensions.y,
-      this.chunks.chunkDimensions.z
-    )
+    const spiralRadius = Math.min(this.renderDistance.x, this.renderDistance.z)
 
-    for (let cx = x - this.renderDistance.x; cx <= x + this.renderDistance.x; cx++) {
-      for (let cy = y - this.renderDistance.y; cy <= y + this.renderDistance.y; cy++) {
-        for (let cz = z - this.renderDistance.z; cz <= z + this.renderDistance.z; cz++) {
-          chunkPosition.set(cx, cy, cz)
+    const spiral = new SpiralHelper2d(spiralRadius)
+    const positions = spiral.generateSpiral()
 
-          const chunk = this.chunks.getChunk(chunkPosition)
-          if (chunk) continue
-
-          const newChunk = new Chunk(
-            this.terrainGenerator,
-            chunkPosition.clone(),
-            chunkDimensions
-          )
-
-          this.chunks.addChunk(newChunk)
-          newChunks.push(newChunk)
-        }
+    positions.forEach(position => {
+      for (let columnY = y - this.renderDistance.y; columnY <= y + this.renderDistance.y; columnY++) {
+        const chunkPosition = new THREE.Vector3(position.x + x, columnY, position.y + z)
+        const chunk = new Chunk(this.terrainGenerator, chunkPosition, this.chunks.chunkDimensions)
+        this.chunks.addChunk(chunk)
+        newChunks.push(chunk)
       }
-    }
+    })
 
     return newChunks
   }
