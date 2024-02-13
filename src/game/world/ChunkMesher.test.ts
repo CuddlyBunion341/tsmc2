@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { describe, it, expect, beforeEach } from 'vitest'
-import { ChunkMesher, Vertex } from './ChunkMesher'
+import { ChunkMesher, Tripplet, Vertex } from './ChunkMesher'
 import { ChunkData } from './ChunkData'
 import { blockIds } from './blocks'
 
@@ -16,6 +16,64 @@ const assertVertexData = (vertex: Vertex) => {
   assertGeometryArray(vertex.normal, 3)
   assertGeometryArray(vertex.uv, 2)
 }
+
+const buildVertex = (): Vertex => {
+  return {
+    position: [0, 0, 0],
+    normal: [0, 0, 0],
+    uv: [0, 0],
+    color: [0, 0, 0],
+    blockId: 0,
+    ao: 0
+  }
+}
+
+
+describe('.encodeVertex()', () => {
+
+  it('encodes empty vertex correctly', () => {
+    const vertex = buildVertex()
+    const encoded = ChunkMesher.encodeVertex(vertex)
+    expect(encoded).toEqual(0b000_00000000_00000_00000_000000)
+  })
+
+  it('encodes position data correctly', () => {
+    const vertex = {...buildVertex(), position: [1,2,3] as Tripplet<number>}
+    const encoded = ChunkMesher.encodeVertex(vertex)
+    expect(encoded).toEqual(0b000_00000000_00011_00010_00001)
+  })
+
+
+  it('encodes position data correctly at chunk borders', () => {
+    const vertex = {...buildVertex(), position: [31,31,31] as Tripplet<number>}
+    const encoded = ChunkMesher.encodeVertex(vertex)
+    expect(encoded).toEqual(0b000_00000000_11111_11111_11111)
+  })
+
+  it('encodes block data correctly', () => {
+    const vertex = {...buildVertex(), blockId: 179}
+    const encoded = ChunkMesher.encodeVertex(vertex)
+    expect(encoded).toEqual(0b000_10110011_00000_00000_00000)
+  })
+
+  it('encodes ambient occlusion data correctly', () => {
+    const vertex = {...buildVertex(), ao: 0.625}
+    const encoded = ChunkMesher.encodeVertex(vertex)
+    expect(encoded).toEqual(0b101_00000000_00000_00000_00000)
+  })
+
+  it('encodes all data correctly', () => {
+    const vertex = {
+      ...buildVertex(),
+      position: [1,2,3] as Tripplet<number>,
+      blockId: 4,
+      ao: 0.625
+    }
+
+    const encoded = ChunkMesher.encodeVertex(vertex)
+    expect(encoded).toEqual(0b101_00000100_00011_00010_00001)
+  })
+})
 
 describe('#generateFaceGeometry()', () => {
   it('should generate the correct face', () => {
