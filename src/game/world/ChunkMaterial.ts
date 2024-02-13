@@ -9,18 +9,17 @@ export class ChunkMaterial {
       return new THREE.ShaderMaterial({
         uniforms: this.uniforms,
         vertexShader: `
-          varying uint16 vData;
-
+          varying vec2 vUv;
           void main() {
-            vWorldPosition = (modelMatrix * vec4(position, 1.0)).xyz;
-            vWorldNormal = normalize((modelMatrix * vec4(normal, 0.0)).xyz);
-            vViewPosition = cameraPosition;
-            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            vUv = uv;
+            vec4 modelViewPosition = modelViewMatrix * vec4(position, 1.0);
+            gl_Position = projectionMatrix * modelViewPosition; 
           }
         `,
         fragmentShader: `
+        varying vec2 vUv;
           void main() {
-            gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+            gl_FragColor = vec4(vUv, 1.0, 1.0);
           }
         `
       })

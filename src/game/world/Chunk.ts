@@ -2,6 +2,7 @@ import { ChunkData } from './ChunkData'
 import { ChunkMesher } from './ChunkMesher'
 import * as THREE from 'three'
 import { TerrainGenerator } from './TerrainGenerator'
+import { ChunkMaterial } from './ChunkMaterial'
 
 export type ChunkMessageData = {
   position: {
@@ -44,7 +45,7 @@ export class Chunk {
     this.chunkMesher = new ChunkMesher(dimensions, this.chunkData)
     this.mesh = new THREE.Mesh()
     this.mesh.position.add(this.position.clone().multiply(this.dimensions))
-    this.mesh.material = new THREE.MeshBasicMaterial({vertexColors: true})
+    this.mesh.material = ChunkMaterial.getMaterial()
   }
 
   generateTerrain() {
