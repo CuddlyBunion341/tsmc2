@@ -133,8 +133,6 @@ export class ChunkMesher {
     const {vertices, indices} = this.generateChunkVertices()
     const vertexData = vertices.map(ChunkMesher.encodeVertex) 
 
-    console.log(PACKING_CONSTANTS)
-
     return { vertices: vertexData, indices }
   }
 
