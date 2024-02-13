@@ -1,10 +1,10 @@
 precision highp int;
 precision mediump float;
 
-in vec2 vUv;
+in float vAo;
 
 out vec4 outColor;
 
 void main() {
-  outColor = vec4(vUv.x, vUv.y, 0.0, 1.0);
+  outColor = vec4(vAo, vAo, vAo, 1.0);
 }

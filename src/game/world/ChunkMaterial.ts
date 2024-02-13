@@ -12,7 +12,8 @@ export class ChunkMaterial {
       uniforms: this.uniforms,
       vertexShader,
       fragmentShader,
-      glslVersion: THREE.GLSL3
+      glslVersion: THREE.GLSL3,
+      side: THREE.DoubleSide, // TODO: remove once normals are implemented
     })
   }
 
