@@ -19,6 +19,8 @@ export const defaultVertexPackages: VertexPackageInput[] = [
 
 export class VertexPacker {
   public packages: VertexPackage[]
+  public validator: VertexPackerValidator
+  public calculator: VertexPackerCalculator
 
   constructor(VertexPackages: VertexPackageInput[] = defaultVertexPackages) {
     this.packages = VertexPackages.map((input) => {
@@ -30,11 +32,64 @@ export class VertexPacker {
       }
     })
 
-    this.validateInput()
+    this.validator = new VertexPackerValidator(this)
+    this.validator.validateInput()
+
+    this.calculator = new VertexPackerCalculator(this)
+  }
+
+  public calculateAll() {
+    this.calculator.calculateAll()
+    this.validator.validateCalculation()
   }
 
   public toUniforms() {
     // TODO: Implement
+  }
+}
+
+class VertexPackerCalculator {
+  public packages: VertexPackage[]
+
+  constructor(packer: VertexPacker) {
+    this.packages = packer.packages
+  }
+
+public calculateOffsets() {
+    this.packages.reduce((offset, property) => {
+      property.offset = offset
+      return offset + property.bits
+    }, 0)
+  }
+
+  public calculateMasks() {
+    this.packages.forEach((property) => {
+      property.encodingMask = (1 << property.bits) - 1
+      property.decodingMask = property.encodingMask << property.offset
+    })
+  }
+
+  public calculatePackingHash() {
+    const hash: Record<VertexPropertyName, VertexPackage> = {} as Record<VertexPropertyName, VertexPackage>
+    this.packages.forEach((property) => {
+      hash[property.name] = property
+    })
+    return hash
+  }
+
+  public calculateAll() {
+    this.calculateOffsets()
+    this.calculateMasks()
+    return this.calculatePackingHash()
+  }
+}
+
+
+class VertexPackerValidator {
+  public packages: VertexPackage[]
+
+  constructor(packer: VertexPacker) {
+    this.packages = packer.packages
   }
 
   public validateTotalBits() {
@@ -89,33 +144,5 @@ export class VertexPacker {
   public validateCalculation() {
     this.validateNoOverlaps()
     this.validateNoGaps()
-  }
-
-  public calculateOffsets() {
-    this.packages.reduce((offset, property) => {
-      property.offset = offset
-      return offset + property.bits
-    }, 0)
-  }
-
-  public calculateMasks() {
-    this.packages.forEach((property) => {
-      property.encodingMask = (1 << property.bits) - 1
-      property.decodingMask = property.encodingMask << property.offset
-    })
-  }
-
-  public calculatePackingHash() {
-    const hash: Record<VertexPropertyName, VertexPackage> = {} as Record<VertexPropertyName, VertexPackage>
-    this.packages.forEach((property) => {
-      hash[property.name] = property
-    })
-    return hash
-  }
-
-  public calculateAll() {
-    this.calculateOffsets()
-    this.calculateMasks()
-    return this.calculatePackingHash()
   }
 }
