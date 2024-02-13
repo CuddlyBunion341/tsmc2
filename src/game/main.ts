@@ -39,6 +39,8 @@ export default class Game implements Experience {
         callback: (args: MessageEvent<ArrayBuffer>) => {
           task.callback(args)
           chunk.updateMeshGeometry()
+          const helper = new THREE.BoxHelper(chunk.mesh)
+          this.engine.scene.add(helper)
         }
       })
     })

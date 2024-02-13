@@ -17,6 +17,53 @@ export type Vertex = {
 const FACE_COUNT = 6
 const FACE_VERTEX_COUNT = 4
 
+export type VertexPackPropertyName = 'positionX' | 'positionY' | 'positionZ' | 'blockId' | 'ao'
+type PACKING_CONSTANT_PROPERTY = {
+  bits: number
+  offset: number
+  mask: number
+}
+
+export const PACKING_CONSTANTS = (() => {
+  const POSITION_BITS = 5
+  const BLOCK_ID_BITS = 8
+  const AO_BITS = 3
+
+  const properties: {name: VertexPackPropertyName, bits: number}[] = [
+    { name: 'positionX', bits: POSITION_BITS },
+    { name: 'positionY', bits: POSITION_BITS },
+    { name: 'positionZ', bits: POSITION_BITS },
+    { name: 'blockId', bits: BLOCK_ID_BITS },
+    { name: 'ao', bits: AO_BITS },
+  ]
+
+  const propertiesWithOffset = properties.map(p => ( {...p, offset: 0} ))
+
+  propertiesWithOffset.reduce((offset, property) => {
+    property.offset = offset
+    return offset + property.bits
+  }, 0)
+
+  const getMask = (bits: number) => (1 << bits) - 1
+
+  const propertiesWithMask = propertiesWithOffset.map(property => {
+    return {
+      name: property.name,
+      bits: property.bits,
+      offset: property.offset,
+      mask: getMask(property.bits)
+    }
+  })
+
+  const propertiesHash: Record<VertexPackPropertyName, PACKING_CONSTANT_PROPERTY> = {} as Record<VertexPackPropertyName, PACKING_CONSTANT_PROPERTY>
+
+  propertiesWithMask.forEach(property => {
+    propertiesHash[property.name] = property
+  })
+
+  return propertiesHash
+})()
+
 export class ChunkMesher {
   static vertexData: Vertex[] = [
     // left
@@ -85,6 +132,8 @@ export class ChunkMesher {
   packVertexData() {
     const {vertices, indices} = this.generateChunkVertices()
     const vertexData = vertices.map(ChunkMesher.encodeVertex) 
+
+    console.log(PACKING_CONSTANTS)
 
     return { vertices: vertexData, indices }
   }

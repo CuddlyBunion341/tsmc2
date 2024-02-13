@@ -11,7 +11,7 @@ uniform vec3 cameraPosition;
 in uint data;
 
 out vec2 vUv;
-out vec3 vPos;
+out vec3 bPos;
 out float vAo;
 flat out uint blockId;
 
@@ -34,8 +34,8 @@ void main() {
   float posX = float((data & POS_X_MASK) >> POS_X_SHIFT);
   float posY = float((data & POS_Y_MASK) >> POS_Y_SHIFT);
   float posZ = float((data & POS_Z_MASK) >> POS_Z_SHIFT);
-  vPos = vec3(posX, posY, posZ);
-
+  bPos = vec3(posX, posY, posZ);
   vAo = float((data & AO_MASK) >> AO_SHIFT) / 8.0;
-  gl_Position = projectionMatrix * modelViewMatrix * vec4(vPos, 1.0);
+  blockId = data >> 24u;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(bPos, 1.0);
 }
