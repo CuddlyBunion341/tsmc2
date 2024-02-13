@@ -1,6 +1,6 @@
 import { Vertex } from "./ChunkMesher"
 
-export type VertexPropertyName = 'positionX' | 'positionY' | 'positionZ' | 'blockId' | 'ao'
+export type VertexPropertyName = 'positionX' | 'positionY' | 'positionZ' | 'blockId' | 'ao' | 'vertexIndex'
 export type VertexPackage = {
   name: VertexPropertyName
   bits: number
@@ -12,6 +12,7 @@ export type VertexPackage = {
 export type VertexPackageInput = Pick<VertexPackage, "name" | "bits">
 
 export const defaultVertexPackages: VertexPackageInput[] = [
+  { name: 'vertexIndex', bits: 5 },
   { name: 'positionX', bits: 5 },
   { name: 'positionY', bits: 5 },
   { name: 'positionZ', bits: 5 },
