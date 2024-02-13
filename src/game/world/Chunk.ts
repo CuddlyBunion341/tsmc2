@@ -44,7 +44,7 @@ export class Chunk {
     this.chunkMesher = new ChunkMesher(dimensions, this.chunkData)
     this.mesh = new THREE.Mesh()
     this.mesh.position.add(this.position.clone().multiply(this.dimensions))
-    this.mesh.material = new THREE.MeshMatcapMaterial({vertexColors: true})
+    this.mesh.material = new THREE.MeshBasicMaterial({vertexColors: true})
   }
 
   generateTerrain() {
