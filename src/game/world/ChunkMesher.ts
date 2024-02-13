@@ -140,7 +140,7 @@ export class ChunkMesher {
 
     const color = blocks[blockId].color
 
-    const vertexPosition = new THREE.Vector3(0,0,0)
+    const vertexPosition = new THREE.Vector3(0, 0, 0)
 
     const faceVertices = ChunkMesher.vertexData
       .slice(firstFaceVertexIndex, firstFaceVertexIndex + FACE_VERTEX_COUNT)
@@ -155,7 +155,7 @@ export class ChunkMesher {
 
         // TODO: calculate light level
         // TODO: calculate UVs
-        return { ...vertex, position, color: color.map(v => v * ao) as [number,number,number] }
+        return { ...vertex, position, color: color.map(v => v * ao) as [number, number, number] }
       })
 
     return faceVertices
@@ -171,30 +171,30 @@ export class ChunkMesher {
   }
 
   private calculateVertexAO(position: THREE.Vector3) {
-    const { x, y, z } = position;
-    const neighborPosition = new THREE.Vector3(0, 0, 0);
+    const { x, y, z } = position
+    const neighborPosition = new THREE.Vector3(0, 0, 0)
 
-    let occlusion = 0;
-    const maxOcclusion = 8;
+    let occlusion = 0
+    const maxOcclusion = 8
 
     const checkNeighbor = (dx: number, dy: number, dz: number) => {
-      neighborPosition.set(x + dx, y + dy, z + dz);
-      return this.positionAffectsAo(neighborPosition);
-    };
+      neighborPosition.set(x + dx, y + dy, z + dz)
+      return this.positionAffectsAo(neighborPosition)
+    }
 
     // Check each of the three voxels touching the corner
-    if (checkNeighbor(0, 1, 0)) occlusion++;
-    if (checkNeighbor(1, 0, 0)) occlusion++;
-    if (checkNeighbor(0, 0, 1)) occlusion++;
+    if (checkNeighbor(0, 1, 0)) occlusion++
+    if (checkNeighbor(1, 0, 0)) occlusion++
+    if (checkNeighbor(0, 0, 1)) occlusion++
 
     // Check three voxels diagonal to the corner
-    if (checkNeighbor(1, 1, 0) && (checkNeighbor(0, 1, 0) || checkNeighbor(1, 0, 0))) occlusion++;
-    if (checkNeighbor(0, 1, 1) && (checkNeighbor(0, 1, 0) || checkNeighbor(0, 0, 1))) occlusion++;
-    if (checkNeighbor(1, 0, 1) && (checkNeighbor(1, 0, 0) || checkNeighbor(0, 0, 1))) occlusion++;
-    if (checkNeighbor(1, 1, 1) && (checkNeighbor(0, 1, 1) || checkNeighbor(1, 0, 1) || checkNeighbor(1, 1, 0))) occlusion++;
+    if (checkNeighbor(1, 1, 0) && (checkNeighbor(0, 1, 0) || checkNeighbor(1, 0, 0))) occlusion++
+    if (checkNeighbor(0, 1, 1) && (checkNeighbor(0, 1, 0) || checkNeighbor(0, 0, 1))) occlusion++
+    if (checkNeighbor(1, 0, 1) && (checkNeighbor(1, 0, 0) || checkNeighbor(0, 0, 1))) occlusion++
+    if (checkNeighbor(1, 1, 1) && (checkNeighbor(0, 1, 1) || checkNeighbor(1, 0, 1) || checkNeighbor(1, 1, 0))) occlusion++
 
     // Normalize the occlusion value
-    const aoValue = (maxOcclusion - occlusion) / maxOcclusion;
-    return aoValue;
+    const aoValue = (maxOcclusion - occlusion) / maxOcclusion
+    return aoValue
   }
 }
