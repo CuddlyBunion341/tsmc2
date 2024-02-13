@@ -1,3 +1,5 @@
+import { Vertex } from "./ChunkMesher"
+
 export type VertexPropertyName = 'positionX' | 'positionY' | 'positionZ' | 'blockId' | 'ao'
 export type VertexPackage = {
   name: VertexPropertyName
@@ -19,6 +21,7 @@ export const defaultVertexPackages: VertexPackageInput[] = [
 
 export class VertexPacker {
   public packages: VertexPackage[]
+  public hash!: Record<VertexPropertyName, VertexPackage>
   public validator: VertexPackerValidator
   public calculator: VertexPackerCalculator
 
@@ -41,10 +44,23 @@ export class VertexPacker {
   public calculateAll() {
     this.calculator.calculateAll()
     this.validator.validateCalculation()
+    this.hash = this.calculator.calculatePackingHash()
   }
 
   public toUniforms() {
     // TODO: Implement
+  }
+
+  public packVertex(vertex: Vertex) {
+    let vertexData = 0
+
+    vertexData |= vertex.position[0] & this.hash.positionX.encodingMask << this.hash.positionX.offset
+    vertexData |= vertex.position[1] & this.hash.positionY.encodingMask << this.hash.positionY.offset
+    vertexData |= vertex.position[2] & this.hash.positionZ.encodingMask << this.hash.positionZ.offset
+    vertexData |= vertex.blockId & this.hash.blockId.encodingMask << this.hash.blockId.offset
+    vertexData |= vertex.ao & this.hash.ao.encodingMask << this.hash.ao.offset
+
+    return vertexData
   }
 }
 
