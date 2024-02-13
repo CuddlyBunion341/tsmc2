@@ -8,6 +8,7 @@ import { ChunkManager } from './world/ChunkManager'
 import { TerrainGenerator } from './world/TerrainGenerator'
 import { WorkerManager } from './world/workers/WorkerPool'
 import { ChunkMessageData } from './world/Chunk'
+import { InstancedOakLeaves } from './world/InstancedOakLeaves'
 
 export default class Game implements Experience {
   resources: Resource[] = []
@@ -16,6 +17,8 @@ export default class Game implements Experience {
 
   @Benchmark
   init(): void {
+    this.addOakLeaves()
+
     const terrainGenerator = new TerrainGenerator(69420)
     const chunkManager = new ChunkManager(terrainGenerator, new THREE.Vector3(8, 2, 8))
 
@@ -42,6 +45,19 @@ export default class Game implements Experience {
         }
       })
     })
+  }
+
+  addOakLeaves() {
+    const oakLeaves = new InstancedOakLeaves()
+    this.engine.scene.add(oakLeaves.instancedMesh)
+
+    for (let x = 0; x < 10; x++) {
+      for (let y = 0; y < 10; y++) {
+        for (let z = 0; z < 10; z++) {
+          oakLeaves.createInstance(new THREE.Vector3(x * 1.5, y * 1.5, z * 1.5))
+        }
+      }
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
