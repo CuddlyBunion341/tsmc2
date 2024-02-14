@@ -13,6 +13,8 @@ import { InstancedOakLeaves } from './world/InstancedOakLeaves'
 export default class Game implements Experience {
   resources: Resource[] = []
 
+  public oakLeaves!: InstancedOakLeaves
+
   constructor(private engine: Engine) {}
 
   @Benchmark
@@ -49,19 +51,23 @@ export default class Game implements Experience {
 
   addOakLeaves() {
     const oakLeaves = new InstancedOakLeaves()
-    this.engine.scene.add(oakLeaves.instancedMesh)
+    this.oakLeaves = oakLeaves
+    this.engine.scene.add(oakLeaves.frontSideMesh)
+    this.engine.scene.add(oakLeaves.backSideMesh)
 
     for (let x = 0; x < 10; x++) {
       for (let y = 0; y < 10; y++) {
         for (let z = 0; z < 10; z++) {
-          oakLeaves.createInstance(new THREE.Vector3(x * 1.5, y * 1.5, z * 1.5))
+          oakLeaves.createInstance(new THREE.Vector3(x * 1, y * 1, z * 1))
         }
       }
     }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  update(delta: number): void {}
+  update(delta: number): void {
+    this.oakLeaves.sortInstances(this.engine.camera.instance)
+  }
 
   resize?(): void {}
 }
