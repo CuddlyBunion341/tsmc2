@@ -166,7 +166,7 @@ export class ChunkMesher {
   }
 
   affectsAo(blockId: number) {
-    return blockId !== blockIds.air
+    return !blocks[blockId].transparent
   }
 
   positionAffectsAo(position: THREE.Vector3) {
