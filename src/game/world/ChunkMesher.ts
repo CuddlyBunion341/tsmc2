@@ -3,6 +3,7 @@ import { blockIds, blocks } from './blocks'
 import { ChunkData } from './ChunkData'
 
 export type Vertex = {
+  materialIndex: number,
   position: [number, number, number]
   normal: [number, number, number]
   uv: [number, number]
@@ -22,35 +23,35 @@ export class ChunkMesher {
 
   static vertexData: Vertex[] = [
     // left
-    { color: [0, 0, 0], position: [-1, -1, -1], normal: [-1, 0, 0], uv: [0, 0] },
-    { color: [0, 0, 0], position: [-1, -1, 1], normal: [-1, 0, 0], uv: [1, 0] },
-    { color: [0, 0, 0], position: [-1, 1, -1], normal: [-1, 0, 0], uv: [0, 1] },
-    { color: [0, 0, 0], position: [-1, 1, 1], normal: [-1, 0, 0], uv: [1, 1] },
+    { materialIndex: 0, color: [0, 0, 0], position: [-1, -1, -1], normal: [-1, 0, 0], uv: [0, 0] },
+    { materialIndex: 0, color: [0, 0, 0], position: [-1, -1, 1], normal: [-1, 0, 0], uv: [1, 0] },
+    { materialIndex: 0, color: [0, 0, 0], position: [-1, 1, -1], normal: [-1, 0, 0], uv: [0, 1] },
+    { materialIndex: 0, color: [0, 0, 0], position: [-1, 1, 1], normal: [-1, 0, 0], uv: [1, 1] },
     // right
-    { color: [0, 0, 0], position: [1, -1, 1], normal: [1, 0, 0], uv: [0, 0] },
-    { color: [0, 0, 0], position: [1, -1, -1], normal: [1, 0, 0], uv: [1, 0] },
-    { color: [0, 0, 0], position: [1, 1, 1], normal: [1, 0, 0], uv: [0, 1] },
-    { color: [0, 0, 0], position: [1, 1, -1], normal: [1, 0, 0], uv: [1, 1] },
+    { materialIndex: 0, color: [0, 0, 0], position: [1, -1, 1], normal: [1, 0, 0], uv: [0, 0] },
+    { materialIndex: 0, color: [0, 0, 0], position: [1, -1, -1], normal: [1, 0, 0], uv: [1, 0] },
+    { materialIndex: 0, color: [0, 0, 0], position: [1, 1, 1], normal: [1, 0, 0], uv: [0, 1] },
+    { materialIndex: 0, color: [0, 0, 0], position: [1, 1, -1], normal: [1, 0, 0], uv: [1, 1] },
     // bottom
-    { color: [0, 0, 0], position: [1, -1, 1], normal: [0, -1, 0], uv: [0, 0] },
-    { color: [0, 0, 0], position: [-1, -1, 1], normal: [0, -1, 0], uv: [1, 0] },
-    { color: [0, 0, 0], position: [1, -1, -1], normal: [0, -1, 0], uv: [0, 1] },
-    { color: [0, 0, 0], position: [-1, -1, -1], normal: [0, -1, 0], uv: [1, 1] },
+    { materialIndex: 0, color: [0, 0, 0], position: [1, -1, 1], normal: [0, -1, 0], uv: [0, 0] },
+    { materialIndex: 0, color: [0, 0, 0], position: [-1, -1, 1], normal: [0, -1, 0], uv: [1, 0] },
+    { materialIndex: 0, color: [0, 0, 0], position: [1, -1, -1], normal: [0, -1, 0], uv: [0, 1] },
+    { materialIndex: 0, color: [0, 0, 0], position: [-1, -1, -1], normal: [0, -1, 0], uv: [1, 1] },
     // top
-    { color: [0, 0, 0], position: [1, 1, -1], normal: [0, 1, 0], uv: [0, 0] },
-    { color: [0, 0, 0], position: [-1, 1, -1], normal: [0, 1, 0], uv: [1, 0] },
-    { color: [0, 0, 0], position: [1, 1, 1], normal: [0, 1, 0], uv: [0, 1] },
-    { color: [0, 0, 0], position: [-1, 1, 1], normal: [0, 1, 0], uv: [1, 1] },
+    { materialIndex: 0, color: [0, 0, 0], position: [1, 1, -1], normal: [0, 1, 0], uv: [0, 0] },
+    { materialIndex: 0, color: [0, 0, 0], position: [-1, 1, -1], normal: [0, 1, 0], uv: [1, 0] },
+    { materialIndex: 0, color: [0, 0, 0], position: [1, 1, 1], normal: [0, 1, 0], uv: [0, 1] },
+    { materialIndex: 0, color: [0, 0, 0], position: [-1, 1, 1], normal: [0, 1, 0], uv: [1, 1] },
     // back
-    { color: [0, 0, 0], position: [1, -1, -1], normal: [0, 0, -1], uv: [0, 0] },
-    { color: [0, 0, 0], position: [-1, -1, -1], normal: [0, 0, -1], uv: [1, 0] },
-    { color: [0, 0, 0], position: [1, 1, -1], normal: [0, 0, -1], uv: [0, 1] },
-    { color: [0, 0, 0], position: [-1, 1, -1], normal: [0, 0, -1], uv: [1, 1] },
+    { materialIndex: 0, color: [0, 0, 0], position: [1, -1, -1], normal: [0, 0, -1], uv: [0, 0] },
+    { materialIndex: 0, color: [0, 0, 0], position: [-1, -1, -1], normal: [0, 0, -1], uv: [1, 0] },
+    { materialIndex: 0, color: [0, 0, 0], position: [1, 1, -1], normal: [0, 0, -1], uv: [0, 1] },
+    { materialIndex: 0, color: [0, 0, 0], position: [-1, 1, -1], normal: [0, 0, -1], uv: [1, 1] },
     // front
-    { color: [0, 0, 0], position: [-1, -1, 1], normal: [0, 0, 1], uv: [0, 0] },
-    { color: [0, 0, 0], position: [1, -1, 1], normal: [0, 0, 1], uv: [1, 0] },
-    { color: [0, 0, 0], position: [-1, 1, 1], normal: [0, 0, 1], uv: [0, 1] },
-    { color: [0, 0, 0], position: [1, 1, 1], normal: [0, 0, 1], uv: [1, 1] }
+    { materialIndex: 0, color: [0, 0, 0], position: [-1, -1, 1], normal: [0, 0, 1], uv: [0, 0] },
+    { materialIndex: 0, color: [0, 0, 0], position: [1, -1, 1], normal: [0, 0, 1], uv: [1, 0] },
+    { materialIndex: 0, color: [0, 0, 0], position: [-1, 1, 1], normal: [0, 0, 1], uv: [0, 1] },
+    { materialIndex: 0, color: [0, 0, 0], position: [1, 1, 1], normal: [0, 0, 1], uv: [1, 1] }
   ] as const
 
   static vertexIndices = [0, 1, 2, 2, 1, 3] as const
@@ -80,6 +81,7 @@ export class ChunkMesher {
     })
 
     geometry.setIndex(indices)
+    geometry.addGroup(0, indices.length, 0)
 
     return geometry
   }
@@ -139,6 +141,10 @@ export class ChunkMesher {
     return { vertices, indices }
   }
 
+  blockMaterialIndex(blockId: number) {
+    return blockId === blockIds.water ? 1 : 0
+  }
+
   generateFaceVertices(faceIndex: number, blockId: number, blockPosition: THREE.Vector3) {
     const firstFaceVertexIndex = faceIndex * FACE_VERTEX_COUNT
 
@@ -159,7 +165,7 @@ export class ChunkMesher {
 
         // TODO: calculate light level
         // TODO: calculate UVs
-        return { ...vertex, position, color: color.map(v => v * ao) as [number, number, number] }
+        return { ...vertex, materialIndex: this.blockMaterialIndex(blockId), position, color: color.map(v => v * ao) as [number, number, number] }
       })
 
     return faceVertices

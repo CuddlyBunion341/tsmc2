@@ -42,9 +42,11 @@ export class Chunk {
   ) {
     this.chunkData = new ChunkData(dimensions)
     this.chunkMesher = new ChunkMesher(dimensions, this.chunkData)
-    this.mesh = new THREE.Mesh()
+    this.mesh = new THREE.Mesh(new THREE.BufferGeometry(), [
+      new THREE.MeshBasicMaterial({vertexColors: true}),
+      new THREE.MeshNormalMaterial()
+    ])
     this.mesh.position.add(this.position.clone().multiply(this.dimensions))
-    this.mesh.material = new THREE.MeshBasicMaterial({vertexColors: true})
   }
 
   generateTerrain() {
