@@ -15,9 +15,10 @@ export class RenderEngine implements GameEntity {
       antialias: true,
     })
 
-    this.renderer.outputEncoding = THREE.sRGBEncoding
-    this.renderer.toneMapping = THREE.CineonToneMapping
-    this.renderer.toneMappingExposure = 1.75
+    // this.renderer.outputEncoding = THREE.sRGBEncoding
+    this.renderer.outputEncoding = THREE.LinearEncoding
+    // this.renderer.toneMapping = THREE.CineonToneMapping
+    // this.renderer.toneMappingExposure = 1.75
     this.renderer.shadowMap.enabled = true
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap
     this.renderer.setClearColor('#000000')
