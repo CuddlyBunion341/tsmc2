@@ -4,6 +4,7 @@ import { blockIds } from './blocks'
 
 export class TerrainGenerator {
   public readonly noise2d
+  public readonly waterLevel = 0
 
   constructor(public readonly seed: number) {
     this.noise2d = new FractalNoise2d(this.seed, 4)
@@ -17,6 +18,7 @@ export class TerrainGenerator {
 
     const height = this.noise2d.get(x, z) * 20
 
+    if (y > height && y <= this.waterLevel) return blockIds.water
     if (y > height) return blockIds.air
     if (y > 5) return blockIds.grass
     if (y > 0) return blockIds.dirt
