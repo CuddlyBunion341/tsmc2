@@ -2,8 +2,7 @@ import * as THREE from 'three'
 import { Benchmark } from '../utilities/Benchmark'
 
 export class InstancedOakLeaves {
-  public frontSideMesh: THREE.InstancedMesh
-  public backSideMesh: THREE.InstancedMesh
+  public instancedMesh: THREE.InstancedMesh
   public instanceCount = 0
 
   constructor(public maxInstanceCount = 1000) {
@@ -11,25 +10,32 @@ export class InstancedOakLeaves {
     const texture = new THREE.TextureLoader().load('src/game/resources/textures/oak_leaves.png')
     texture.minFilter = THREE.NearestFilter
     texture.magFilter = THREE.NearestFilter
-    const commonMaterialProperties = { opacity: 1, transparent: true, map: texture, depthWrite: true }
-
-    const frontSideMaterial = new THREE.MeshBasicMaterial({ ...commonMaterialProperties, side: THREE.FrontSide })
-    const backSideMaterial = new THREE.MeshBasicMaterial({ ...commonMaterialProperties, side: THREE.BackSide })
-    this.frontSideMesh = new THREE.InstancedMesh(boxGeometry, frontSideMaterial, maxInstanceCount)
-    this.backSideMesh = new THREE.InstancedMesh(boxGeometry, backSideMaterial, maxInstanceCount)
+    texture.colorSpace = THREE.DisplayP3ColorSpace 
+    const commonMaterialProperties = { opacity: 1, map: texture, transparent: true, depthWrite: true, depthTest: true }
+    const material = new THREE.MeshBasicMaterial({ ...commonMaterialProperties, side: THREE.FrontSide })
+    this.instancedMesh = new THREE.InstancedMesh(boxGeometry, material, maxInstanceCount)
+    // this.instancedMesh.renderOrder = 999
   }
 
   public createInstance(position: THREE.Vector3) {
     if (++this.instanceCount > this.maxInstanceCount) throw new Error('Max instance count exceeded')
 
-    const matrix = new THREE.Matrix4()
-    matrix.makeTranslation(position.x, position.y, position.z)
+    // const matrix = new THREE.Matrix4()
+    // matrix.makeTranslation(position.x, position.y, position.z)
 
-    this.frontSideMesh.setMatrixAt(this.instanceCount - 1, matrix)
-    this.backSideMesh.setMatrixAt(this.instanceCount - 1, matrix)
+    // this.instancedMesh.setMatrixAt(this.instanceCount - 1, matrix)
+
+    const mesh = new THREE.Mesh(this.instancedMesh.geometry, this.instancedMesh.material)
+    mesh.position.copy(position)
+    return mesh
   }
 
-  // @Benchmark
+  public resetInstances() {
+    this.instanceCount = 0
+    this.instancedMesh.count = 0
+  }
+
+  @Benchmark
   public sortInstances(camera: THREE.Camera) {
     // generated with copilot
 
@@ -42,7 +48,7 @@ export class InstancedOakLeaves {
     // Get the positions and distances of all instances
     for (let i = 0; i < this.instanceCount; i++) {
       const instanceMatrix = new THREE.Matrix4()
-      this.frontSideMesh.getMatrixAt(i, instanceMatrix)
+      this.instancedMesh.getMatrixAt(i, instanceMatrix)
 
       const instancePosition = new THREE.Vector3()
       instanceMatrix.decompose(instancePosition,  new THREE.Quaternion(), new THREE.Vector3())
@@ -70,13 +76,13 @@ export class InstancedOakLeaves {
       }
     }
 
-    // Update the instance positions in the frontSideMesh
+    // Update the instance positions in the instancedMesh
     for (let i = 0; i < this.instanceCount; i++) {
       const instanceMatrix = new THREE.Matrix4()
       instanceMatrix.makeTranslation(instancePositions[i].x, instancePositions[i].y, instancePositions[i].z)
-      this.frontSideMesh.setMatrixAt(i, instanceMatrix)
+      this.instancedMesh.setMatrixAt(i, instanceMatrix)
     }
 
-    this.frontSideMesh.instanceMatrix.needsUpdate = true
+    this.instancedMesh.instanceMatrix.needsUpdate = true
   }
 }

@@ -17,9 +17,35 @@ export default class Game implements Experience {
 
   constructor(private engine: Engine) {}
 
+  addPlane() {
+    const d = 18
+    for (let x = 0; x < d; x++) {
+      for (let y = 0; y < d; y++) {
+        const color = Math.random() * 0xffffff
+        const plane = new THREE.Mesh(
+          new THREE.PlaneGeometry(32, 32),
+          new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide, opacity: 0.5, transparent: true, depthWrite: false, depthTest: true})
+        )
+        plane.renderOrder = 1
+    plane.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2)
+        plane.position.set((x - d / 2) * 32, 0, (y - d / 2) * 32)
+        this.engine.scene.add(plane)
+
+        console.log(plane.renderOrder)
+      }
+    }
+  }
+
   @Benchmark
   init(): void {
     this.addOakLeaves()
+    this.addPlane()
+
+    document.addEventListener('keyup', event => {
+      if (event.key === 'i') {
+        this.oakLeaves.sortInstances(this.engine.camera.instance)
+      }
+    })
 
     const terrainGenerator = new TerrainGenerator(69420)
     const chunkManager = new ChunkManager(terrainGenerator, new THREE.Vector3(8, 2, 8))
@@ -50,15 +76,17 @@ export default class Game implements Experience {
   }
 
   addOakLeaves() {
-    const oakLeaves = new InstancedOakLeaves()
+    const cubeSide = 20
+    const offset = 1
+    const oakLeaves = new InstancedOakLeaves(cubeSide * cubeSide * cubeSide)
     this.oakLeaves = oakLeaves
-    this.engine.scene.add(oakLeaves.frontSideMesh)
-    this.engine.scene.add(oakLeaves.backSideMesh)
+    this.engine.scene.add(oakLeaves.instancedMesh)
 
-    for (let x = 0; x < 10; x++) {
-      for (let y = 0; y < 10; y++) {
-        for (let z = 0; z < 10; z++) {
-          oakLeaves.createInstance(new THREE.Vector3(x * 1, y * 1, z * 1))
+    for (let x = 0; x < cubeSide; x++) {
+      for (let y = 0; y < cubeSide; y++) {
+        for (let z = 0; z < cubeSide; z++) {
+          const mesh = oakLeaves.createInstance(new THREE.Vector3(x * offset, y * offset - 5, z * offset))
+          this.engine.scene.add(mesh)
         }
       }
     }
@@ -66,7 +94,6 @@ export default class Game implements Experience {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   update(delta: number): void {
-    this.oakLeaves.sortInstances(this.engine.camera.instance)
   }
 
   resize?(): void {}
