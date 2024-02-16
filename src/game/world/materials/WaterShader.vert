@@ -28,6 +28,8 @@ void main() {
   vPosition = (modelViewMatrix * vec4(position, 1.0)).xyz;
   vNormal = normalize(normalMatrix * normal);
 
+  vPosition -= vNormal * 0.3;
+
     // Output the final vertex position
   gl_Position = projectionMatrix * vec4(vPosition, 1.0);
 
