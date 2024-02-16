@@ -110,46 +110,18 @@ export class ChunkMesher {
 
     geometry.setIndex(indices)
     geometry.addGroup(0, indices.length, 0)
-
-    const defaultGroup = {
-      start: 0,
-      count: 0,
-      materialIndex: 0
-    }
-
-    let currentGroup = { ...defaultGroup }
-
-    const groups: (typeof defaultGroup)[] = []
-
-    vertices.forEach((vertex, index) => {
-      if (vertex.materialIndex !== currentGroup.materialIndex) {
-        groups.push(currentGroup)
-        currentGroup = { ...defaultGroup, start: index, materialIndex: vertex.materialIndex }
-      } else {
-        currentGroup.count++
-      }
-    })
+    
+    const vertexGroups = ChunkMesher.calculateVertexGroups(vertices)
 
     console.log(indices)
     console.log(vertices)
-    console.log(groups)
+    console.log(vertexGroups)
 
     geometry.clearGroups()
-    // const indicesPerFace = 6
-    // const indicesPerTriangle = 3
-    // const verticesPerTriangle = 3
-    // const verticesPerFace = 4
 
-    geometry.addGroup(0, 12, 0)
-    geometry.addGroup(12, 138, 1)
-
-    // groups.forEach((group) => {
-    //   geometry.addGroup(
-    //     group.start / 8
-    //     group.count * indicesPerFace,
-    //     group.materialIndex
-    //   )
-    // })
+    vertexGroups.forEach((group) => {
+      geometry.addGroup(group.start / 4 * 6, group.count / 4 * 6, group.materialIndex)
+    })
 
     return geometry
   }
