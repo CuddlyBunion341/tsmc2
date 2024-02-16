@@ -10,6 +10,12 @@ export type Vertex = {
   color: [number, number, number]
 }
 
+export type VertexGroup = {
+  start: number
+  count: number
+  materialIndex: number
+}
+
 const FACE_COUNT = 6
 const FACE_VERTEX_COUNT = 4
 
@@ -69,6 +75,28 @@ export class ChunkMesher {
     return mesh
   }
 
+  static calculateVertexGroups(vertices: Vertex[]) {
+    const groups: VertexGroup[] = []
+    let currentGroup: VertexGroup | null = null
+
+    vertices.forEach((vertex, index) => {
+      if (!(!currentGroup || vertex.materialIndex !== currentGroup.materialIndex)) {
+        currentGroup.count++
+        return
+      }
+
+      currentGroup = {
+        start: index,
+        count: 1,
+        materialIndex: vertex.materialIndex,
+      };
+
+      groups.push(currentGroup)
+    })
+
+    return groups
+  }
+
   generateGeometry() {
     const { vertices, indices } = this.generateChunkVertices()
 
@@ -82,6 +110,46 @@ export class ChunkMesher {
 
     geometry.setIndex(indices)
     geometry.addGroup(0, indices.length, 0)
+
+    const defaultGroup = {
+      start: 0,
+      count: 0,
+      materialIndex: 0
+    }
+
+    let currentGroup = { ...defaultGroup }
+
+    const groups: (typeof defaultGroup)[] = []
+
+    vertices.forEach((vertex, index) => {
+      if (vertex.materialIndex !== currentGroup.materialIndex) {
+        groups.push(currentGroup)
+        currentGroup = { ...defaultGroup, start: index, materialIndex: vertex.materialIndex }
+      } else {
+        currentGroup.count++
+      }
+    })
+
+    console.log(indices)
+    console.log(vertices)
+    console.log(groups)
+
+    geometry.clearGroups()
+    // const indicesPerFace = 6
+    // const indicesPerTriangle = 3
+    // const verticesPerTriangle = 3
+    // const verticesPerFace = 4
+
+    geometry.addGroup(0, 12, 0)
+    geometry.addGroup(12, 138, 1)
+
+    // groups.forEach((group) => {
+    //   geometry.addGroup(
+    //     group.start / 8
+    //     group.count * indicesPerFace,
+    //     group.materialIndex
+    //   )
+    // })
 
     return geometry
   }
@@ -117,12 +185,12 @@ export class ChunkMesher {
 
           // use a face mask to determine which faces to render
           let faceMask = 0b000000
-          if (this.renderNeighbor(blockId,neighborPosition.set(x - 1, y, z))) faceMask |= 0b000001 // 1
-          if (this.renderNeighbor(blockId,neighborPosition.set(x + 1, y, z))) faceMask |= 0b000010 // 2
-          if (this.renderNeighbor(blockId,neighborPosition.set(x, y - 1, z))) faceMask |= 0b000100 // 4
-          if (this.renderNeighbor(blockId,neighborPosition.set(x, y + 1, z))) faceMask |= 0b001000 // 8
-          if (this.renderNeighbor(blockId,neighborPosition.set(x, y, z - 1))) faceMask |= 0b010000 // 16
-          if (this.renderNeighbor(blockId,neighborPosition.set(x, y, z + 1))) faceMask |= 0b100000 // 32
+          if (this.renderNeighbor(blockId, neighborPosition.set(x - 1, y, z))) faceMask |= 0b000001 // 1
+          if (this.renderNeighbor(blockId, neighborPosition.set(x + 1, y, z))) faceMask |= 0b000010 // 2
+          if (this.renderNeighbor(blockId, neighborPosition.set(x, y - 1, z))) faceMask |= 0b000100 // 4
+          if (this.renderNeighbor(blockId, neighborPosition.set(x, y + 1, z))) faceMask |= 0b001000 // 8
+          if (this.renderNeighbor(blockId, neighborPosition.set(x, y, z - 1))) faceMask |= 0b010000 // 16
+          if (this.renderNeighbor(blockId, neighborPosition.set(x, y, z + 1))) faceMask |= 0b100000 // 32
           if (faceMask === 0b000000) continue
 
           for (let i = 0; i < FACE_COUNT; i++) {
