@@ -2,6 +2,7 @@ import { ChunkData } from './ChunkData'
 import { ChunkMesher } from './ChunkMesher'
 import * as THREE from 'three'
 import { TerrainGenerator } from './TerrainGenerator'
+import { WaterMaterial } from './materials/WaterMaterial'
 
 export type ChunkMessageData = {
   position: {
@@ -44,7 +45,7 @@ export class Chunk {
     this.chunkMesher = new ChunkMesher(dimensions, this.chunkData)
     this.mesh = new THREE.Mesh(new THREE.BufferGeometry(), [
       new THREE.MeshBasicMaterial({vertexColors: true}),
-      new THREE.MeshBasicMaterial({color: 0x0000ff, opacity: 0.5, transparent: true, side: THREE.DoubleSide})
+      WaterMaterial.createMaterial(),
     ])
     this.mesh.position.add(this.position.clone().multiply(this.dimensions))
   }
