@@ -4,7 +4,7 @@ name: Deploy static content to Pages
 on:
   # Runs on pushes targeting the default branch
   push:
-  
+
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -35,9 +35,9 @@ jobs:
           node-version: 18
           cache: 'npm'
       - name: Install dependencies
-        run: yarn install
+        run: npm install
       - name: Build
-        run: yarn vite build
+        run: npx run vite build
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
@@ -48,72 +48,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
-
-# name: on-push
-# on: [push]
-# jobs:
-#   check:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Checkout
-#         uses: actions/checkout@v4
-
-#       - name: Cache
-#         uses: actions/cache@v3
-#         with:
-#           path: node_modules
-#           key: npm-${{ hashFiles('yarn.lock') }}
-
-#       - name: Node setup
-#         uses: actions/setup-node@v3
-#         with:
-#           node-version: latest
-
-#       - name: Install dependencies
-#         run: yarn install
-      
-#       - name: Run linters
-#         run: yarn lint
-
-#       - name: Run tests
-#         run: yarn test
-
-#       - name: Build
-#         run: yarn vite build
-
-#       - name: Deploy to GitHub Pages
-#         uses: peaceiris/actions-gh-pages@v3
-#         with:
-#           github_token: ${{ secrets.GITHUB_TOKEN }}
-#           publish_dir: ./dist
-    
-  # deploy:
-  #   # Add a dependency to the build job
-  #   needs: check
-
-  #   # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
-  #   permissions:
-  #     pages: write      # to deploy to Pages
-  #     id-token: write   # to verify the deployment originates from an appropriate source
-
-  #   # Deploy to the github-pages environment
-  #   environment:
-  #     name: github-pages
-  #     url: ${{ steps.deployment.outputs.page_url }}
-
-  #   # Specify runner + deployment step
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Deploy to GitHub Pages
-  #       id: deployment
-  #       uses: actions/deploy-pages@v4 # or specific "vX.X.X" version tag for this action
-
-  # deploy:
-  #   needs: check
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Deploy to GitHub Pages
-  #       uses: peaceiris/actions-gh-pages@v3
-  #       with:
-  #         github_token: ${{ secrets.GITHUB_TOKEN }}
-  #         publish_dir: ./dist
