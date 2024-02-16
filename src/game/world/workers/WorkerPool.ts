@@ -10,13 +10,13 @@ export class WorkerManager<T, U> {
 
   public taskQueue: WorkerTask<T, U>[] = []
 
-  constructor(public readonly scriptUrl: string, public readonly workerCount: number) {
+  constructor(public readonly workerConstructor: new () => Worker, public readonly workerCount: number) {
     this.initializeWebWorkers()
   }
 
   public initializeWebWorkers() {
     for (let i = 0; i < this.workerCount; i++) {
-      const worker = new Worker(this.scriptUrl, { type: 'module' })
+      const worker = new this.workerConstructor()
       this.idleWorkers.push(worker)
     }
   }

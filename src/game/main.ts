@@ -8,6 +8,7 @@ import { ChunkManager } from './world/ChunkManager'
 import { TerrainGenerator } from './world/TerrainGenerator'
 import { WorkerManager } from './world/workers/WorkerPool'
 import { ChunkMessageData } from './world/Chunk'
+import TerrainGenerationWorker from './world/workers/TerrainGenerationWorker.ts?worker'
 
 export default class Game implements Experience {
   resources: Resource[] = []
@@ -21,11 +22,10 @@ export default class Game implements Experience {
 
     const chunks = chunkManager.createChunksAroundOrigin(new THREE.Vector3(0, 0, 0))
 
-    const workerPath = './src/game/world/workers/TerrainGenerationWorker.ts'
     const workerCount = navigator.hardwareConcurrency
 
     const workerManager = new WorkerManager<ChunkMessageData, ArrayBuffer>(
-      workerPath,
+      TerrainGenerationWorker,
       workerCount
     )
 
