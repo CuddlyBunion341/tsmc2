@@ -1,4 +1,6 @@
 import * as THREE from 'three'
+import vertexShader from './WaterShader.vert'
+import fragmentShader from './WaterShader.frag'
 
 export type WaterMaterialUniforms = {
   uTime: { value: number }
@@ -25,69 +27,8 @@ export class WaterMaterial {
 
   private createMaterial() {
     const material = new THREE.RawShaderMaterial({
-      vertexShader: /*glsl*/`
-precision mediump float;
-
-// Vertex positions in object space
-in vec3 position;
-
-// Normal vectors in object space, for lighting calculations
-in vec3 normal;
-
-// UV coordinates for the vertex, useful for texture mapping
-in vec2 uv;
-
-// Outputs to the Fragment Shader
-out vec2 vUv;
-out vec3 vPosition;
-out vec3 vNormal;
-out vec4 fPosition;
-
-// Transformation matrices
-uniform mat4 modelViewMatrix;
-uniform mat4 projectionMatrix;
-uniform mat3 normalMatrix;
-
-void main() {
-    // Pass the UV to the Fragment Shader
-    vUv = uv;
-
-    // Transform the position and normal to camera space
-    vPosition = (modelViewMatrix * vec4(position, 1.0)).xyz;
-    vNormal = normalize(normalMatrix * normal);
-
-    // Output the final vertex position
-    gl_Position = projectionMatrix * vec4(vPosition, 1.0);
-
-    fPosition = gl_Position;
-}
-      `,
-      fragmentShader: /*glsl*/`
-precision mediump float;
-
-// Inputs from the Vertex Shader
-in vec2 vUv;
-in vec3 vPosition;
-in vec3 vNormal;
-in vec4 fPosition;
-
-// Output color of the pixel
-out vec4 fragColor;
-
-// Uniforms
-uniform sampler2D uDepthTexture; // The depth texture
-uniform float uTime;
-uniform vec3 uFoamColor;
-uniform vec3 uWaterColor;
-uniform mat4 uInverseProjectionMatrix; // To unproject depth values
-uniform vec2 uScreenSize; // Size of the depth texture / screen
-
-void main() {
-  float depth = gl_FragCoord.z;
-  vec3 rgb = vec3(depth / 5.0);
-  fragColor = vec4(rgb, 0.5);
-}
-      `,
+      vertexShader, 
+      fragmentShader,
       transparent: true,
       side: THREE.DoubleSide,
       glslVersion: THREE.GLSL3,

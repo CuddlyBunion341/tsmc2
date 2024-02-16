@@ -1,5 +1,7 @@
 import * as THREE from 'three'
 
+// inspired by https://threejs.org/examples/webgl_depth_texture
+
 export class RenderTarget {
   instance: THREE.WebGLRenderTarget
 
@@ -9,6 +11,7 @@ export class RenderTarget {
     this.instance.texture.magFilter = THREE.NearestFilter
     this.instance.depthTexture = new THREE.DepthTexture(1,1)
     this.instance.depthTexture.type = THREE.UnsignedIntType
+    this.instance.depthTexture.format = THREE.DepthFormat
   }
 
   updateSize(width: number, height: number) {
