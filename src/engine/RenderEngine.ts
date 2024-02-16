@@ -4,10 +4,12 @@ import * as THREE from 'three'
 import { GameEntity } from './GameEntity'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass'
+import { RenderTarget } from './RenderTarget'
 
 export class RenderEngine implements GameEntity {
   private readonly renderer: WebGLRenderer
   composer: EffectComposer
+  target: RenderTarget
 
   constructor(private engine: Engine) {
     this.renderer = new WebGLRenderer({
@@ -31,15 +33,18 @@ export class RenderEngine implements GameEntity {
       this.engine.camera.instance
     )
     this.composer.addPass(renderPass)
+    this.target = new RenderTarget()
   }
 
   update() {
+    this.target.instance.depthTexture
     this.composer.render()
   }
 
   resize() {
     this.renderer.setSize(this.engine.sizes.width, this.engine.sizes.height)
     this.composer.setSize(this.engine.sizes.width, this.engine.sizes.height)
+    this.target.updateSize(this.engine.sizes.width, this.engine.sizes.height)
     this.composer.render()
   }
 }

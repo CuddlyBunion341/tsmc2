@@ -16,9 +16,12 @@ describe('#getBlockChunk(), #addChunk()', () => {
     const chunkStorage = new ChunkStorage(new THREE.Vector3(32, 32, 32))
     const terrainGenerator = new TerrainGenerator(0)
     const chunk = new Chunk(
-      terrainGenerator,
-      new THREE.Vector3(0, 0, 0),
-      new THREE.Vector3(32, 32, 32)
+      {
+        terrainGenerator,
+        position: new THREE.Vector3(0, 0, 0),
+        dimensions: new THREE.Vector3(32, 32, 32),
+        materials: []
+      }
     )
     chunkStorage.addChunk(chunk)
 

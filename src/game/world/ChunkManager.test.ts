@@ -6,7 +6,7 @@ import { TerrainGenerator } from './TerrainGenerator'
 const buildChunkManager = () => {
   const terrainGenerator = new TerrainGenerator(69420)
   const renderDistance = new THREE.Vector3(1, 1, 1)
-  return new ChunkManager(terrainGenerator, renderDistance)
+  return new ChunkManager({terrainGenerator,renderDistance, materials: []})
 }
 
 describe('#createChunksAroundOrigin()', () => {

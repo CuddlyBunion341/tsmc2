@@ -17,6 +17,14 @@ const assertVertexData = (vertex: Vertex) => {
   assertGeometryArray(vertex.uv, 2)
 }
 
+const vertexStub: Vertex = {
+  materialIndex: 0,
+  color: [0, 0, 0],
+  position: [0, 0, 0],
+  normal: [0, 0, 0],
+  uv: [0, 0]
+} as const
+
 describe('#generateFaceGeometry()', () => {
   it('should generate the correct face', () => {
     const chunkMesher = new ChunkMesher(
@@ -63,5 +71,27 @@ describe('#generateVertexData()', () => {
     const { indices, vertices } = chunkMesher.generateChunkVertices()
     expect(indices).toHaveLength(0)
     expect(vertices).toHaveLength(0)
+  })
+})
+
+describe('.calculateVertexGroups()', () => {
+  it('should return the correct geometry groups', () => {
+    const vertices: Vertex[] = []
+
+    const addVertex = (materialIndex: number) => {
+      vertices.push({ ...vertexStub, materialIndex })
+    }
+
+    for (let i = 0; i < 4; i++) addVertex(0)
+    for (let i = 0; i < 8; i++) addVertex(1)
+    for (let i = 0; i < 16; i++) addVertex(0)
+
+    const expected = [
+      { start: 0, count: 4, materialIndex: 0 },
+      { start: 4, count: 8, materialIndex: 1 },
+      { start: 12, count: 16, materialIndex: 0 },
+    ]
+
+    expect(ChunkMesher.calculateVertexGroups(vertices)).toEqual(expected)
   })
 })

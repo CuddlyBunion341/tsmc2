@@ -3,10 +3,17 @@ import { blockIds, blocks } from './blocks'
 import { ChunkData } from './ChunkData'
 
 export type Vertex = {
+  materialIndex: number,
   position: [number, number, number]
   normal: [number, number, number]
   uv: [number, number]
   color: [number, number, number]
+}
+
+export type VertexGroup = {
+  start: number
+  count: number
+  materialIndex: number
 }
 
 const FACE_COUNT = 6
@@ -22,35 +29,35 @@ export class ChunkMesher {
 
   static vertexData: Vertex[] = [
     // left
-    { color: [0, 0, 0], position: [-1, -1, -1], normal: [-1, 0, 0], uv: [0, 0] },
-    { color: [0, 0, 0], position: [-1, -1, 1], normal: [-1, 0, 0], uv: [1, 0] },
-    { color: [0, 0, 0], position: [-1, 1, -1], normal: [-1, 0, 0], uv: [0, 1] },
-    { color: [0, 0, 0], position: [-1, 1, 1], normal: [-1, 0, 0], uv: [1, 1] },
+    { materialIndex: 0, color: [0, 0, 0], position: [-1, -1, -1], normal: [-1, 0, 0], uv: [0, 0] },
+    { materialIndex: 0, color: [0, 0, 0], position: [-1, -1, 1], normal: [-1, 0, 0], uv: [1, 0] },
+    { materialIndex: 0, color: [0, 0, 0], position: [-1, 1, -1], normal: [-1, 0, 0], uv: [0, 1] },
+    { materialIndex: 0, color: [0, 0, 0], position: [-1, 1, 1], normal: [-1, 0, 0], uv: [1, 1] },
     // right
-    { color: [0, 0, 0], position: [1, -1, 1], normal: [1, 0, 0], uv: [0, 0] },
-    { color: [0, 0, 0], position: [1, -1, -1], normal: [1, 0, 0], uv: [1, 0] },
-    { color: [0, 0, 0], position: [1, 1, 1], normal: [1, 0, 0], uv: [0, 1] },
-    { color: [0, 0, 0], position: [1, 1, -1], normal: [1, 0, 0], uv: [1, 1] },
+    { materialIndex: 0, color: [0, 0, 0], position: [1, -1, 1], normal: [1, 0, 0], uv: [0, 0] },
+    { materialIndex: 0, color: [0, 0, 0], position: [1, -1, -1], normal: [1, 0, 0], uv: [1, 0] },
+    { materialIndex: 0, color: [0, 0, 0], position: [1, 1, 1], normal: [1, 0, 0], uv: [0, 1] },
+    { materialIndex: 0, color: [0, 0, 0], position: [1, 1, -1], normal: [1, 0, 0], uv: [1, 1] },
     // bottom
-    { color: [0, 0, 0], position: [1, -1, 1], normal: [0, -1, 0], uv: [0, 0] },
-    { color: [0, 0, 0], position: [-1, -1, 1], normal: [0, -1, 0], uv: [1, 0] },
-    { color: [0, 0, 0], position: [1, -1, -1], normal: [0, -1, 0], uv: [0, 1] },
-    { color: [0, 0, 0], position: [-1, -1, -1], normal: [0, -1, 0], uv: [1, 1] },
+    { materialIndex: 0, color: [0, 0, 0], position: [1, -1, 1], normal: [0, -1, 0], uv: [0, 0] },
+    { materialIndex: 0, color: [0, 0, 0], position: [-1, -1, 1], normal: [0, -1, 0], uv: [1, 0] },
+    { materialIndex: 0, color: [0, 0, 0], position: [1, -1, -1], normal: [0, -1, 0], uv: [0, 1] },
+    { materialIndex: 0, color: [0, 0, 0], position: [-1, -1, -1], normal: [0, -1, 0], uv: [1, 1] },
     // top
-    { color: [0, 0, 0], position: [1, 1, -1], normal: [0, 1, 0], uv: [0, 0] },
-    { color: [0, 0, 0], position: [-1, 1, -1], normal: [0, 1, 0], uv: [1, 0] },
-    { color: [0, 0, 0], position: [1, 1, 1], normal: [0, 1, 0], uv: [0, 1] },
-    { color: [0, 0, 0], position: [-1, 1, 1], normal: [0, 1, 0], uv: [1, 1] },
+    { materialIndex: 0, color: [0, 0, 0], position: [1, 1, -1], normal: [0, 1, 0], uv: [0, 0] },
+    { materialIndex: 0, color: [0, 0, 0], position: [-1, 1, -1], normal: [0, 1, 0], uv: [1, 0] },
+    { materialIndex: 0, color: [0, 0, 0], position: [1, 1, 1], normal: [0, 1, 0], uv: [0, 1] },
+    { materialIndex: 0, color: [0, 0, 0], position: [-1, 1, 1], normal: [0, 1, 0], uv: [1, 1] },
     // back
-    { color: [0, 0, 0], position: [1, -1, -1], normal: [0, 0, -1], uv: [0, 0] },
-    { color: [0, 0, 0], position: [-1, -1, -1], normal: [0, 0, -1], uv: [1, 0] },
-    { color: [0, 0, 0], position: [1, 1, -1], normal: [0, 0, -1], uv: [0, 1] },
-    { color: [0, 0, 0], position: [-1, 1, -1], normal: [0, 0, -1], uv: [1, 1] },
+    { materialIndex: 0, color: [0, 0, 0], position: [1, -1, -1], normal: [0, 0, -1], uv: [0, 0] },
+    { materialIndex: 0, color: [0, 0, 0], position: [-1, -1, -1], normal: [0, 0, -1], uv: [1, 0] },
+    { materialIndex: 0, color: [0, 0, 0], position: [1, 1, -1], normal: [0, 0, -1], uv: [0, 1] },
+    { materialIndex: 0, color: [0, 0, 0], position: [-1, 1, -1], normal: [0, 0, -1], uv: [1, 1] },
     // front
-    { color: [0, 0, 0], position: [-1, -1, 1], normal: [0, 0, 1], uv: [0, 0] },
-    { color: [0, 0, 0], position: [1, -1, 1], normal: [0, 0, 1], uv: [1, 0] },
-    { color: [0, 0, 0], position: [-1, 1, 1], normal: [0, 0, 1], uv: [0, 1] },
-    { color: [0, 0, 0], position: [1, 1, 1], normal: [0, 0, 1], uv: [1, 1] }
+    { materialIndex: 0, color: [0, 0, 0], position: [-1, -1, 1], normal: [0, 0, 1], uv: [0, 0] },
+    { materialIndex: 0, color: [0, 0, 0], position: [1, -1, 1], normal: [0, 0, 1], uv: [1, 0] },
+    { materialIndex: 0, color: [0, 0, 0], position: [-1, 1, 1], normal: [0, 0, 1], uv: [0, 1] },
+    { materialIndex: 0, color: [0, 0, 0], position: [1, 1, 1], normal: [0, 0, 1], uv: [1, 1] }
   ] as const
 
   static vertexIndices = [0, 1, 2, 2, 1, 3] as const
@@ -68,6 +75,28 @@ export class ChunkMesher {
     return mesh
   }
 
+  static calculateVertexGroups(vertices: Vertex[]) {
+    const groups: VertexGroup[] = []
+    let currentGroup: VertexGroup | null = null
+
+    vertices.forEach((vertex, index) => {
+      if (!(!currentGroup || vertex.materialIndex !== currentGroup.materialIndex)) {
+        currentGroup.count++
+        return
+      }
+
+      currentGroup = {
+        start: index,
+        count: 1,
+        materialIndex: vertex.materialIndex,
+      };
+
+      groups.push(currentGroup)
+    })
+
+    return groups
+  }
+
   generateGeometry() {
     const { vertices, indices } = this.generateChunkVertices()
 
@@ -80,17 +109,27 @@ export class ChunkMesher {
     })
 
     geometry.setIndex(indices)
+    
+    const vertexGroups = ChunkMesher.calculateVertexGroups(vertices)
+
+    vertexGroups.forEach((group) => {
+      geometry.addGroup(group.start / 4 * 6, group.count / 4 * 6, group.materialIndex)
+    })
 
     return geometry
   }
 
-  private static isSolid(block: number) {
-    if (block === 0) return false
-    return !blocks[block]?.transparent
+  private static renderNeighbor(blockId: number, neighborBlockId: number) {
+    if (!blocks[neighborBlockId].transparent) return false
+    if (blockId === blockIds.air) return false
+    if (neighborBlockId === blockIds.air) return true
+    if (blocks[blockId].transparent && neighborBlockId !== blockId) return true
+    if (!blocks[blockId].transparent && blocks[neighborBlockId].transparent) return true
+    return false
   }
 
-  private isSolid(blockPosition: THREE.Vector3) {
-    return ChunkMesher.isSolid(this.chunkData.get(blockPosition))
+  private renderNeighbor(blockId: number, neighborBlockPosition: THREE.Vector3) {
+    return ChunkMesher.renderNeighbor(blockId, this.chunkData.get(neighborBlockPosition))
   }
 
   generateChunkVertices() {
@@ -106,23 +145,23 @@ export class ChunkMesher {
       for (let y = 0; y < this.dimensions.y; y++) {
         for (let z = 0; z < this.dimensions.z; z++) {
           blockPosition.set(x, y, z)
-          const block = this.chunkData.get(blockPosition)
-          if (!ChunkMesher.isSolid(block)) continue
+          const blockId = this.chunkData.get(blockPosition)
+          if (blockId === blockIds.air) continue
 
           // use a face mask to determine which faces to render
           let faceMask = 0b000000
-          if (!this.isSolid(neighborPosition.set(x - 1, y, z))) faceMask |= 0b000001 // 1
-          if (!this.isSolid(neighborPosition.set(x + 1, y, z))) faceMask |= 0b000010 // 2
-          if (!this.isSolid(neighborPosition.set(x, y - 1, z))) faceMask |= 0b000100 // 4
-          if (!this.isSolid(neighborPosition.set(x, y + 1, z))) faceMask |= 0b001000 // 8
-          if (!this.isSolid(neighborPosition.set(x, y, z - 1))) faceMask |= 0b010000 // 16
-          if (!this.isSolid(neighborPosition.set(x, y, z + 1))) faceMask |= 0b100000 // 32
+          if (this.renderNeighbor(blockId, neighborPosition.set(x - 1, y, z))) faceMask |= 0b000001 // 1
+          if (this.renderNeighbor(blockId, neighborPosition.set(x + 1, y, z))) faceMask |= 0b000010 // 2
+          if (this.renderNeighbor(blockId, neighborPosition.set(x, y - 1, z))) faceMask |= 0b000100 // 4
+          if (this.renderNeighbor(blockId, neighborPosition.set(x, y + 1, z))) faceMask |= 0b001000 // 8
+          if (this.renderNeighbor(blockId, neighborPosition.set(x, y, z - 1))) faceMask |= 0b010000 // 16
+          if (this.renderNeighbor(blockId, neighborPosition.set(x, y, z + 1))) faceMask |= 0b100000 // 32
           if (faceMask === 0b000000) continue
 
           for (let i = 0; i < FACE_COUNT; i++) {
             // check if the current face is visible
             if ((faceMask & (1 << i)) === 0) continue
-            const faceVertices = this.generateFaceVertices(i, block, blockPosition)
+            const faceVertices = this.generateFaceVertices(i, blockId, blockPosition)
             vertices.push(...faceVertices)
 
             indices.push(...ChunkMesher.vertexIndices.map((v) => lastIndex + v))
@@ -133,6 +172,10 @@ export class ChunkMesher {
     }
 
     return { vertices, indices }
+  }
+
+  blockMaterialIndex(blockId: number) {
+    return blockId === blockIds.water ? 1 : 0
   }
 
   generateFaceVertices(faceIndex: number, blockId: number, blockPosition: THREE.Vector3) {
@@ -155,14 +198,14 @@ export class ChunkMesher {
 
         // TODO: calculate light level
         // TODO: calculate UVs
-        return { ...vertex, position, color: color.map(v => v * ao) as [number, number, number] }
+        return { ...vertex, materialIndex: this.blockMaterialIndex(blockId), position, color: color.map(v => v * ao) as [number, number, number] }
       })
 
     return faceVertices
   }
 
   affectsAo(blockId: number) {
-    return blockId !== blockIds.air
+    return !blocks[blockId].transparent
   }
 
   positionAffectsAo(position: THREE.Vector3) {

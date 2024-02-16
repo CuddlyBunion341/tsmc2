@@ -9,7 +9,8 @@ const paritalBlocks = [
   { name: 'air', transparent: true },
   { name: 'stone', color: [0.2, 0.2, 0.2] },
   { name: 'dirt', color: [0.2, 0.1, 0] },
-  { name: 'grass', color: [0, 0.5, 0] }
+  { name: 'grass', color: [0, 0.5, 0] },
+  { name: 'water', color: [0, 0, 0.5], transparent: true },
 ] as const
 
 type BlockIdRecord = Record<(typeof paritalBlocks)[number]['name'], number>
