@@ -26,12 +26,7 @@ jobs:
 
       - name: Run tests
         run: yarn test
-        
-  build:
-    needs: check
 
-    runs-on: ubuntu-latest
-    steps:
       - name: Build
         run: yarn vite build
     
