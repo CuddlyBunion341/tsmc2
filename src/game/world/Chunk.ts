@@ -44,7 +44,7 @@ export class Chunk {
     this.chunkMesher = new ChunkMesher(dimensions, this.chunkData)
     this.mesh = new THREE.Mesh(new THREE.BufferGeometry(), [
       new THREE.MeshBasicMaterial({vertexColors: true}),
-      new THREE.MeshBasicMaterial({color: 0x0000ff, opacity: 0.5, transparent: true})
+      new THREE.MeshBasicMaterial({color: 0x0000ff, opacity: 0.5, transparent: true, side: THREE.DoubleSide})
     ])
     this.mesh.position.add(this.position.clone().multiply(this.dimensions))
   }
