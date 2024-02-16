@@ -109,15 +109,8 @@ export class ChunkMesher {
     })
 
     geometry.setIndex(indices)
-    geometry.addGroup(0, indices.length, 0)
     
     const vertexGroups = ChunkMesher.calculateVertexGroups(vertices)
-
-    console.log(indices)
-    console.log(vertices)
-    console.log(vertexGroups)
-
-    geometry.clearGroups()
 
     vertexGroups.forEach((group) => {
       geometry.addGroup(group.start / 4 * 6, group.count / 4 * 6, group.materialIndex)
