@@ -14,14 +14,18 @@ import { BaseMaterial } from './world/materials/BaseMaterial'
 export default class Game implements Experience {
   resources: Resource[] = []
 
-  constructor(private engine: Engine) {}
+  private readonly waterMaterial: WaterMaterial
+
+  constructor(private engine: Engine) {
+    this.waterMaterial = new WaterMaterial()
+  }
 
   @Benchmark
   init(): void {
     const terrainGenerator = new TerrainGenerator(69420)
     const materials = [
       new BaseMaterial(),
-      new WaterMaterial()
+      this.waterMaterial,
     ]
 
     const chunkManager = new ChunkManager({
@@ -56,7 +60,15 @@ export default class Game implements Experience {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  update(delta: number): void {}
+  update(delta: number): void {
+    this.waterMaterial.uniforms = {
+      uTime: { value: performance.now() / 1000 },
+      uFoamThreshold: { value: 0.5 },
+      uFoamColor: { value: new THREE.Color(0x0000ff) },
+      uWaterColor: { value: new THREE.Color(0x0000ff) },
+      uDepthTexture: { value: this.engine.renderEngine.target.instance.depthTexture }
+    }
+  }
 
   resize?(): void {}
 }

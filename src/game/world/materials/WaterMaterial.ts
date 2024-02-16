@@ -1,5 +1,13 @@
 import * as THREE from 'three'
 
+export type WaterMaterialUniforms = {
+  uTime: { value: number }
+  uFoamThreshold: { value: number }
+  uFoamColor: { value: THREE.Color }
+  uWaterColor: { value: THREE.Color }
+  uDepthTexture: { value: THREE.Texture | null }
+}
+
 export class WaterMaterial {
   material: THREE.RawShaderMaterial
 
@@ -11,10 +19,10 @@ export class WaterMaterial {
     this.material = this.createMaterial()
   }
 
-  updateUniforms(time: number, uDepth: THREE.Texture) {
-    this.material.uniforms.uTime.value = time
-    this.material.uniforms.uDepthTexture.value = uDepth
+  public set uniforms(uniforms: WaterMaterialUniforms) {
+    this.material.uniforms = uniforms
   }
+
   private createMaterial() {
     const material = new THREE.RawShaderMaterial({
       vertexShader: /*glsl*/`
