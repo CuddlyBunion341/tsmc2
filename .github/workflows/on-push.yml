@@ -29,6 +29,12 @@ jobs:
 
       - name: Build
         run: yarn vite build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
     
   # deploy:
   #   # Add a dependency to the build job
@@ -51,12 +57,12 @@ jobs:
   #       id: deployment
   #       uses: actions/deploy-pages@v4 # or specific "vX.X.X" version tag for this action
 
-  deploy:
-    needs: check
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+  # deploy:
+  #   needs: check
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Deploy to GitHub Pages
+  #       uses: peaceiris/actions-gh-pages@v3
+  #       with:
+  #         github_token: ${{ secrets.GITHUB_TOKEN }}
+  #         publish_dir: ./dist
