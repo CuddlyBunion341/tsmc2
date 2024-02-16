@@ -66,7 +66,8 @@ export default class Game implements Experience {
       uFoamThreshold: { value: 0.5 },
       uFoamColor: { value: new THREE.Color(0x0000ff) },
       uWaterColor: { value: new THREE.Color(0x0000ff) },
-      uDepthTexture: { value: this.engine.renderEngine.target.instance.depthTexture }
+      uDepthTexture: { value: this.engine.renderEngine.target.instance.depthTexture },
+      uCameraPosition: { value: this.engine.camera.instance.position }
     }
   }
 

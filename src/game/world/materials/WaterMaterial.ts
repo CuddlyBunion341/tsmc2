@@ -11,14 +11,14 @@ export type WaterMaterialUniforms = {
 }
 
 export class WaterMaterial {
-  material: THREE.RawShaderMaterial
+  material: THREE.Material
 
   constructor() {
     this.material = this.createMaterial()
   }
 
   public set uniforms(uniforms: WaterMaterialUniforms) {
-    this.material.uniforms = uniforms
+    // this.material.uniforms = uniforms
   }
 
   private createMaterial() {
@@ -37,6 +37,7 @@ export class WaterMaterial {
         uFoamColor: { value: new THREE.Color(0xffffff) },
         uWaterColor: { value: new THREE.Color(0x0000ff) },
         uDepthTexture: { value: null },
+        uCameraPosition: { value: new THREE.Vector3() }
       }
     })
 
