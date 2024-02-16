@@ -13,10 +13,6 @@ export type WaterMaterialUniforms = {
 export class WaterMaterial {
   material: THREE.RawShaderMaterial
 
-  public static createBasicMaterial() {
-    return new THREE.MeshBasicMaterial({ color: 0x0000ff, opacity: 0.5, transparent: true, side: THREE.DoubleSide })
-  }
-
   constructor() {
     this.material = this.createMaterial()
   }
