@@ -1,7 +1,7 @@
 name: on-push
 on: [push]
 jobs:
-  build:
+  check:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -26,7 +26,15 @@ jobs:
 
       - name: Run tests
         run: yarn test
+        
+  build:
+    needs: check
 
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build
+        run: yarn vite build
+    
   deploy:
     # Add a dependency to the build job
     needs: build
@@ -47,4 +55,6 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4 # or specific "vX.X.X" version tag for this action
+        with: 
+          path: ./dist
 
