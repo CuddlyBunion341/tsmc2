@@ -1,19 +1,17 @@
 import * as THREE from 'three'
-import { FractalNoise2d } from '../utilities/Noise'
+import { FractalNoise2d, FractalNoise2dParams } from '../utilities/Noise'
 import { blockIds } from './blocks'
+import GUI from 'lil-gui'
 
 export type TerrainGeneratorParams = {
   seed: number
   hilliness: number
-  frequencyX: number
-  frequencyY: number
-  persistence: number
-  octaves: number
+  fractalNoiseParams: FractalNoise2dParams
 }
 
 export class TerrainGenerator {
 
-  public readonly noise2d: FractalNoise2d
+  public noise2d: FractalNoise2d
   public hilliness: number
 
   constructor(public seed: number) {
@@ -42,18 +40,20 @@ export class TerrainGenerator {
     return blockIds.stone
   }
 
+  addToGUI(gui: GUI, changeCallback: () => void) {
+    const folder = gui.addFolder('Terrain Generator')
+    folder.add(this, 'hilliness', 1, 100, 1).onChange(changeCallback)
+    this.noise2d.addToGUI(folder, changeCallback)
+  }
+
   serialize(): TerrainGeneratorParams {
-    return { hilliness: this.hilliness, seed: this.seed, frequencyX: this.noise2d.frequencyX, frequencyY: this.noise2d.frequencyY, persistence: this.noise2d.persistence, octaves: this.noise2d.octaves}
+    return { hilliness: this.hilliness, seed: this.seed, fractalNoiseParams: this.noise2d.serialize() }
   }
 
   deserialize(data: TerrainGeneratorParams) {
     this.seed = data.seed
     this.hilliness = data.hilliness
-    this.noise2d.frequencyX = data.frequencyX
-    this.noise2d.frequencyY = data.frequencyY
-    this.noise2d.persistence = data.persistence
-    this.noise2d.frequencyX = data.frequencyX
-    this.noise2d.frequencyY = data.frequencyY
-    this.noise2d.octaves = data.octaves
+
+    this.noise2d.deserialize(data.fractalNoiseParams)
   }
 }

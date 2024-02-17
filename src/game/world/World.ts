@@ -29,11 +29,7 @@ export class World {
     renderDistanceFolder.add(this.renderDistance, "y", 0, 16, 1).onChange(changeCallback)
     renderDistanceFolder.add(this.renderDistance, "z", 0, 16, 1).onChange(changeCallback)
 
-    const terrainFolder = gui.addFolder("Terrain")
-    terrainFolder.add(this.terrainGenerator.noise2d, "frequencyX", 1, 1000, 1).onChange(changeCallback)
-    terrainFolder.add(this.terrainGenerator.noise2d, "frequencyY", 1, 1000, 1).onChange(changeCallback)
-    terrainFolder.add(this.terrainGenerator, "hilliness", 1, 100, 1).onChange(changeCallback)
-    terrainFolder.add(this.terrainGenerator.noise2d, "octaves", 1, 8, 1).onChange(changeCallback)
+    this.terrainGenerator.addToGUI(gui, changeCallback)
   }
 
   clearWorkerTasks() {
