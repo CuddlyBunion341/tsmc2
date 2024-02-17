@@ -1,4 +1,5 @@
-name: on-push
+name: Run linter and tests
+
 on: [push]
 jobs:
   check:
