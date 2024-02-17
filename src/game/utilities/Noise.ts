@@ -19,7 +19,7 @@ export class FractalNoise2d {
   public persistence = 2
   public noiseFunction: NoiseFunction2D
 
-  constructor(public readonly seed: number, public readonly octaves: number) {
+  constructor(public readonly seed: number, public octaves: number) {
     this.noiseFunction = createNoise2D(seededRandomizer(seed))
   }
 

@@ -33,6 +33,7 @@ export class World {
     terrainFolder.add(this.terrainGenerator.noise2d, "frequencyX", 1, 1000, 1).onChange(changeCallback)
     terrainFolder.add(this.terrainGenerator.noise2d, "frequencyY", 1, 1000, 1).onChange(changeCallback)
     terrainFolder.add(this.terrainGenerator, "hilliness", 1, 100, 1).onChange(changeCallback)
+    terrainFolder.add(this.terrainGenerator.noise2d, "octaves", 1, 8, 1).onChange(changeCallback)
   }
 
   clearWorkerTasks() {

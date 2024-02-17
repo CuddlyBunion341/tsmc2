@@ -8,6 +8,7 @@ export type TerrainGeneratorParams = {
   frequencyX: number
   frequencyY: number
   persistence: number
+  octaves: number
 }
 
 export class TerrainGenerator {
@@ -42,7 +43,7 @@ export class TerrainGenerator {
   }
 
   serialize(): TerrainGeneratorParams {
-    return { hilliness: this.hilliness, seed: this.seed, frequencyX: this.noise2d.frequencyX, frequencyY: this.noise2d.frequencyY, persistence: this.noise2d.persistence }
+    return { hilliness: this.hilliness, seed: this.seed, frequencyX: this.noise2d.frequencyX, frequencyY: this.noise2d.frequencyY, persistence: this.noise2d.persistence, octaves: this.noise2d.octaves}
   }
 
   deserialize(data: TerrainGeneratorParams) {
@@ -53,5 +54,6 @@ export class TerrainGenerator {
     this.noise2d.persistence = data.persistence
     this.noise2d.frequencyX = data.frequencyX
     this.noise2d.frequencyY = data.frequencyY
+    this.noise2d.octaves = data.octaves
   }
 }
