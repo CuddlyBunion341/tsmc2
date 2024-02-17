@@ -1,7 +1,7 @@
 import { ChunkData } from './ChunkData'
 import { ChunkMesher } from './ChunkMesher'
 import * as THREE from 'three'
-import { TerrainGenerator } from './TerrainGenerator'
+import { TerrainGenerator, TerrainGeneratorParams } from './TerrainGenerator'
 
 export type ChunkMessageData = {
   position: {
@@ -14,7 +14,7 @@ export type ChunkMessageData = {
     height: number
     depth: number
   }
-  generatorSeed: number
+  generatorParams: TerrainGeneratorParams
 }
 
 export class Chunk {
@@ -24,12 +24,14 @@ export class Chunk {
   public readonly mesh: THREE.Mesh
 
   public static fromMessageData(data: ChunkMessageData) {
-    const { position, dimensions, generatorSeed } = data
+    const { position, dimensions, generatorParams } = data
     const { x, y, z } = position
     const { width, height, depth } = dimensions
 
+    const terrainGenerator = TerrainGenerator.fromMessageData(generatorParams)
+
     const chunk = new Chunk(
-      new TerrainGenerator(generatorSeed),
+      terrainGenerator,
       new THREE.Vector3(x, y, z),
       new THREE.Vector3(width, height, depth)
     )
@@ -68,14 +70,14 @@ export class Chunk {
   }
 
   generateTerrainGenerationWorkerTask() {
-    const message = {
+    const message: ChunkMessageData = {
       position: { x: this.position.x, y: this.position.y, z: this.position.z },
       dimensions: {
         width: this.dimensions.x,
         height: this.dimensions.y,
         depth: this.dimensions.z
       },
-      generatorSeed: this.terrainGenerator.seed
+      generatorParams: this.terrainGenerator.serialize()
     }
 
     const callback = (message: MessageEvent<ArrayBuffer>) => {
