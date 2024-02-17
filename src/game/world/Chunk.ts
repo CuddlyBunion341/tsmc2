@@ -18,6 +18,7 @@ export type ChunkMessageData = {
 }
 
 export class Chunk {
+  public static readonly meshName = "Chunk"
   public readonly chunkData: ChunkData
   public readonly chunkMesher: ChunkMesher
   public readonly mesh: THREE.Mesh
@@ -43,6 +44,7 @@ export class Chunk {
     this.chunkData = new ChunkData(dimensions)
     this.chunkMesher = new ChunkMesher(dimensions, this.chunkData)
     this.mesh = new THREE.Mesh()
+    this.mesh.name = Chunk.meshName
     this.mesh.position.add(this.position.clone().multiply(this.dimensions))
     this.mesh.material = new THREE.MeshBasicMaterial({vertexColors: true})
   }

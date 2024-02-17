@@ -4,6 +4,8 @@ import { ChunkManager } from "./ChunkManager";
 import { TerrainGenerator } from "./TerrainGenerator";
 import { WorkerManager } from "./workers/WorkerPool";
 import TerrainGenerationWorker from './workers/TerrainGenerationWorker.ts?worker'
+import GUI from "lil-gui";
+
 export class World {
   readonly terrainGenerator: TerrainGenerator
   readonly chunkManager: ChunkManager
@@ -19,6 +21,17 @@ export class World {
       TerrainGenerationWorker,
       navigator.hardwareConcurrency
     )
+  }
+
+  addToGUI(gui: GUI, changeCallback: () => void) {
+    const folder = gui.addFolder("Render Distance")
+    folder.add(this.renderDistance, "x", 0, 16, 1).onChange(changeCallback)
+    folder.add(this.renderDistance, "y", 0, 16, 1).onChange(changeCallback)
+    folder.add(this.renderDistance, "z", 0, 16, 1).onChange(changeCallback)
+  }
+
+  clearWorkerTasks() {
+    this.workerManager.clearQueue()
   }
 
   generate() {

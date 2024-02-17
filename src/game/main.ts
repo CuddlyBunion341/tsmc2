@@ -5,16 +5,30 @@ import { Experience } from '../engine/Experience'
 import { Resource } from '../engine/Resources'
 import { Benchmark } from './utilities/Benchmark'
 import { World } from './world/World'
+import { Chunk } from './world/Chunk'
 
 export default class Game implements Experience {
   resources: Resource[] = []
 
-  constructor(private engine: Engine) { }
+  world: World
+
+  constructor(private engine: Engine) {
+    this.world = new World(69420, new THREE.Vector3(8, 2, 8))
+   }
 
   @Benchmark
   init(): void {
-    const world = new World(69420, new THREE.Vector3(8, 2, 8))
-    const chunks = world.generate()
+    this.generateWorld()
+    this.world.addToGUI(this.engine.debug.gui, () => this.generateWorld())
+  }
+
+  generateWorld() {
+    const oldChunkMeshes = this.engine.scene.children.filter(child => child.name === Chunk.meshName)
+    oldChunkMeshes.forEach(mesh => this.engine.scene.remove(mesh))
+
+    this.world.clearWorkerTasks()
+
+    const chunks = this.world.generate()
     chunks.forEach(chunk => this.engine.scene.add(chunk.mesh))
   }
 

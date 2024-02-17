@@ -60,14 +60,6 @@ export class ChunkMesher {
     public readonly chunkData: ChunkData
   ) { }
 
-  generateMesh() {
-    const geometry = this.generateGeometry()
-    const material = new THREE.MeshNormalMaterial()
-    const mesh = new THREE.Mesh(geometry, material)
-
-    return mesh
-  }
-
   generateGeometry() {
     const { vertices, indices } = this.generateChunkVertices()
 
