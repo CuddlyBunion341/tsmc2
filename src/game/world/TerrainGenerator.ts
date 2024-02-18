@@ -3,6 +3,7 @@ import { FractalNoise2d, FractalNoise2dParams } from '../utilities/Noise'
 import { blockIds } from './blocks'
 import GUI from 'lil-gui'
 import { Serializable } from '../utilities/Serializable'
+import { linearSplineInterpolation } from '../utilities/Math'
 
 export type TerrainGeneratorParams = {
   seed: number
@@ -18,19 +19,29 @@ export class TerrainGenerator implements Serializable<TerrainGeneratorParams> {
   public hilliness: number
   public grassLevel: number
   public dirtLevel: number
+  public terrainHeightSplines: number[][]
+
 
   constructor(public seed: number) {
     this.continentalness = new FractalNoise2d({
       seed,
-      octaves: 4,
-      frequency: 100,
-      persistence: 2,
+      octaves: 5,
+      frequency: 137,
+      persistence: 1.6,
       amplitude: 1,
-      lacunarity: 2
+      lacunarity: 1.6
     })
-    this.hilliness = 20
-    this.grassLevel = 5
-    this.dirtLevel = 3
+
+    this.hilliness = 5
+    this.grassLevel = 73
+    this.dirtLevel = 49
+
+    this.terrainHeightSplines = [
+      [-1, 5],
+      [0.3, 10],
+      [0.4, 15],
+      [1, 16],
+    ]
   }
 
   public static fromMessageData(data: TerrainGeneratorParams) {
@@ -42,7 +53,11 @@ export class TerrainGenerator implements Serializable<TerrainGeneratorParams> {
   public getBlock(blockPosition: THREE.Vector3) {
     const { x, y, z } = blockPosition
 
-    const height = this.continentalness.get(x, z) * this.hilliness
+    const continentalnessValue = this.continentalness.get(x, z)
+
+    const splineValue = linearSplineInterpolation(continentalnessValue, this.terrainHeightSplines)
+
+    const height = splineValue * this.hilliness
 
     if (y > height) return blockIds.air
     if (y > this.grassLevel) return blockIds.grass
