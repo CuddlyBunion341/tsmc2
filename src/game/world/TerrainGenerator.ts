@@ -4,6 +4,8 @@ import { blockIds } from './blocks'
 import GUI from 'lil-gui'
 import { linearSplineInterpolation } from '../utilities/Math'
 
+// Inspired by: https://www.youtube.com/watch?v=CSa5O6knuwI
+
 export type TerrainGeneratorParams = {
   seed: number
   hilliness: number

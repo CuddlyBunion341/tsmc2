@@ -1,7 +1,6 @@
 import {describe, expect, test} from 'vitest'
 import { linearSplineInterpolation } from './Math'
 
-
 describe('linearSplineInterpolation()', () => {
   test('should return input values when splinepoints are the same', () => {
     expect(linearSplineInterpolation(0, [[0, 0], [1, 1]])).toBe(0)
