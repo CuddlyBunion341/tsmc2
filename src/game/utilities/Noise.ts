@@ -69,26 +69,26 @@ export class FractalNoise2d {
     return noise
   }
 
-    public serialize(): FractalNoise2dParams {
-      return {
-        amplitude: this.amplitude,
-        frequency: this.frequency,
-        lacunarity: this.lacunarity,
-        persistence: this.persistence,
-        seed: this.seed,
-        octaves: this.octaves
-      }
+  public serialize(): FractalNoise2dParams {
+    return {
+      amplitude: this.amplitude,
+      frequency: this.frequency,
+      lacunarity: this.lacunarity,
+      persistence: this.persistence,
+      seed: this.seed,
+      octaves: this.octaves
     }
+  }
 
-    public deserialize(data: FractalNoise2dParams) {
-      this.amplitude = data.amplitude
-      this.frequency = data.frequency
-      this.lacunarity = data.lacunarity
-      this.persistence = data.persistence
-      this.seed = data.seed
-      this.noiseFunction = createNoise2D(createSeededRandomizer(data.seed))
-      this.octaves = data.octaves
-    }
+  public deserialize(data: FractalNoise2dParams) {
+    this.amplitude = data.amplitude
+    this.frequency = data.frequency
+    this.lacunarity = data.lacunarity
+    this.persistence = data.persistence
+    this.seed = data.seed
+    this.noiseFunction = createNoise2D(createSeededRandomizer(data.seed))
+    this.octaves = data.octaves
+  }
 }
 
 function createSeededRandomizer(seed: number) {
