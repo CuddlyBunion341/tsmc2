@@ -4,44 +4,32 @@ import { Engine } from '../engine/Engine'
 import { Experience } from '../engine/Experience'
 import { Resource } from '../engine/Resources'
 import { Benchmark } from './utilities/Benchmark'
-import { ChunkManager } from './world/ChunkManager'
-import { TerrainGenerator } from './world/TerrainGenerator'
-import { WorkerManager } from './world/workers/WorkerPool'
-import { ChunkMessageData } from './world/Chunk'
-import TerrainGenerationWorker from './world/workers/TerrainGenerationWorker.ts?worker'
+import { World } from './world/World'
+import { Chunk } from './world/Chunk'
 
 export default class Game implements Experience {
   resources: Resource[] = []
 
-  constructor(private engine: Engine) {}
+  world: World
+
+  constructor(private engine: Engine) {
+    this.world = new World(69420, new THREE.Vector3(8, 2, 8))
+   }
 
   @Benchmark
   init(): void {
-    const terrainGenerator = new TerrainGenerator(69420)
-    const chunkManager = new ChunkManager(terrainGenerator, new THREE.Vector3(8, 2, 8))
+    this.generateWorld()
+    this.world.addToGUI(this.engine.debug.gui, () => this.generateWorld())
+  }
 
-    const chunks = chunkManager.createChunksAroundOrigin(new THREE.Vector3(0, 0, 0))
+  generateWorld() {
+    const oldChunkMeshes = this.engine.scene.children.filter(child => child.name === Chunk.meshName)
+    oldChunkMeshes.forEach(mesh => this.engine.scene.remove(mesh))
 
-    const workerCount = navigator.hardwareConcurrency
+    this.world.clearWorkerTasks()
 
-    const workerManager = new WorkerManager<ChunkMessageData, ArrayBuffer>(
-      TerrainGenerationWorker,
-      workerCount
-    )
-
-    chunks.forEach((chunk) => {
-      this.engine.scene.add(chunk.mesh)
-
-      const task = chunk.generateTerrainGenerationWorkerTask()
-
-      workerManager.enqueueTask({
-        message: task.message,
-        callback: (args: MessageEvent<ArrayBuffer>) => {
-          task.callback(args)
-          chunk.updateMeshGeometry()
-        }
-      })
-    })
+    const chunks = this.world.generate()
+    chunks.forEach(chunk => this.engine.scene.add(chunk.mesh))
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -4,39 +4,53 @@
 
 import { NoiseFunction2D, createNoise2D } from 'simplex-noise'
 import { MersenneTwister19937, Random } from 'random-js'
+import GUI from 'lil-gui'
 
-export function seededRandomizer(seed: number) {
-  const engine = MersenneTwister19937.seed(seed)
-  const random = new Random(engine)
-  return () => random.realZeroToOneExclusive()
+export interface FractalNoise2dParams {
+  seed: number
+  amplitude: number
+  frequency: number
+  lacunarity: number
+  persistence: number
+  octaves: number
 }
 
 export class FractalNoise2d {
-  public amplitude = 1
-  public frequencyX = 30
-  public frequencyY = 30
-  public lacunarity = 2
-  public persistence = 2
-  public noiseFunction: NoiseFunction2D
+  private noiseFunction!: NoiseFunction2D
+  public seed!: number
+  public amplitude!: number
+  public frequency!: number
+  public lacunarity!: number
+  public persistence!: number
+  public octaves!: number
 
-  constructor(public readonly seed: number, public readonly octaves: number) {
-    this.noiseFunction = createNoise2D(seededRandomizer(seed))
+  constructor(params: FractalNoise2dParams) {
+    this.deserialize(params)
+  }
+
+  public addToGUI(gui: GUI, changeCallback: () => void) {
+    const folder = gui.addFolder('Fractal Noise 2D')
+    folder.add(this, 'amplitude', 1, 100, 1).onChange(changeCallback)
+    folder.add(this, 'frequency', 1, 1000, 1).onChange(changeCallback)
+    folder.add(this, 'lacunarity', 1, 4, 0.1).onChange(changeCallback)
+    folder.add(this, 'persistence', 1, 4, 0.1).onChange(changeCallback)
+    folder.add(this, 'octaves', 1, 8, 1).onChange(changeCallback)
   }
 
   public getOctave(x: number, y: number, octave: number): number {
+    const { frequency, lacunarity, amplitude } = this
     return (
       this.noiseFunction(
-        (x * this.frequencyX * this.lacunarity) / octave,
-        ((y / (this.frequencyY * octave)) * this.lacunarity) / octave
+        (x * frequency * lacunarity) / octave,
+        ((y / (frequency * octave)) * lacunarity) / octave
       ) *
-      this.amplitude *
-      this.lacunarity
+      amplitude *
+      lacunarity
     )
   }
 
   public get(x: number, y: number): number {
     let noise = 0
-
     let amplitudeSum = 0
 
     for (let o = 0; o < this.octaves; o++) {
@@ -47,11 +61,38 @@ export class FractalNoise2d {
 
       noise +=
         (1 / p) *
-        this.noiseFunction(x / (this.frequencyX / l), y / (this.frequencyY / l))
+        this.noiseFunction(x / (this.frequency / l), y / (this.frequency / l))
     }
 
     noise = noise / amplitudeSum
 
     return noise
   }
+
+  public serialize(): FractalNoise2dParams {
+    return {
+      amplitude: this.amplitude,
+      frequency: this.frequency,
+      lacunarity: this.lacunarity,
+      persistence: this.persistence,
+      seed: this.seed,
+      octaves: this.octaves
+    }
+  }
+
+  public deserialize(data: FractalNoise2dParams) {
+    this.amplitude = data.amplitude
+    this.frequency = data.frequency
+    this.lacunarity = data.lacunarity
+    this.persistence = data.persistence
+    this.seed = data.seed
+    this.noiseFunction = createNoise2D(createSeededRandomizer(data.seed))
+    this.octaves = data.octaves
+  }
+}
+
+function createSeededRandomizer(seed: number) {
+  const engine = MersenneTwister19937.seed(seed)
+  const random = new Random(engine)
+  return () => random.realZeroToOneExclusive()
 }

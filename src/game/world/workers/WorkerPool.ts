@@ -5,6 +5,7 @@ export interface WorkerTask<T, U> {
 }
 
 export class WorkerManager<T, U> {
+
   public idleWorkers: Worker[] = []
   public activeWorkers: Worker[] = []
 
@@ -39,12 +40,16 @@ export class WorkerManager<T, U> {
     }
 
     this.activeWorkers.push(idleWorker)
-}
+  }
 
   public enqueueTaskFromQueue() {
     if (this.taskQueue.length === 0) return
 
     const task = this.taskQueue.shift()
     if (task) this.enqueueTask(task)
+  }
+
+  clearQueue() {
+    this.taskQueue = []
   }
 }
