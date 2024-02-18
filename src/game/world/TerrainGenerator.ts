@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import { FractalNoise2d, FractalNoise2dParams } from '../utilities/Noise'
 import { blockIds } from './blocks'
 import GUI from 'lil-gui'
+import { Serializable } from '../utilities/Serializable'
 
 export type TerrainGeneratorParams = {
   seed: number
@@ -11,18 +12,22 @@ export type TerrainGeneratorParams = {
   dirtLevel: number
 }
 
-export class TerrainGenerator {
+export class TerrainGenerator implements Serializable<TerrainGeneratorParams> {
 
-  public noise2d: FractalNoise2d
+  public continentalness: FractalNoise2d
   public hilliness: number
   public grassLevel: number
   public dirtLevel: number
 
   constructor(public seed: number) {
-    this.noise2d = new FractalNoise2d(this.seed, 4)
-    this.noise2d.frequencyX = 100
-    this.noise2d.frequencyY = 100
-    this.noise2d.persistence = 2
+    this.continentalness = new FractalNoise2d({
+      seed,
+      octaves: 4,
+      frequency: 100,
+      persistence: 2,
+      amplitude: 1,
+      lacunarity: 2
+    })
     this.hilliness = 20
     this.grassLevel = 5
     this.dirtLevel = 3
@@ -37,7 +42,7 @@ export class TerrainGenerator {
   public getBlock(blockPosition: THREE.Vector3) {
     const { x, y, z } = blockPosition
 
-    const height = this.noise2d.get(x, z) * this.hilliness
+    const height = this.continentalness.get(x, z) * this.hilliness
 
     if (y > height) return blockIds.air
     if (y > this.grassLevel) return blockIds.grass
@@ -51,11 +56,11 @@ export class TerrainGenerator {
     folder.add(this, 'hilliness', 1, 100, 1).onChange(changeCallback)
     folder.add(this, 'grassLevel', -50, 100, 1).onChange(changeCallback)
     folder.add(this, 'dirtLevel', -50, 100, 1).onChange(changeCallback)
-    this.noise2d.addToGUI(folder, changeCallback)
+    this.continentalness.addToGUI(folder, changeCallback)
   }
 
-  serialize(): TerrainGeneratorParams {
-    return { hilliness: this.hilliness, seed: this.seed, fractalNoiseParams: this.noise2d.serialize(), grassLevel: this.grassLevel, dirtLevel: this.dirtLevel}
+  serialize() {
+    return { hilliness: this.hilliness, seed: this.seed, fractalNoiseParams: this.continentalness.serialize(), grassLevel: this.grassLevel, dirtLevel: this.dirtLevel}
   }
 
   deserialize(data: TerrainGeneratorParams) {
@@ -64,6 +69,6 @@ export class TerrainGenerator {
     this.grassLevel = data.grassLevel
     this.dirtLevel = data.dirtLevel
 
-    this.noise2d.deserialize(data.fractalNoiseParams)
+    this.continentalness.deserialize(data.fractalNoiseParams)
   }
 }
