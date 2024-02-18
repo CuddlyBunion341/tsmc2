@@ -5,7 +5,6 @@
 import { NoiseFunction2D, createNoise2D } from 'simplex-noise'
 import { MersenneTwister19937, Random } from 'random-js'
 import GUI from 'lil-gui'
-import { Serializable } from './Serializable'
 
 export interface FractalNoise2dParams {
   seed: number
@@ -16,7 +15,7 @@ export interface FractalNoise2dParams {
   octaves: number
 }
 
-export class FractalNoise2d implements Serializable<FractalNoise2dParams> {
+export class FractalNoise2d {
   private noiseFunction!: NoiseFunction2D
   public seed!: number
   public amplitude!: number

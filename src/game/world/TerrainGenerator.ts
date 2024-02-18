@@ -2,7 +2,6 @@ import * as THREE from 'three'
 import { FractalNoise2d, FractalNoise2dParams } from '../utilities/Noise'
 import { blockIds } from './blocks'
 import GUI from 'lil-gui'
-import { Serializable } from '../utilities/Serializable'
 import { linearSplineInterpolation } from '../utilities/Math'
 
 export type TerrainGeneratorParams = {
@@ -14,7 +13,7 @@ export type TerrainGeneratorParams = {
   terrainHeightSplines: number[][]
 }
 
-export class TerrainGenerator implements Serializable<TerrainGeneratorParams> {
+export class TerrainGenerator {
 
   public continentalness: FractalNoise2d
   public hilliness: number
@@ -68,7 +67,7 @@ export class TerrainGenerator implements Serializable<TerrainGeneratorParams> {
     return blockIds.stone
   }
 
-  addToGUI(gui: GUI, changeCallback: () => void) {
+  public addToGUI(gui: GUI, changeCallback: () => void) {
     const folder = gui.addFolder('Terrain Generator')
     folder.add(this, 'hilliness', 1, 100, 1).onChange(changeCallback)
     folder.add(this, 'grassLevel', -50, 100, 1).onChange(changeCallback)
@@ -82,17 +81,24 @@ export class TerrainGenerator implements Serializable<TerrainGeneratorParams> {
     this.continentalness.addToGUI(folder, changeCallback)
   }
 
-  serialize() {
-    return { hilliness: this.hilliness, seed: this.seed, fractalNoiseParams: this.continentalness.serialize(), grassLevel: this.grassLevel, dirtLevel: this.dirtLevel, terrainHeightSplines: this.terrainHeightSplines}
+  public serialize(): TerrainGeneratorParams {
+    return {
+      seed: this.seed,
+      hilliness: this.hilliness,
+      grassLevel: this.grassLevel,
+      dirtLevel: this.dirtLevel,
+      terrainHeightSplines: this.terrainHeightSplines,
+      fractalNoiseParams: this.continentalness.serialize(),
+    }
   }
 
-  deserialize(data: TerrainGeneratorParams) {
+  public deserialize(data: TerrainGeneratorParams) {
     this.seed = data.seed
     this.hilliness = data.hilliness
     this.grassLevel = data.grassLevel
     this.dirtLevel = data.dirtLevel
+    this.terrainHeightSplines = data.terrainHeightSplines
 
     this.continentalness.deserialize(data.fractalNoiseParams)
-    this.terrainHeightSplines = data.terrainHeightSplines
   }
 }
