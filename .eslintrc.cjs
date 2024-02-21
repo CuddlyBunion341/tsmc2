@@ -14,7 +14,6 @@ module.exports = {
         "@typescript-eslint/explicit-member-accessibility": "error",
         "@typescript-eslint/array-type": "error",
         "@typescript-eslint/ban-tslint-comment": "error",
-        "@typescript-eslint/class-literal-property-style": "error",
         "class-methods-use-this": "off",
         "@typescript-eslint/class-methods-use-this": "error",
         "@typescript-eslint/consistent-generic-constructors": "error",
@@ -22,7 +21,9 @@ module.exports = {
         "@typescript-eslint/consistent-type-assertions": "error",
         "@typescript-eslint/consistent-type-definitions": ["error", "type"],
         "@typescript-eslint/consistent-type-exports": "error",
-        "@typescript-eslint/consistent-type-imports": "error"
+        "@typescript-eslint/consistent-type-imports": "error",
+        "@typescript-eslint/class-literal-property-style": ["error", "fields"],
+        "@typescript-eslint/default-param-last": "error"
       }
     }
   ]
