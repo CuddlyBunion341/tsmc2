@@ -23,7 +23,11 @@ module.exports = {
         "@typescript-eslint/consistent-type-exports": "error",
         "@typescript-eslint/consistent-type-imports": "error",
         "@typescript-eslint/class-literal-property-style": ["error", "fields"],
-        "@typescript-eslint/default-param-last": "error"
+        "@typescript-eslint/default-param-last": "error",
+        "@typescript-eslint/member-ordering": [
+          "error",
+          { "default": ["signature", "field", "constructor", "method"] },
+        ],
       }
     }
   ]

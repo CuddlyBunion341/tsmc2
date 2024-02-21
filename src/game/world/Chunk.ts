@@ -24,6 +24,19 @@ export class Chunk {
   public readonly chunkMesher: ChunkMesher
   public readonly mesh: THREE.Mesh
 
+  public constructor(
+    public readonly terrainGenerator: TerrainGenerator,
+    public readonly position: THREE.Vector3,
+    public readonly dimensions: THREE.Vector3
+  ) {
+    this.chunkData = new ChunkData(dimensions)
+    this.chunkMesher = new ChunkMesher(dimensions, this.chunkData)
+    this.mesh = new THREE.Mesh()
+    this.mesh.name = Chunk.meshName
+    this.mesh.position.add(this.position.clone().multiply(this.dimensions))
+    this.mesh.material = new THREE.MeshBasicMaterial({vertexColors: true})
+  }
+
   public static fromMessageData(data: ChunkMessageData) {
     const { position, dimensions, generatorParams } = data
     const { x, y, z } = position
@@ -37,19 +50,6 @@ export class Chunk {
       new THREE.Vector3(width, height, depth)
     )
     return chunk
-  }
-
-  public constructor(
-    public readonly terrainGenerator: TerrainGenerator,
-    public readonly position: THREE.Vector3,
-    public readonly dimensions: THREE.Vector3
-  ) {
-    this.chunkData = new ChunkData(dimensions)
-    this.chunkMesher = new ChunkMesher(dimensions, this.chunkData)
-    this.mesh = new THREE.Mesh()
-    this.mesh.name = Chunk.meshName
-    this.mesh.position.add(this.position.clone().multiply(this.dimensions))
-    this.mesh.material = new THREE.MeshBasicMaterial({vertexColors: true})
   }
 
   public generateTerrain() {
