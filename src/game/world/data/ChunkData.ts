@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { BlockLattice } from '../util/BlockLattice'
+import { BlockLattice } from '../../util/BlockLattice'
 
 export class ChunkData extends BlockLattice {
   constructor(dimensions: THREE.Vector3) {

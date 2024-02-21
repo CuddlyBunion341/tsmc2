@@ -1,6 +1,6 @@
 import * as THREE from 'three'
-import { Chunk } from './Chunk'
-import { ChunkStorage } from './ChunkStorage'
+import { Chunk } from './data/Chunk'
+import { ChunkStorage } from './data/ChunkStorage'
 import { SpiralHelper2d } from './SpiralHelper2d'
 import { TerrainGenerator } from './TerrainGenerator'
 

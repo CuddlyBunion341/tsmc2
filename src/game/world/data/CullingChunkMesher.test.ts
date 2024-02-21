@@ -1,8 +1,9 @@
 import * as THREE from 'three'
 import { describe, it, expect, beforeEach } from 'vitest'
-import { ChunkMesher, Vertex } from './ChunkMesher'
+import { CullingChunkMesher } from '../meshing/CullingChunkMesher'
 import { ChunkData } from './ChunkData'
 import { blockIds } from './blocks'
+import { Vertex } from '../meshing/AbstractChunkMesher'
 
 const assertGeometryArray = (array: number[], length: number) => {
   expect(array).toHaveLength(length)
@@ -19,7 +20,7 @@ const assertVertexData = (vertex: Vertex) => {
 
 describe('#generateFaceGeometry()', () => {
   it('should generate the correct face', () => {
-    const chunkMesher = new ChunkMesher(
+    const chunkMesher = new CullingChunkMesher(
       new THREE.Vector3(1, 1, 1),
       new ChunkData(new THREE.Vector3(1, 1, 1))
     )
@@ -30,12 +31,12 @@ describe('#generateFaceGeometry()', () => {
 
 describe('#generateVertexData()', () => {
   let chunkData: ChunkData
-  let chunkMesher: ChunkMesher
+  let chunkMesher: CullingChunkMesher
 
   beforeEach(() => {
     const dimensions = new THREE.Vector3(32, 32, 32)
     chunkData = new ChunkData(dimensions)
-    chunkMesher = new ChunkMesher(dimensions, chunkData)
+    chunkMesher = new CullingChunkMesher(dimensions, chunkData)
   })
 
   it('should generate correct vertices for a cube', () => {

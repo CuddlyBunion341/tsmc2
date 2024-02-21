@@ -1,7 +1,7 @@
 import { ChunkData } from './ChunkData'
-import { ChunkMesher } from './ChunkMesher'
+import { CullingChunkMesher } from '../meshing/CullingChunkMesher'
 import * as THREE from 'three'
-import { TerrainGenerator, TerrainGeneratorParams } from './TerrainGenerator'
+import { TerrainGenerator, TerrainGeneratorParams } from '../TerrainGenerator'
 
 export type ChunkMessageData = {
   position: {
@@ -20,7 +20,7 @@ export type ChunkMessageData = {
 export class Chunk {
   public static readonly meshName = "Chunk"
   public readonly chunkData: ChunkData
-  public readonly chunkMesher: ChunkMesher
+  public readonly chunkMesher: CullingChunkMesher
   public readonly mesh: THREE.Mesh
 
   public static fromMessageData(data: ChunkMessageData) {
@@ -44,7 +44,7 @@ export class Chunk {
     public readonly dimensions: THREE.Vector3
   ) {
     this.chunkData = new ChunkData(dimensions)
-    this.chunkMesher = new ChunkMesher(dimensions, this.chunkData)
+    this.chunkMesher = new CullingChunkMesher(dimensions, this.chunkData)
     this.mesh = new THREE.Mesh()
     this.mesh.name = Chunk.meshName
     this.mesh.position.add(this.position.clone().multiply(this.dimensions))

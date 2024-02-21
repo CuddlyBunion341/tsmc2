@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { ChunkMessageData } from "./Chunk";
+import { ChunkMessageData } from "./data/Chunk";
 import { ChunkManager } from "./ChunkManager";
 import { TerrainGenerator } from "./TerrainGenerator";
 import { WorkerManager } from "./workers/WorkerPool";

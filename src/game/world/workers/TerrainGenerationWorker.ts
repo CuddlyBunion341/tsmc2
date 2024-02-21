@@ -1,4 +1,4 @@
-import { Chunk, ChunkMessageData } from '../Chunk'
+import { Chunk, ChunkMessageData } from '../data/Chunk'
 
 self.onmessage = (message: MessageEvent<ChunkMessageData>) => {
   const { data } = message

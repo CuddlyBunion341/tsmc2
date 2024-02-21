@@ -1,71 +1,19 @@
 import * as THREE from 'three'
-import { blockIds, blocks } from './blocks'
-import { ChunkData } from './ChunkData'
+import { blockIds, blocks } from '../data/blocks'
+import { ChunkData } from '../data/ChunkData'
+import { AbstractChunkMesher, Vertex } from './AbstractChunkMesher'
 
-export type Vertex = {
-  position: [number, number, number]
-  normal: [number, number, number]
-  uv: [number, number]
-  color: [number, number, number]
-}
-
-const FACE_COUNT = 6
-const FACE_VERTEX_COUNT = 4
-
-export class ChunkMesher {
-  static geometryAttributes = [
-    { name: 'position', size: 3 },
-    { name: 'normal', size: 3 },
-    { name: 'uv', size: 2 },
-    { name: 'color', size: 3 }
-  ] as const
-
-  static vertexData: Vertex[] = [
-    // left
-    { color: [0, 0, 0], position: [-1, -1, -1], normal: [-1, 0, 0], uv: [0, 0] },
-    { color: [0, 0, 0], position: [-1, -1, 1], normal: [-1, 0, 0], uv: [1, 0] },
-    { color: [0, 0, 0], position: [-1, 1, -1], normal: [-1, 0, 0], uv: [0, 1] },
-    { color: [0, 0, 0], position: [-1, 1, 1], normal: [-1, 0, 0], uv: [1, 1] },
-    // right
-    { color: [0, 0, 0], position: [1, -1, 1], normal: [1, 0, 0], uv: [0, 0] },
-    { color: [0, 0, 0], position: [1, -1, -1], normal: [1, 0, 0], uv: [1, 0] },
-    { color: [0, 0, 0], position: [1, 1, 1], normal: [1, 0, 0], uv: [0, 1] },
-    { color: [0, 0, 0], position: [1, 1, -1], normal: [1, 0, 0], uv: [1, 1] },
-    // bottom
-    { color: [0, 0, 0], position: [1, -1, 1], normal: [0, -1, 0], uv: [0, 0] },
-    { color: [0, 0, 0], position: [-1, -1, 1], normal: [0, -1, 0], uv: [1, 0] },
-    { color: [0, 0, 0], position: [1, -1, -1], normal: [0, -1, 0], uv: [0, 1] },
-    { color: [0, 0, 0], position: [-1, -1, -1], normal: [0, -1, 0], uv: [1, 1] },
-    // top
-    { color: [0, 0, 0], position: [1, 1, -1], normal: [0, 1, 0], uv: [0, 0] },
-    { color: [0, 0, 0], position: [-1, 1, -1], normal: [0, 1, 0], uv: [1, 0] },
-    { color: [0, 0, 0], position: [1, 1, 1], normal: [0, 1, 0], uv: [0, 1] },
-    { color: [0, 0, 0], position: [-1, 1, 1], normal: [0, 1, 0], uv: [1, 1] },
-    // back
-    { color: [0, 0, 0], position: [1, -1, -1], normal: [0, 0, -1], uv: [0, 0] },
-    { color: [0, 0, 0], position: [-1, -1, -1], normal: [0, 0, -1], uv: [1, 0] },
-    { color: [0, 0, 0], position: [1, 1, -1], normal: [0, 0, -1], uv: [0, 1] },
-    { color: [0, 0, 0], position: [-1, 1, -1], normal: [0, 0, -1], uv: [1, 1] },
-    // front
-    { color: [0, 0, 0], position: [-1, -1, 1], normal: [0, 0, 1], uv: [0, 0] },
-    { color: [0, 0, 0], position: [1, -1, 1], normal: [0, 0, 1], uv: [1, 0] },
-    { color: [0, 0, 0], position: [-1, 1, 1], normal: [0, 0, 1], uv: [0, 1] },
-    { color: [0, 0, 0], position: [1, 1, 1], normal: [0, 0, 1], uv: [1, 1] }
-  ] as const
-
-  static vertexIndices = [0, 1, 2, 2, 1, 3] as const
-
-  constructor(
-    public readonly dimensions: THREE.Vector3,
-    public readonly chunkData: ChunkData
-  ) { }
+export class CullingChunkMesher extends AbstractChunkMesher {
+  constructor( dimensions: THREE.Vector3, chunkData: ChunkData) {
+    super(dimensions, chunkData)
+   }
 
   generateGeometry() {
     const { vertices, indices } = this.generateChunkVertices()
 
     const geometry = new THREE.BufferGeometry()
 
-    ChunkMesher.geometryAttributes.forEach(({ name, size }) => {
+    CullingChunkMesher.geometryAttributes.forEach(({ name, size }) => {
       const attributeData = vertices.map((v) => v[name]).flat()
       const attribute = new THREE.BufferAttribute(new Float32Array(attributeData), size)
       geometry.setAttribute(name, attribute)
@@ -82,7 +30,7 @@ export class ChunkMesher {
   }
 
   private isSolid(blockPosition: THREE.Vector3) {
-    return ChunkMesher.isSolid(this.chunkData.get(blockPosition))
+    return CullingChunkMesher.isSolid(this.chunkData.get(blockPosition))
   }
 
   generateChunkVertices() {
@@ -99,7 +47,7 @@ export class ChunkMesher {
         for (let z = 0; z < this.dimensions.z; z++) {
           blockPosition.set(x, y, z)
           const block = this.chunkData.get(blockPosition)
-          if (!ChunkMesher.isSolid(block)) continue
+          if (!CullingChunkMesher.isSolid(block)) continue
 
           // use a face mask to determine which faces to render
           let faceMask = 0b000000
@@ -111,14 +59,14 @@ export class ChunkMesher {
           if (!this.isSolid(neighborPosition.set(x, y, z + 1))) faceMask |= 0b100000 // 32
           if (faceMask === 0b000000) continue
 
-          for (let i = 0; i < FACE_COUNT; i++) {
+          for (let i = 0; i < CullingChunkMesher.cubeFaceCount; i++) {
             // check if the current face is visible
             if ((faceMask & (1 << i)) === 0) continue
             const faceVertices = this.generateFaceVertices(i, block, blockPosition)
             vertices.push(...faceVertices)
 
-            indices.push(...ChunkMesher.vertexIndices.map((v) => lastIndex + v))
-            lastIndex += FACE_VERTEX_COUNT
+            indices.push(...CullingChunkMesher.vertexIndices.map((v) => lastIndex + v))
+            lastIndex += CullingChunkMesher.faceVertexCount
           }
         }
       }
@@ -128,14 +76,14 @@ export class ChunkMesher {
   }
 
   generateFaceVertices(faceIndex: number, blockId: number, blockPosition: THREE.Vector3) {
-    const firstFaceVertexIndex = faceIndex * FACE_VERTEX_COUNT
+    const firstFaceVertexIndex = faceIndex * CullingChunkMesher.faceVertexCount
 
     const color = blocks[blockId].color
 
     const vertexPosition = new THREE.Vector3(0, 0, 0)
 
-    const faceVertices = ChunkMesher.vertexData
-      .slice(firstFaceVertexIndex, firstFaceVertexIndex + FACE_VERTEX_COUNT)
+    const faceVertices = CullingChunkMesher.vertexData
+      .slice(firstFaceVertexIndex, firstFaceVertexIndex + CullingChunkMesher.faceVertexCount)
       .map((vertex) => {
         const position: [number, number, number] = [
           vertex.position[0] / 2 + blockPosition.x,

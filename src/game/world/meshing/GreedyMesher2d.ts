@@ -1,4 +1,4 @@
-import { BlockGrid } from '../util/BlockGrid'
+import { BlockGrid } from '../../util/BlockGrid'
 
 export interface Area<T> {
   value: T

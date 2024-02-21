@@ -5,7 +5,7 @@ import { Experience } from '../engine/Experience'
 import { Resource } from '../engine/Resources'
 import { Benchmark } from './utilities/Benchmark'
 import { World } from './world/World'
-import { Chunk } from './world/Chunk'
+import { Chunk } from './world/data/Chunk'
 
 export default class Game implements Experience {
   resources: Resource[] = []

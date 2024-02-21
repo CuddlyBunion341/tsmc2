@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import { Chunk } from './Chunk'
 import { ChunkStorage } from './ChunkStorage'
 import { describe, expect, test } from 'vitest'
-import { TerrainGenerator } from './TerrainGenerator'
+import { TerrainGenerator } from '../TerrainGenerator'
 
 describe('#getChunkKey()', () => {
   test('should generate the correct key', () => {
