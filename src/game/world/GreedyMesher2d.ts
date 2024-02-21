@@ -1,6 +1,6 @@
 import { BlockGrid } from '../util/BlockGrid'
 
-export interface Area<T> {
+export type Area<T> = {
   value: T
   x: number
   y: number

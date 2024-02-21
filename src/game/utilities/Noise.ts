@@ -6,7 +6,7 @@ import { NoiseFunction2D, createNoise2D } from 'simplex-noise'
 import { MersenneTwister19937, Random } from 'random-js'
 import GUI from 'lil-gui'
 
-export interface FractalNoise2dParams {
+export type FractalNoise2dParams = {
   seed: number
   amplitude: number
   frequency: number

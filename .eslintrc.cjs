@@ -14,6 +14,10 @@ module.exports = {
         "@typescript-eslint/class-literal-property-style": "error",
         "class-methods-use-this": "off",
         "@typescript-eslint/class-methods-use-this": "error",
+        "@typescript-eslint/consistent-generic-constructors": "error",
+        "@typescript-eslint/consistent-indexed-object-style": "error",
+        "@typescript-eslint/consistent-type-assertions": "error",
+        "@typescript-eslint/consistent-type-definitions": ["error", "type"],
       }
     }
   ]
