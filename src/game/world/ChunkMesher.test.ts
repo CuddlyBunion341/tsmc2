@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { describe, it, expect, beforeEach } from 'vitest'
-import { ChunkMesher, Vertex } from './ChunkMesher'
+import type { Vertex } from './ChunkMesher';
+import { ChunkMesher } from './ChunkMesher'
 import { ChunkData } from './ChunkData'
 import { blockIds } from './blocks'
 

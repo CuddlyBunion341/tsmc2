@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { blockIds, blocks } from './blocks'
-import { ChunkData } from './ChunkData'
+import type { ChunkData } from './ChunkData'
 
 export type Vertex = {
   position: [number, number, number]

@@ -2,9 +2,10 @@
 // https://www.npmjs.com/package/simplex-noise
 // https://www.youtube.com/watch?app=desktop&v=G1T8H58EP70
 
-import { NoiseFunction2D, createNoise2D } from 'simplex-noise'
+import type { NoiseFunction2D} from 'simplex-noise';
+import { createNoise2D } from 'simplex-noise'
 import { MersenneTwister19937, Random } from 'random-js'
-import GUI from 'lil-gui'
+import type GUI from 'lil-gui'
 
 export type FractalNoise2dParams = {
   seed: number

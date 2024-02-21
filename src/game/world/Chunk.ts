@@ -1,7 +1,8 @@
 import { ChunkData } from './ChunkData'
 import { ChunkMesher } from './ChunkMesher'
 import * as THREE from 'three'
-import { TerrainGenerator, TerrainGeneratorParams } from './TerrainGenerator'
+import type { TerrainGeneratorParams } from './TerrainGenerator';
+import { TerrainGenerator } from './TerrainGenerator'
 
 export type ChunkMessageData = {
   position: {

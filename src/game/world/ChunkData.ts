@@ -1,4 +1,4 @@
-import * as THREE from 'three'
+import type * as THREE from 'three'
 import { BlockLattice } from '../util/BlockLattice'
 
 export class ChunkData extends BlockLattice {

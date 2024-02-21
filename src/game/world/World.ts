@@ -1,10 +1,10 @@
 import * as THREE from "three";
-import { ChunkMessageData } from "./Chunk";
+import type { ChunkMessageData } from "./Chunk";
 import { ChunkManager } from "./ChunkManager";
 import { TerrainGenerator } from "./TerrainGenerator";
 import { WorkerManager } from "./workers/WorkerPool";
 import TerrainGenerationWorker from './workers/TerrainGenerationWorker.ts?worker'
-import GUI from "lil-gui";
+import type GUI from "lil-gui";
 
 export class World {
   private readonly terrainGenerator: TerrainGenerator

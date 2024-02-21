@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import { Chunk } from './Chunk'
 import { ChunkStorage } from './ChunkStorage'
 import { SpiralHelper2d } from './SpiralHelper2d'
-import { TerrainGenerator } from './TerrainGenerator'
+import type { TerrainGenerator } from './TerrainGenerator'
 
 export class ChunkManager {
   private readonly chunks: ChunkStorage

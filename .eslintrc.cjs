@@ -6,6 +6,9 @@ module.exports = {
   root: true,
   overrides: [
     {
+      parserOptions: {
+        project: './tsconfig.json',
+      },
       files: ['src/game/*/*.ts'],
       rules: {
         "@typescript-eslint/explicit-member-accessibility": "error",
@@ -18,6 +21,8 @@ module.exports = {
         "@typescript-eslint/consistent-indexed-object-style": "error",
         "@typescript-eslint/consistent-type-assertions": "error",
         "@typescript-eslint/consistent-type-definitions": ["error", "type"],
+        "@typescript-eslint/consistent-type-exports": "error",
+        "@typescript-eslint/consistent-type-imports": "error"
       }
     }
   ]

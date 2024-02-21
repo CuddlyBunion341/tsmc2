@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { Chunk } from './Chunk'
+import type { Chunk } from './Chunk'
 
 export class ChunkStorage {
   private readonly chunks: Map<string, Chunk>
