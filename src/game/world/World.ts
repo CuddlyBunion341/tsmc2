@@ -7,12 +7,12 @@ import TerrainGenerationWorker from './workers/TerrainGenerationWorker.ts?worker
 import GUI from "lil-gui";
 
 export class World {
-  readonly terrainGenerator: TerrainGenerator
-  readonly chunkManager: ChunkManager
-  readonly workerManager: WorkerManager<ChunkMessageData, ArrayBuffer>
-  readonly renderDistance: THREE.Vector3
+  private readonly terrainGenerator: TerrainGenerator
+  private readonly chunkManager: ChunkManager
+  private readonly workerManager: WorkerManager<ChunkMessageData, ArrayBuffer>
+  private readonly renderDistance: THREE.Vector3
 
-  constructor(seed: number, renderDistance: THREE.Vector3) {
+  public constructor(seed: number, renderDistance: THREE.Vector3) {
     this.terrainGenerator = new TerrainGenerator(seed)
     this.renderDistance = renderDistance
     this.chunkManager = new ChunkManager(this.terrainGenerator, this.renderDistance)
@@ -23,7 +23,7 @@ export class World {
     )
   }
 
-  addToGUI(gui: GUI, changeCallback: () => void) {
+  public addToGUI(gui: GUI, changeCallback: () => void) {
     const renderDistanceFolder = gui.addFolder("Render Distance")
     renderDistanceFolder.add(this.renderDistance, "x", 0, 16, 1).onChange(changeCallback)
     renderDistanceFolder.add(this.renderDistance, "y", 0, 16, 1).onChange(changeCallback)
@@ -32,11 +32,11 @@ export class World {
     this.terrainGenerator.addToGUI(gui, changeCallback)
   }
 
-  clearWorkerTasks() {
+  public clearWorkerTasks() {
     this.workerManager.clearQueue()
   }
 
-  generate() {
+  public generate() {
     const chunks = this.chunkManager.createChunksAroundOrigin(new THREE.Vector3(0, 0, 0))
 
     chunks.forEach((chunk) => {

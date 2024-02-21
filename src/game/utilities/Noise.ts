@@ -24,7 +24,8 @@ export class FractalNoise2d {
   public persistence!: number
   public octaves!: number
 
-  constructor(params: FractalNoise2dParams) {
+  
+  public constructor(params: FractalNoise2dParams) {
     this.deserialize(params)
   }
 

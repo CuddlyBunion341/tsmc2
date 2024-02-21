@@ -8,21 +8,21 @@ import { World } from './world/World'
 import { Chunk } from './world/Chunk'
 
 export default class Game implements Experience {
-  resources: Resource[] = []
+  public resources: Resource[] = []
 
-  world: World
+  private world: World
 
-  constructor(private engine: Engine) {
+  public constructor(private engine: Engine) {
     this.world = new World(69420, new THREE.Vector3(8, 2, 8))
    }
 
   @Benchmark
-  init(): void {
+  public init(): void {
     this.generateWorld()
     this.world.addToGUI(this.engine.debug.gui, () => this.generateWorld())
   }
 
-  generateWorld() {
+  public generateWorld() {
     const oldChunkMeshes = this.engine.scene.children.filter(child => child.name === Chunk.meshName)
     oldChunkMeshes.forEach(mesh => this.engine.scene.remove(mesh))
 
@@ -33,7 +33,7 @@ export default class Game implements Experience {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  update(delta: number): void {}
+  public update(delta: number): void {}
 
-  resize?(): void {}
+  public resize?(): void {}
 }

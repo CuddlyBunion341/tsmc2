@@ -24,7 +24,7 @@ export class TerrainGenerator {
   public terrainHeightSplines: number[][]
 
 
-  constructor(public seed: number) {
+  public constructor(public seed: number) {
     this.continentalness = new FractalNoise2d({
       seed,
       octaves: 5,

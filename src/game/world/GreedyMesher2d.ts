@@ -10,12 +10,12 @@ export interface Area<T> {
 }
 
 export class GreedyMesher2d<T> {
-  public areas: Area<T>[]
-  public currentArea: Area<T>
-  public processed: BlockGrid<boolean>
-  public isDone: boolean
+  private areas: Area<T>[]
+  private currentArea: Area<T>
+  private processed: BlockGrid<boolean>
+  private isDone: boolean
 
-  constructor(
+  public constructor(
     private readonly width: number,
     private readonly height: number,
     private readonly dataGetter: (x: number, y: number) => T,

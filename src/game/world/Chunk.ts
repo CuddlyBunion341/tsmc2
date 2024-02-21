@@ -38,7 +38,7 @@ export class Chunk {
     return chunk
   }
 
-  constructor(
+  public constructor(
     public readonly terrainGenerator: TerrainGenerator,
     public readonly position: THREE.Vector3,
     public readonly dimensions: THREE.Vector3
@@ -51,7 +51,7 @@ export class Chunk {
     this.mesh.material = new THREE.MeshBasicMaterial({vertexColors: true})
   }
 
-  generateTerrain() {
+  public generateTerrain() {
     const chunkPosition = new THREE.Vector3(0,0,0)
 
     for (let x = -1; x < this.dimensions.x + 1; x++) {
@@ -69,7 +69,7 @@ export class Chunk {
     }
   }
 
-  generateTerrainGenerationWorkerTask() {
+  public generateTerrainGenerationWorkerTask() {
     const message: ChunkMessageData = {
       position: { x: this.position.x, y: this.position.y, z: this.position.z },
       dimensions: {
@@ -88,7 +88,7 @@ export class Chunk {
   }
 
   // @Benchmark
-  updateMeshGeometry() {
+  public updateMeshGeometry() {
     const geometry = this.chunkMesher.generateGeometry()
     this.mesh.geometry = geometry
   }
