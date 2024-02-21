@@ -24,7 +24,7 @@ export class FractalNoise2d {
   public persistence!: number
   public octaves!: number
 
-  
+
   public constructor(params: FractalNoise2dParams) {
     this.deserialize(params)
   }
@@ -38,7 +38,7 @@ export class FractalNoise2d {
     folder.add(this, 'octaves', 1, 8, 1).onChange(changeCallback)
   }
 
-  public getOctave(x: number, y: number, octave: number): number {
+  public getOctave(x: number, y: number, octave: number) {
     const { frequency, lacunarity, amplitude } = this
     return (
       this.noiseFunction(
@@ -50,7 +50,7 @@ export class FractalNoise2d {
     )
   }
 
-  public get(x: number, y: number): number {
+  public get(x: number, y: number) {
     let noise = 0
     let amplitudeSum = 0
 

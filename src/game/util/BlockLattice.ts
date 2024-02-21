@@ -17,7 +17,7 @@ export class BlockLattice {
     this.data[this.getIndex(position)] = value
   }
 
-  public getIndex(position: THREE.Vector3): number {
+  public getIndex(position: THREE.Vector3) {
     return position.x + this.dimensions.x * (position.y + this.dimensions.y * position.z)
   }
 }

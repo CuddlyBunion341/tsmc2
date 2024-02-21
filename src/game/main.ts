@@ -17,7 +17,7 @@ export default class Game implements Experience {
    }
 
   @Benchmark
-  public init(): void {
+  public init() {
     this.generateWorld()
     this.world.addToGUI(this.engine.debug.gui, () => this.generateWorld())
   }
@@ -33,7 +33,7 @@ export default class Game implements Experience {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public update(delta: number): void {}
+  public update(delta: number) {}
 
-  public resize?(): void {}
+  public resize?() {}
 }
