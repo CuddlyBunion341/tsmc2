@@ -1,17 +1,17 @@
 export type Point2d = { x: number; y: number }
 
 export class SpiralHelper2d {
-  public directionIndex: number
-  public positions: Point2d[]
-  public radius: number
-  public stepSize: number
-
   public static directions = [
     { x: 1, y: 0 },
     { x: 0, y: -1 },
     { x: -1, y: 0 },
     { x: 0, y: 1 }
   ]
+
+  private directionIndex: number
+  private positions: Point2d[]
+  private radius: number
+  private stepSize: number
 
   constructor(
     public maxRadius: number,
@@ -23,7 +23,7 @@ export class SpiralHelper2d {
     this.stepSize = 1
   }
 
-  generateSpiral() {
+  public generateSpiral() {
     if (this.maxRadius < 1) return [this.origin]
 
     let { x, y } = this.origin

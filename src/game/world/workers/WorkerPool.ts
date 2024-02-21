@@ -6,12 +6,12 @@ export interface WorkerTask<T, U> {
 
 export class WorkerManager<T, U> {
 
-  public idleWorkers: Worker[] = []
-  public activeWorkers: Worker[] = []
+  private idleWorkers: Worker[] = []
+  private activeWorkers: Worker[] = []
 
-  public taskQueue: WorkerTask<T, U>[] = []
+  private taskQueue: WorkerTask<T, U>[] = []
 
-  constructor(public readonly workerConstructor: new () => Worker, public readonly workerCount: number) {
+  constructor(private readonly workerConstructor: new () => Worker, public readonly workerCount: number) {
     this.initializeWebWorkers()
   }
 
@@ -49,7 +49,7 @@ export class WorkerManager<T, U> {
     if (task) this.enqueueTask(task)
   }
 
-  clearQueue() {
+  public clearQueue() {
     this.taskQueue = []
   }
 }
