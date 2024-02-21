@@ -153,13 +153,13 @@ export class ChunkMesher {
     return faceVertices
   }
 
-  public affectsAo(blockId: number) {
+  private static affectsAo(blockId: number) {
     return blockId !== blockIds.air
   }
 
   public positionAffectsAo(position: THREE.Vector3) {
     position.floor()
-    return this.affectsAo(this.chunkData.get(position))
+    return ChunkMesher.affectsAo(this.chunkData.get(position))
   }
 
   private calculateVertexAO(position: THREE.Vector3) {

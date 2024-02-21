@@ -7,7 +7,7 @@ import { TerrainGenerator } from './TerrainGenerator'
 describe('#getChunkKey()', () => {
   test('should generate the correct key', () => {
     const chunkStorage = new ChunkStorage(new THREE.Vector3(32, 32, 32))
-    expect(chunkStorage.getChunkKey(new THREE.Vector3(1, 2, 3))).toBe('1,2,3')
+    expect(Object.getPrototypeOf(chunkStorage).constructor.getChunkKey(new THREE.Vector3(1, 2, 3))).toBe('1,2,3')
   })
 })
 

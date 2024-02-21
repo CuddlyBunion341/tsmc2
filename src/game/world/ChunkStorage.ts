@@ -28,14 +28,14 @@ export class ChunkStorage {
   }
 
   public getChunk(chunkPosition: THREE.Vector3) {
-    return this.chunks.get(this.getChunkKey(chunkPosition))
+    return this.chunks.get(ChunkStorage.getChunkKey(chunkPosition))
   }
 
   public addChunk(chunk: Chunk) {
-    this.chunks.set(this.getChunkKey(chunk.position), chunk)
+    this.chunks.set(ChunkStorage.getChunkKey(chunk.position), chunk)
   }
 
-  private getChunkKey(chunkPosition: THREE.Vector3) {
+  private static getChunkKey(chunkPosition: THREE.Vector3) {
     const { x, y, z } = chunkPosition
     return `${x},${y},${z}`
   }
