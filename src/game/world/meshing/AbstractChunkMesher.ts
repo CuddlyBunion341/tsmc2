@@ -58,4 +58,7 @@ export abstract class AbstractChunkMesher {
     public readonly dimensions: THREE.Vector3,
     public readonly chunkData: ChunkData
   ) { }
+
+  public abstract generateGeometry(): THREE.BufferGeometry
+  public abstract generateChunkVertices(): { vertices: Vertex[], indices: number[] }
 }
