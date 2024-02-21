@@ -76,14 +76,6 @@ export class ChunkMesher {
     return geometry
   }
 
-  private static isSolid(block: number) {
-    if (block === 0) return false
-    return !blocks[block]?.transparent
-  }
-
-  private isSolid(blockPosition: THREE.Vector3) {
-    return ChunkMesher.isSolid(this.chunkData.get(blockPosition))
-  }
 
   public generateChunkVertices() {
     const vertices: Vertex[] = []
@@ -153,9 +145,6 @@ export class ChunkMesher {
     return faceVertices
   }
 
-  private static affectsAo(blockId: number) {
-    return blockId !== blockIds.air
-  }
 
   public positionAffectsAo(position: THREE.Vector3) {
     position.floor()
@@ -188,5 +177,18 @@ export class ChunkMesher {
     // Normalize the occlusion value
     const aoValue = (maxOcclusion - occlusion) / maxOcclusion
     return aoValue
+  }
+
+  private static affectsAo(blockId: number) {
+    return blockId !== blockIds.air
+  }
+
+  private static isSolid(block: number) {
+    if (block === 0) return false
+    return !blocks[block]?.transparent
+  }
+
+  private isSolid(blockPosition: THREE.Vector3) {
+    return ChunkMesher.isSolid(this.chunkData.get(blockPosition))
   }
 }

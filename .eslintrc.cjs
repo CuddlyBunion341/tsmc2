@@ -26,7 +26,11 @@ module.exports = {
         "@typescript-eslint/default-param-last": "error",
         "@typescript-eslint/member-ordering": [
           "error",
-          { "default": ["signature", "field", "constructor", "method"] },
+          {
+            "default": {
+              memberTypes: ["signature", "public-field", "protected-field", "private-field", "constructor", "public-method", "protected-method", "private-method"],
+            }
+          },
         ],
       }
     }

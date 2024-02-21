@@ -17,13 +17,13 @@ export type FractalNoise2dParams = {
 }
 
 export class FractalNoise2d {
-  private noiseFunction!: NoiseFunction2D
   public seed!: number
   public amplitude!: number
   public frequency!: number
   public lacunarity!: number
   public persistence!: number
   public octaves!: number
+  private noiseFunction!: NoiseFunction2D
 
 
   public constructor(params: FractalNoise2dParams) {
