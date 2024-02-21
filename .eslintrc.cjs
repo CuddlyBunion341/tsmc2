@@ -4,4 +4,12 @@ module.exports = {
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint'],
   root: true,
+  overrides: [
+    {
+      files: ['src/game/*/*.ts'],
+      rules: {
+        "@typescript-eslint/explicit-member-accessibility": "error",
+      }
+    }
+  ]
 };
