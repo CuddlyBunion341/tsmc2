@@ -7,7 +7,7 @@ import { createNoise2D } from 'simplex-noise'
 import type { FractalNoiseParams } from './FractalNoiseBase';
 import { FractalNoiseBase, createSeededRandomizer } from './FractalNoiseBase';
 export class FractalNoise2d extends FractalNoiseBase {
-  private noiseFunction!: NoiseFunction2D
+  declare private noiseFunction: NoiseFunction2D
 
   public constructor(params: FractalNoiseParams) {
     super(params)
