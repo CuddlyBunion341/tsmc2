@@ -13,6 +13,7 @@ export type TerrainGeneratorParams = {
   fractalNoiseParams: FractalNoise2dParams
   grassLevel: number
   dirtLevel: number
+  waterLevel: number
   terrainHeightSplines: number[][]
 }
 
@@ -23,6 +24,7 @@ export class TerrainGenerator {
   public grassLevel: number
   public dirtLevel: number
   public terrainHeightSplines: number[][]
+  public waterLevel: number
 
 
   public constructor(public seed: number) {
@@ -38,6 +40,7 @@ export class TerrainGenerator {
     this.hilliness = 6
     this.grassLevel = 18
     this.dirtLevel = 12
+    this.waterLevel = 7
 
     this.terrainHeightSplines = [
       [-1, 3],
@@ -63,6 +66,7 @@ export class TerrainGenerator {
 
     const height = splineValue * this.hilliness
 
+    if (y > height && y < this.waterLevel) return blockIds.water
     if (y > height) return blockIds.air
     if (y > this.grassLevel) return blockIds.grass
     if (y > this.dirtLevel) return blockIds.dirt
@@ -75,6 +79,7 @@ export class TerrainGenerator {
     folder.add(this, 'hilliness', 1, 100, 1).onChange(changeCallback)
     folder.add(this, 'grassLevel', -50, 100, 1).onChange(changeCallback)
     folder.add(this, 'dirtLevel', -50, 100, 1).onChange(changeCallback)
+    folder.add(this, 'waterLevel', -50, 100, 1).onChange(changeCallback)
     const splines = folder.addFolder('Terrain Height Splines')
     this.terrainHeightSplines.forEach((_, i) => {
       const splineFolder = splines.addFolder(`Spline ${i}`)
@@ -89,6 +94,7 @@ export class TerrainGenerator {
       seed: this.seed,
       hilliness: this.hilliness,
       grassLevel: this.grassLevel,
+      waterLevel: this.waterLevel,
       dirtLevel: this.dirtLevel,
       terrainHeightSplines: this.terrainHeightSplines,
       fractalNoiseParams: this.continentalness.serialize(),
@@ -101,6 +107,7 @@ export class TerrainGenerator {
     this.grassLevel = data.grassLevel
     this.dirtLevel = data.dirtLevel
     this.terrainHeightSplines = data.terrainHeightSplines
+    this.waterLevel = data.waterLevel
 
     this.continentalness.deserialize(data.fractalNoiseParams)
   }
