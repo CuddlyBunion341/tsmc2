@@ -1,16 +1,16 @@
-import type * as THREE from 'three'
-import type { FractalNoise2dParams } from '../utilities/FractalNoise2d';
+import * as THREE from 'three'
 import { FractalNoise2d } from '../utilities/FractalNoise2d'
 import { blockIds } from './blocks'
 import type GUI from 'lil-gui'
 import { linearSplineInterpolation } from '../utilities/Math'
+import type { FractalNoiseParams } from '../utilities/FractalNoiseBase'
 
 // Inspired by: https://www.youtube.com/watch?v=CSa5O6knuwI
 
 export type TerrainGeneratorParams = {
   seed: number
   hilliness: number
-  fractalNoiseParams: FractalNoise2dParams
+  fractalNoiseParams: FractalNoiseParams
   grassLevel: number
   dirtLevel: number
   terrainHeightSplines: number[][]
@@ -57,7 +57,7 @@ export class TerrainGenerator {
   public getBlock(blockPosition: THREE.Vector3) {
     const { x, y, z } = blockPosition
 
-    const continentalnessValue = this.continentalness.get(x, z)
+    const continentalnessValue = this.continentalness.get(new THREE.Vector2(x, z))
 
     const splineValue = linearSplineInterpolation(continentalnessValue, this.terrainHeightSplines)
 

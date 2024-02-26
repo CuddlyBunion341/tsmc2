@@ -1,5 +1,6 @@
 import type GUI from "lil-gui"
 import { MersenneTwister19937, Random } from 'random-js'
+import type { Vector2, Vector3 } from "three"
 
 export type FractalNoiseParams = {
 	seed: number
@@ -11,7 +12,7 @@ export type FractalNoiseParams = {
 }
 
 
-export class FractalNoiseBase {
+export class FractalNoiseBase<T extends Vector2 | Vector3>{
 	declare public seed: number
 	declare public amplitude: number
 	declare public frequency: number
@@ -32,6 +33,23 @@ export class FractalNoiseBase {
 		folder.add(this, 'octaves', 1, 8, 1).onChange(changeCallback)
 	}
 
+	public get(position: T): number {
+		let noise = 0
+		let amplitudeSum = 0
+
+		for (let o = 0; o < this.octaves; o++) {
+			const octaveNoise = this.getNoiseOctave(position, o)
+			const amplitude = 1 / Math.pow(this.persistence, o)
+
+			amplitudeSum += amplitude
+			noise += amplitude * octaveNoise
+		}
+
+		noise = noise / amplitudeSum
+
+		return noise
+	}
+
 	public serialize(): FractalNoiseParams {
 		return {
 			amplitude: this.amplitude,
@@ -50,6 +68,24 @@ export class FractalNoiseBase {
 		this.persistence = data.persistence
 		this.seed = data.seed
 		this.octaves = data.octaves
+	}
+
+	protected getNoiseOctave(position: T, octave: number): number {
+		const l = Math.pow(this.lacunarity, octave);
+    const p = Math.pow(this.persistence, octave);
+
+    position.divideScalar(this.frequency / l);
+
+    const noiseValue = (1 / p) * this.noiseFunctionValue(position);
+
+    position.multiplyScalar(this.frequency / l);
+
+    return noiseValue;
+	}
+
+	// eslint-disable-next-line @typescript-eslint/class-methods-use-this, @typescript-eslint/no-unused-vars
+	protected noiseFunctionValue(position: T): number {
+		throw new Error('Not implemented')
 	}
 }
 
