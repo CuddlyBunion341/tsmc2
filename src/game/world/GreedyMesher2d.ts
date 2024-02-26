@@ -1,6 +1,6 @@
 import { BlockGrid } from '../util/BlockGrid'
 
-export interface Area<T> {
+export type Area<T> = {
   value: T
   x: number
   y: number
@@ -10,12 +10,12 @@ export interface Area<T> {
 }
 
 export class GreedyMesher2d<T> {
-  public areas: Area<T>[]
-  public currentArea: Area<T>
-  public processed: BlockGrid<boolean>
-  public isDone: boolean
+  private areas: Area<T>[]
+  private currentArea: Area<T>
+  private processed: BlockGrid<boolean>
+  private isDone: boolean
 
-  constructor(
+  public constructor(
     private readonly width: number,
     private readonly height: number,
     private readonly dataGetter: (x: number, y: number) => T,
@@ -37,8 +37,7 @@ export class GreedyMesher2d<T> {
   public step() {
     if (this.currentArea.state === 'growingX') this.growX()
     else if (this.currentArea.state === 'growingY') this.growY()
-    else if (this.currentArea.state === 'done') this.prepareNextArea()
-    else throw new Error(`Invalid state: ${this.currentArea.state}`)
+    else this.prepareNextArea()
 
     return !this.isDone
   }

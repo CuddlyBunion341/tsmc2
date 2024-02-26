@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { blockIds, blocks } from './blocks'
-import { ChunkData } from './ChunkData'
+import type { ChunkData } from './ChunkData'
 
 export type Vertex = {
   position: [number, number, number]
@@ -13,14 +13,14 @@ const FACE_COUNT = 6
 const FACE_VERTEX_COUNT = 4
 
 export class ChunkMesher {
-  static geometryAttributes = [
+  public static geometryAttributes = [
     { name: 'position', size: 3 },
     { name: 'normal', size: 3 },
     { name: 'uv', size: 2 },
     { name: 'color', size: 3 }
   ] as const
 
-  static vertexData: Vertex[] = [
+  public static vertexData: Vertex[] = [
     // left
     { color: [0, 0, 0], position: [-1, -1, -1], normal: [-1, 0, 0], uv: [0, 0] },
     { color: [0, 0, 0], position: [-1, -1, 1], normal: [-1, 0, 0], uv: [1, 0] },
@@ -53,14 +53,24 @@ export class ChunkMesher {
     { color: [0, 0, 0], position: [1, 1, 1], normal: [0, 0, 1], uv: [1, 1] }
   ] as const
 
-  static vertexIndices = [0, 1, 2, 2, 1, 3] as const
+  public static vertexIndices = [0, 1, 2, 2, 1, 3] as const
 
-  constructor(
+  public constructor(
     public readonly dimensions: THREE.Vector3,
     public readonly chunkData: ChunkData
   ) { }
 
-  generateGeometry() {
+  private static affectsAo(blockId: number) {
+    return blockId !== blockIds.air
+  }
+
+  private static isSolid(block: number) {
+    if (block === 0) return false
+    return !blocks[block]?.transparent
+  }
+
+
+  public generateGeometry() {
     const { vertices, indices } = this.generateChunkVertices()
 
     const geometry = new THREE.BufferGeometry()
@@ -76,16 +86,8 @@ export class ChunkMesher {
     return geometry
   }
 
-  private static isSolid(block: number) {
-    if (block === 0) return false
-    return !blocks[block]?.transparent
-  }
 
-  private isSolid(blockPosition: THREE.Vector3) {
-    return ChunkMesher.isSolid(this.chunkData.get(blockPosition))
-  }
-
-  generateChunkVertices() {
+  public generateChunkVertices() {
     const vertices: Vertex[] = []
     const indices: number[] = []
 
@@ -127,7 +129,7 @@ export class ChunkMesher {
     return { vertices, indices }
   }
 
-  generateFaceVertices(faceIndex: number, blockId: number, blockPosition: THREE.Vector3) {
+  public generateFaceVertices(faceIndex: number, blockId: number, blockPosition: THREE.Vector3) {
     const firstFaceVertexIndex = faceIndex * FACE_VERTEX_COUNT
 
     const color = blocks[blockId].color
@@ -153,13 +155,10 @@ export class ChunkMesher {
     return faceVertices
   }
 
-  affectsAo(blockId: number) {
-    return blockId !== blockIds.air
-  }
 
-  positionAffectsAo(position: THREE.Vector3) {
+  public positionAffectsAo(position: THREE.Vector3) {
     position.floor()
-    return this.affectsAo(this.chunkData.get(position))
+    return ChunkMesher.affectsAo(this.chunkData.get(position))
   }
 
   private calculateVertexAO(position: THREE.Vector3) {
@@ -188,5 +187,9 @@ export class ChunkMesher {
     // Normalize the occlusion value
     const aoValue = (maxOcclusion - occlusion) / maxOcclusion
     return aoValue
+  }
+
+  private isSolid(blockPosition: THREE.Vector3) {
+    return ChunkMesher.isSolid(this.chunkData.get(blockPosition))
   }
 }

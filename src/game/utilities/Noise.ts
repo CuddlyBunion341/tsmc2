@@ -2,11 +2,12 @@
 // https://www.npmjs.com/package/simplex-noise
 // https://www.youtube.com/watch?app=desktop&v=G1T8H58EP70
 
-import { NoiseFunction2D, createNoise2D } from 'simplex-noise'
+import type { NoiseFunction2D} from 'simplex-noise';
+import { createNoise2D } from 'simplex-noise'
 import { MersenneTwister19937, Random } from 'random-js'
-import GUI from 'lil-gui'
+import type GUI from 'lil-gui'
 
-export interface FractalNoise2dParams {
+export type FractalNoise2dParams = {
   seed: number
   amplitude: number
   frequency: number
@@ -16,15 +17,16 @@ export interface FractalNoise2dParams {
 }
 
 export class FractalNoise2d {
-  private noiseFunction!: NoiseFunction2D
   public seed!: number
   public amplitude!: number
   public frequency!: number
   public lacunarity!: number
   public persistence!: number
   public octaves!: number
+  private noiseFunction!: NoiseFunction2D
 
-  constructor(params: FractalNoise2dParams) {
+
+  public constructor(params: FractalNoise2dParams) {
     this.deserialize(params)
   }
 
@@ -37,7 +39,7 @@ export class FractalNoise2d {
     folder.add(this, 'octaves', 1, 8, 1).onChange(changeCallback)
   }
 
-  public getOctave(x: number, y: number, octave: number): number {
+  public getOctave(x: number, y: number, octave: number) {
     const { frequency, lacunarity, amplitude } = this
     return (
       this.noiseFunction(
@@ -49,7 +51,7 @@ export class FractalNoise2d {
     )
   }
 
-  public get(x: number, y: number): number {
+  public get(x: number, y: number) {
     let noise = 0
     let amplitudeSum = 0
 

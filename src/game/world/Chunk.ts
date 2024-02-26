@@ -1,7 +1,8 @@
 import { ChunkData } from './ChunkData'
 import { ChunkMesher } from './ChunkMesher'
 import * as THREE from 'three'
-import { TerrainGenerator, TerrainGeneratorParams } from './TerrainGenerator'
+import type { TerrainGeneratorParams } from './TerrainGenerator';
+import { TerrainGenerator } from './TerrainGenerator'
 
 export type ChunkMessageData = {
   position: {
@@ -23,6 +24,19 @@ export class Chunk {
   public readonly chunkMesher: ChunkMesher
   public readonly mesh: THREE.Mesh
 
+  public constructor(
+    public readonly terrainGenerator: TerrainGenerator,
+    public readonly position: THREE.Vector3,
+    public readonly dimensions: THREE.Vector3
+  ) {
+    this.chunkData = new ChunkData(dimensions)
+    this.chunkMesher = new ChunkMesher(dimensions, this.chunkData)
+    this.mesh = new THREE.Mesh()
+    this.mesh.name = Chunk.meshName
+    this.mesh.position.add(this.position.clone().multiply(this.dimensions))
+    this.mesh.material = new THREE.MeshBasicMaterial({vertexColors: true})
+  }
+
   public static fromMessageData(data: ChunkMessageData) {
     const { position, dimensions, generatorParams } = data
     const { x, y, z } = position
@@ -38,20 +52,7 @@ export class Chunk {
     return chunk
   }
 
-  constructor(
-    public readonly terrainGenerator: TerrainGenerator,
-    public readonly position: THREE.Vector3,
-    public readonly dimensions: THREE.Vector3
-  ) {
-    this.chunkData = new ChunkData(dimensions)
-    this.chunkMesher = new ChunkMesher(dimensions, this.chunkData)
-    this.mesh = new THREE.Mesh()
-    this.mesh.name = Chunk.meshName
-    this.mesh.position.add(this.position.clone().multiply(this.dimensions))
-    this.mesh.material = new THREE.MeshBasicMaterial({vertexColors: true})
-  }
-
-  generateTerrain() {
+  public generateTerrain() {
     const chunkPosition = new THREE.Vector3(0,0,0)
 
     for (let x = -1; x < this.dimensions.x + 1; x++) {
@@ -69,7 +70,7 @@ export class Chunk {
     }
   }
 
-  generateTerrainGenerationWorkerTask() {
+  public generateTerrainGenerationWorkerTask() {
     const message: ChunkMessageData = {
       position: { x: this.position.x, y: this.position.y, z: this.position.z },
       dimensions: {
@@ -88,7 +89,7 @@ export class Chunk {
   }
 
   // @Benchmark
-  updateMeshGeometry() {
+  public updateMeshGeometry() {
     const geometry = this.chunkMesher.generateGeometry()
     this.mesh.geometry = geometry
   }

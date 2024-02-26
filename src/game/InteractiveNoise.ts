@@ -8,10 +8,6 @@ type ColorRamp = {
 }
 
 export class InteractiveNoise {
-  public canvas: HTMLCanvasElement
-  public ctx: CanvasRenderingContext2D
-  public noise: FractalNoise2d
-  public executionTime: string
   public resolution: number = 32
   public colors: ColorRamp[] = [
     { min: -1, max: -0.8, value: '#493212' },
@@ -25,26 +21,25 @@ export class InteractiveNoise {
     { min: 0.6, max: 0.8, value: '#b67e2b' },
     { min: 0.8, max: 1, value: '#b67e2b' }
   ]
-  // public colors: ColorRamp[] = [
-  //   { min: -1, max: -0.8, value: '#0000ff' },
-  //   { min: -0.8, max: -0.6, value: '#3366ff' },
-  //   { min: -0.6, max: -0.4, value: '#66a3ff' },
-  //   { min: -0.4, max: -0.2, value: '#99ccff' },
-  //   { min: -0.2, max: 0, value: '#cce5ff' },
-  //   { min: 0, max: 0.2, value: '#ffffcc' },
-  //   { min: 0.2, max: 0.4, value: '#ffff99' },
-  //   { min: 0.4, max: 0.6, value: '#ffff66' },
-  //   { min: 0.6, max: 0.8, value: '#ffff33' },
-  //   { min: 0.8, max: 1, value: '#ffff00' }
-  // ]
-
   public min = -1
   public max = 1
 
-  constructor(public engine: Engine) {
+  private canvas: HTMLCanvasElement
+  private ctx: CanvasRenderingContext2D
+  private noise: FractalNoise2d
+  private executionTime: string
+
+  public constructor(private engine: Engine) {
     this.executionTime = `0ms`
 
-    this.noise = new FractalNoise2d(69420, 2)
+    this.noise = new FractalNoise2d({
+      seed: 69420,
+      amplitude: 1,
+      frequency: 10,
+      octaves: 4,
+      lacunarity: 2,
+      persistence: 2,
+    })
 
     const canvas = document.createElement('canvas')
     this.canvas = canvas

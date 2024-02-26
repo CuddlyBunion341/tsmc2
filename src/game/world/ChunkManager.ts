@@ -2,12 +2,12 @@ import * as THREE from 'three'
 import { Chunk } from './Chunk'
 import { ChunkStorage } from './ChunkStorage'
 import { SpiralHelper2d } from './SpiralHelper2d'
-import { TerrainGenerator } from './TerrainGenerator'
+import type { TerrainGenerator } from './TerrainGenerator'
 
 export class ChunkManager {
-  public readonly chunks: ChunkStorage
+  private readonly chunks: ChunkStorage
 
-  constructor(
+  public constructor(
     public terrainGenerator: TerrainGenerator,
     public renderDistance: THREE.Vector3,
     chunkSize = new THREE.Vector3(32, 32, 32)

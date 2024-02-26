@@ -1,7 +1,8 @@
-import * as THREE from 'three'
-import { FractalNoise2d, FractalNoise2dParams } from '../utilities/Noise'
+import type * as THREE from 'three'
+import type { FractalNoise2dParams } from '../utilities/Noise';
+import { FractalNoise2d } from '../utilities/Noise'
 import { blockIds } from './blocks'
-import GUI from 'lil-gui'
+import type GUI from 'lil-gui'
 import { linearSplineInterpolation } from '../utilities/Math'
 
 // Inspired by: https://www.youtube.com/watch?v=CSa5O6knuwI
@@ -24,7 +25,7 @@ export class TerrainGenerator {
   public terrainHeightSplines: number[][]
 
 
-  constructor(public seed: number) {
+  public constructor(public seed: number) {
     this.continentalness = new FractalNoise2d({
       seed,
       octaves: 5,
