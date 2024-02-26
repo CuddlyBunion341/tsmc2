@@ -1,6 +1,6 @@
 import type * as THREE from 'three'
-import type { FractalNoise2dParams } from '../utilities/Noise';
-import { FractalNoise2d } from '../utilities/Noise'
+import type { FractalNoise2dParams } from '../utilities/FractalNoise2d';
+import { FractalNoise2d } from '../utilities/FractalNoise2d'
 import { blockIds } from './blocks'
 import type GUI from 'lil-gui'
 import { linearSplineInterpolation } from '../utilities/Math'

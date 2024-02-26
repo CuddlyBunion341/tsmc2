@@ -1,4 +1,4 @@
-import { FractalNoise2d } from './utilities/Noise'
+import { FractalNoise2d } from './utilities/FractalNoise2d'
 import { Engine } from '../engine/Engine'
 
 type ColorRamp = {
