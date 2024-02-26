@@ -53,18 +53,18 @@ export class Chunk {
   }
 
   public generateTerrain() {
-    const chunkPosition = new THREE.Vector3(0,0,0)
+    const chunkPosition = this.position.clone().multiply(this.dimensions)
+    const blockWorldPosition = new THREE.Vector3(0,0,0)
+    const blockChunkPosition = new THREE.Vector3(0,0,0)
 
     for (let x = -1; x < this.dimensions.x + 1; x++) {
       for (let y = -1; y < this.dimensions.y + 1; y++) {
         for (let z = -1; z < this.dimensions.z + 1; z++) {
-          chunkPosition.set(x,y,z)
-          const worldPosition = chunkPosition
-            .clone()
-            .add(this.position.clone().multiply(this.dimensions))
+          blockChunkPosition.set(x,y,z)
+          blockWorldPosition.set(x,y,z).add(chunkPosition)
 
-          const block = this.terrainGenerator.getBlock(worldPosition)
-          this.chunkData.set(chunkPosition, block)
+          const block = this.terrainGenerator.getBlock(blockWorldPosition)
+          this.chunkData.set(blockChunkPosition, block)
         }
       }
     }
