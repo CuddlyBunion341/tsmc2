@@ -16,6 +16,8 @@ export type TerrainGeneratorParams = {
   terrainHeightSplines: number[][]
 }
 
+const vec2 = new THREE.Vector2()
+
 export class TerrainGenerator {
 
   public continentalness: FractalNoise2d
@@ -57,7 +59,7 @@ export class TerrainGenerator {
   public getBlock(blockPosition: THREE.Vector3) {
     const { x, y, z } = blockPosition
 
-    const continentalnessValue = this.continentalness.get(new THREE.Vector2(x, z))
+    const continentalnessValue = this.continentalness.get(vec2.set(x,z))
 
     const splineValue = linearSplineInterpolation(continentalnessValue, this.terrainHeightSplines)
 
