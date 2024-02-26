@@ -5,11 +5,11 @@ export function Benchmark(
   propertyKey: string,
   descriptor: PropertyDescriptor
 ) {
-  const originalMethod = descriptor.value
+  const originalMethod = descriptor.value as () => unknown
 
   descriptor.value = function (...args: unknown[]) {
     const start = performance.now()
-    const result = originalMethod.apply(this, args)
+    const result = originalMethod.apply(this)
     const end = performance.now()
     const duration = end - start
 

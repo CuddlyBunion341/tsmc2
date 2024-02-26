@@ -6,7 +6,11 @@ export class BlockGrid<T> {
     public readonly height: number,
     defaultValue?: T
   ) {
-    this.data = Array(width * height).fill(defaultValue)
+    this.data = Array(width * height) as T[]
+
+    if (defaultValue !== undefined) {
+      this.data.fill(defaultValue)
+    }
   }
 
   public getIndex(x: number, y: number) {

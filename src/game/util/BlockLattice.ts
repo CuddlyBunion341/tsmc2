@@ -3,7 +3,7 @@ import type * as THREE from 'three'
 export class BlockLattice {
   public data: THREE.TypedArray
 
-  public constructor(public readonly dimensions: THREE.Vector3, defaultValue: number = 0) {
+  public constructor(public readonly dimensions: THREE.Vector3, defaultValue = 0) {
     this.data = new Uint8Array(dimensions.x * dimensions.y * dimensions.z).fill(
       defaultValue
     )
