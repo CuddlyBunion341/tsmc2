@@ -8,9 +8,15 @@ export class ChunkStorage {
     this.chunks = new Map()
   }
 
+
+  private static getChunkKey(chunkPosition: THREE.Vector3) {
+    const { x, y, z } = chunkPosition
+    return `${x},${y},${z}`
+  }
+
   public getBlock(blockPosition: THREE.Vector3) {
     const chunk = this.getBlockChunk(blockPosition)
-    if (!chunk) throw new Error(`Chunk not found for block at ${blockPosition}`)
+    if (!chunk) throw new Error(`Chunk not found for block at ${blockPosition.toArray().join(',')}`)
 
     const { x, y, z } = blockPosition
 
@@ -33,10 +39,5 @@ export class ChunkStorage {
 
   public addChunk(chunk: Chunk) {
     this.chunks.set(ChunkStorage.getChunkKey(chunk.position), chunk)
-  }
-
-  private static getChunkKey(chunkPosition: THREE.Vector3) {
-    const { x, y, z } = chunkPosition
-    return `${x},${y},${z}`
   }
 }

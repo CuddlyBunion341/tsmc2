@@ -1,17 +1,16 @@
 export type Point2d = { x: number; y: number }
 
 export class SpiralHelper2d {
-  private directionIndex: number
-  private positions: Point2d[]
-  private radius: number
-  private stepSize: number
-
   private static directions = [
     { x: 1, y: 0 },
     { x: 0, y: -1 },
     { x: -1, y: 0 },
     { x: 0, y: 1 }
   ]
+  private directionIndex: number
+  private positions: Point2d[]
+  private radius: number
+  private stepSize: number
 
   public constructor(
     private maxRadius: number,

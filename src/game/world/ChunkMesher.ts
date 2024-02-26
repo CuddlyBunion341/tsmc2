@@ -60,6 +60,16 @@ export class ChunkMesher {
     public readonly chunkData: ChunkData
   ) { }
 
+  private static affectsAo(blockId: number) {
+    return blockId !== blockIds.air
+  }
+
+  private static isSolid(block: number) {
+    if (block === 0) return false
+    return !blocks[block]?.transparent
+  }
+
+
   public generateGeometry() {
     const { vertices, indices } = this.generateChunkVertices()
 
@@ -177,15 +187,6 @@ export class ChunkMesher {
     // Normalize the occlusion value
     const aoValue = (maxOcclusion - occlusion) / maxOcclusion
     return aoValue
-  }
-
-  private static affectsAo(blockId: number) {
-    return blockId !== blockIds.air
-  }
-
-  private static isSolid(block: number) {
-    if (block === 0) return false
-    return !blocks[block]?.transparent
   }
 
   private isSolid(blockPosition: THREE.Vector3) {
