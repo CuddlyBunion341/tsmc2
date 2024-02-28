@@ -3,6 +3,7 @@ import { MersenneTwister19937, Random } from 'random-js'
 import type { Vector2, Vector3 } from "three"
 
 export type FractalNoiseParams = {
+	name: string
 	seed: number
 	amplitude: number
 	frequency: number
@@ -13,6 +14,7 @@ export type FractalNoiseParams = {
 
 
 export class FractalNoiseBase<T extends Vector2 | Vector3>{
+	declare public name: string
 	declare public seed: number
 	declare public amplitude: number
 	declare public frequency: number
@@ -25,7 +27,7 @@ export class FractalNoiseBase<T extends Vector2 | Vector3>{
 	}
 
 	public addToGUI(gui: GUI, changeCallback: () => void) {
-		const folder = gui.addFolder('Fractal Noise 2D')
+		const folder = gui.addFolder(this.name)
 		folder.add(this, 'amplitude', 1, 100, 1).onChange(changeCallback)
 		folder.add(this, 'frequency', 1, 1000, 1).onChange(changeCallback)
 		folder.add(this, 'lacunarity', 1, 4, 0.1).onChange(changeCallback)
@@ -52,6 +54,7 @@ export class FractalNoiseBase<T extends Vector2 | Vector3>{
 
 	public serialize(): FractalNoiseParams {
 		return {
+			name: this.name,
 			amplitude: this.amplitude,
 			frequency: this.frequency,
 			lacunarity: this.lacunarity,
@@ -62,6 +65,7 @@ export class FractalNoiseBase<T extends Vector2 | Vector3>{
 	}
 
 	public deserialize(data: FractalNoiseParams) {
+		this.name = data.name
 		this.amplitude = data.amplitude
 		this.frequency = data.frequency
 		this.lacunarity = data.lacunarity
