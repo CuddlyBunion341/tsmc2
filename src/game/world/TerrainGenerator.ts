@@ -13,10 +13,12 @@ export type TerrainGeneratorParams = {
   hilliness: number
   continentalnessNoiseParams: FractalNoiseParams
   densityNoiseParams: FractalNoiseParams
+  caveNoise: FractalNoiseParams
   grassLevel: number
   dirtLevel: number
   terrainHeightSplines: number[][]
   squashingFactor: number
+  caveAirThreshold: number
 }
 
 const vec2 = new THREE.Vector2()
@@ -26,11 +28,13 @@ export class TerrainGenerator {
 
   public continentalness: FractalNoise2d
   public density: FractalNoise3d
+  public caveNoise: FractalNoise3d
   public hilliness: number
   public grassLevel: number
   public dirtLevel: number
   public terrainHeightSplines: number[][]
   public squashingFactor: number
+  public caveAirThreshold: number
 
 
   public constructor(public seed: number) {
@@ -54,10 +58,21 @@ export class TerrainGenerator {
       lacunarity: 1.6
     })
 
+    this.caveNoise = new FractalNoise3d({
+      name: "Cave Noise",
+      seed,
+      octaves: 4,
+      frequency: 137,
+      persistence: 1.6,
+      amplitude: 1,
+      lacunarity: 1.6
+    })
+
     this.hilliness = 6
     this.grassLevel = 18
     this.dirtLevel = 12
     this.squashingFactor = 50
+    this.caveAirThreshold = 0.5
 
     this.terrainHeightSplines = [
       [-1, 3],
@@ -80,6 +95,10 @@ export class TerrainGenerator {
     const densityValue = this.density.get(vec3.set(x,y,z))
 
     if (densityValue < y / this.squashingFactor) return blockIds.air
+
+    const caveNoiseValue = this.caveNoise.get(vec3.set(x,y,z))
+
+    if (caveNoiseValue > this.caveAirThreshold) return blockIds.air
 
     return blockIds.stone
 
@@ -110,6 +129,8 @@ export class TerrainGenerator {
     folder.add(this, 'squashingFactor', -50, 100, 1).onChange(changeCallback)
     this.continentalness.addToGUI(folder, changeCallback)
     this.density.addToGUI(folder, changeCallback)
+    this.caveNoise.addToGUI(folder, changeCallback)
+    folder.add(this, 'caveAirThreshold', -1, 1, 0.01).onChange(changeCallback)
   }
 
   public serialize(): TerrainGeneratorParams {
@@ -122,6 +143,8 @@ export class TerrainGenerator {
       squashingFactor: this.squashingFactor,
       continentalnessNoiseParams: this.continentalness.serialize(),
       densityNoiseParams: this.density.serialize(),
+      caveNoise: this.caveNoise.serialize(),
+      caveAirThreshold: this.caveAirThreshold
     }
   }
 
@@ -132,8 +155,10 @@ export class TerrainGenerator {
     this.dirtLevel = data.dirtLevel
     this.terrainHeightSplines = data.terrainHeightSplines
     this.squashingFactor = data.squashingFactor
+    this.caveAirThreshold = data.caveAirThreshold
 
     this.continentalness.deserialize(data.continentalnessNoiseParams)
     this.density.deserialize(data.densityNoiseParams)
+    this.caveNoise.deserialize(data.caveNoise)
   }
 }
